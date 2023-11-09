@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
@@ -64,34 +64,45 @@ export class UserController {
         }
     }
 
-    async resendOTP(req:Request, res: Response, next: NextFunction) {
+    async resendOTP(req:Request, res: Response) {
         try {
             const OTP = this.otpGenerator.generateOTP()
             req.app.locals.OTP = OTP
             this.mailer.sendMail(req.app.locals.userData.email, OTP)
             res.status(200).json({message: 'OTP has been sent'})
         } catch (error) {
-            next(error)
+            console.log(error);
+            // next(error)
         }
     }
 
-    async userLogin(req:Request, res: Response, next: NextFunction){
+    async userLogin(req:Request, res: Response){
         try {
+            console.log(req.headers.authorization);
+            // console.log(req.headers);
+            // console.log(req.headers['Authorization']);
+            // console.log(req.rawHeaders);
+            // console.log('request................................');
+            
             const { email, password } = req.body
+            // console.log(email, password);
             const verifiedData = await this.userUseCase.verifyLogin(email, password)
             if(verifiedData?.data.token !== '' ){
-                res.cookie('JWT',verifiedData?.data.token, {
-                    httpOnly: true,
-                    sameSite: 'strict',
-                    maxAge: 30 * 24 * 60 * 60 * 1000
-                })
+                // console.log('responding with cookie',verifiedData?.data.token);
+                // res.cookie('JWT',verifiedData?.data.token, {
+                //     httpOnly: true,
+                //     // sameSite: 'strict',
+                //     maxAge: 30 * 24 * 60 * 60 * 1000
+                // })
+                res.status(200).json({token: verifiedData?.data.token})
             }
         } catch (error) {
-            next(error)
+            console.log(error);
+            // next(error)
         }
     }
 
-    async logout(req:Request, res: Response, next: NextFunction){
+    async logout(req:Request, res: Response){
         try {
             res.cookie('JWT','',{
                 httpOnly: true,
@@ -99,7 +110,8 @@ export class UserController {
             })
             res.status(200).json({message: 'user logged out'})
         } catch (error) {
-            next(error)
+            console.log(error);
+            // next(error)
         }
 
     }
