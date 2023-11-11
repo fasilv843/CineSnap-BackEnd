@@ -9,7 +9,7 @@ export class TheaterUseCase {
     constructor (
         private theaterRepository: TheaterRepository,
         private encrypt : Encrypt,
-        private JWTToken : JWTToken
+        private jwtToken : JWTToken
     ){}
 
     async saveTheater (theaterData: ITheater):Promise<ITheater> {
@@ -37,7 +37,7 @@ export class TheaterUseCase {
 
             const passwordMatch = await this.encrypt.comparePasswords(password, theaterData.password)
             if(passwordMatch){
-                const token = this.JWTToken.generateToken(theaterData._id)
+                const token = this.jwtToken.generateToken(theaterData._id)
                 return {
                     status: 200,
                     data: { theaterData, token }
@@ -62,6 +62,6 @@ export class TheaterUseCase {
         }
     }
 
-    
+
 
 }

@@ -15,7 +15,20 @@ export class TheaterController {
 
     async theaterRegister (req:Request, res:Response){
         try {
-            const { name, email, password, country, state, district, city, zip, liscenceId, landmark, latitude, longitude } = req.body;
+            const { name, email, password, country, state, district, city, zip, liscenceId, landmark, latitude, longitude } = req.body as unknown as {
+                name: string;
+                email: string;
+                password: string;
+                country: string;
+                state: string;
+                district: string;
+                city: string;
+                zip: string;
+                liscenceId: string;
+                landmark: string;
+                latitude: number;
+                longitude: number;
+            };
             const isEmailExist = await this.theaterUseCase.isEmailExist(email);
 
             if(!isEmailExist){

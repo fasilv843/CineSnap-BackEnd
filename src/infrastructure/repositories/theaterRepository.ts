@@ -1,6 +1,5 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-// import { ILocation } from "../../interfaces/schema/common";
 import { ITheater } from "../../interfaces/schema/theaterRepo";
 
 
