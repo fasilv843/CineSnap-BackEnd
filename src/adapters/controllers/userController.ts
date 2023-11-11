@@ -55,7 +55,6 @@ export class UserController {
                 res.status(200).send()
             }else{
                 console.log('otp didnt match');
-                
                 res.status(400).json({status: false, message: 'Invalid OTP'})
             }
         } catch (error) {
@@ -78,11 +77,6 @@ export class UserController {
 
     async userLogin(req:Request, res: Response){
         try {
-            console.log(req.headers.authorization);
-            // console.log(req.headers);
-            // console.log(req.headers['Authorization']);
-            // console.log(req.rawHeaders);
-            // console.log('request................................');
             
             const { email, password } = req.body
             // console.log(email, password);

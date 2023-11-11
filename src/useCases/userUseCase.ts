@@ -26,7 +26,14 @@ export class UserUseCase {
         const userData = await this.userRepository.findByEmail(email)
         if(userData !== null) {
             if(userData.isBlocked){
-                throw new Error('You are blocked by admin')
+                return {
+                    status : 400,
+                    data: {
+                        messsage: 'You have been blocked by admin',
+                        token: ''
+                    }
+                    
+                }
             }else{
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password)
                 if(passwordMatch){
@@ -38,7 +45,13 @@ export class UserUseCase {
                 }
             }
         }else{
-            throw new Error('Invalid email or password')
+            return  {
+                status: 400,
+                data: {
+                    message: 'Invalid email or password!',
+                    token : ''
+                }
+            };
         }
     }
 }
