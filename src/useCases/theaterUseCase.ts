@@ -1,5 +1,5 @@
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { ITheater } from "../interfaces/schema/theaterRepo";
+import { ITheater } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 

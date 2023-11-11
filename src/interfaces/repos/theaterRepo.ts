@@ -1,5 +1,5 @@
 // import { ILocation } from "../schema/common"
-import { ITheater } from "../schema/theaterRepo"
+import { ITheater } from "../schema/theaterSchema"
 
 
 export interface ITheaterRepo {

@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { ITheater } from "../../interfaces/schema/theaterRepo";
+import { ITheater } from "../../interfaces/schema/theaterSchema";
 
 
 

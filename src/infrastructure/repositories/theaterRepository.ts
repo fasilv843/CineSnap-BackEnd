@@ -1,6 +1,6 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ITheater } from "../../interfaces/schema/theaterRepo";
+import { ITheater } from "../../interfaces/schema/theaterSchema";
 
 
 

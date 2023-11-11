@@ -1,5 +1,5 @@
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { User } from "../interfaces/schemaInterface";
+import { IUser } from "../interfaces/schema/userSchema"; 
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 
@@ -17,7 +17,7 @@ export class UserUseCase {
         return Boolean(isUserExist)
     }
 
-    async saveUserDetails (userData:User){
+    async saveUserDetails (userData:IUser){
         const user = await this.userRepository.saveUser(userData)
         return user;
     }

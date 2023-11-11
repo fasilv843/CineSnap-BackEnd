@@ -1,23 +1,23 @@
 import userModel from "../../entities/models/userModel";
-import { UserRepo } from "../../interfaces/repos/userRepo";
-import { User } from "../../interfaces/schemaInterface";
+import { IUserRepo } from "../../interfaces/repos/userRepo";
+import { IUser } from "../../interfaces/schema/userSchema"; 
 
 
-export class UserRepository implements UserRepo {
+export class UserRepository implements IUserRepo {
 
-    async saveUser(user: User): Promise<User> {
+    async saveUser(user: IUser): Promise<IUser> {
         return new userModel(user).save()
     }
 
-    async findById(id: string): Promise<User | null> {
+    async findById(id: string): Promise< IUser | null > {
         return await userModel.findById({_id: id})
     }
 
-    async findByEmail(email: string): Promise<User | null> {
+    async findByEmail(email: string): Promise< IUser | null > {
         return await userModel.findOne({ email })
     }
 
-    async findAllUsers(): Promise<User[] | []> {
+    async findAllUsers(): Promise< IUser[] | [] > {
         return await userModel.find({})
     }
     

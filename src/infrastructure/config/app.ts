@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 dotenv.config()
 import cors from 'cors'
-import path from 'path'
 import adminRouter from '../routes/adminRoute'
 import theatreRouter from '../routes/theatreRoute'
 import userRouter from '../routes/userRoute'
