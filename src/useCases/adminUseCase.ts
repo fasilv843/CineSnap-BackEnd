@@ -16,7 +16,7 @@ export class AdminUseCase {
         if(adminData !== null){
             const passwordMatch = await this.encrypt.comparePasswords(password, adminData.password)
             if(passwordMatch){
-                const token = this.jwtToken.generateToken(adminData._id)
+                const token = this.jwtToken.generateToken(adminData._id as string)
                 return {
                     status: 200,
                     message: 'Success',

@@ -37,7 +37,7 @@ export class TheaterUseCase {
 
             const passwordMatch = await this.encrypt.comparePasswords(password, theaterData.password)
             if(passwordMatch){
-                const token = this.jwtToken.generateToken(theaterData._id)
+                const token = this.jwtToken.generateToken(theaterData._id as string)
                 return {
                     status: 200,
                     message: 'Success',

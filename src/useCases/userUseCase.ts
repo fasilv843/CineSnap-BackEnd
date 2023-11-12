@@ -36,7 +36,7 @@ export class UserUseCase {
             } else {
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password)
                 if (passwordMatch) {
-                    const token = this.JWTToken.generateToken(userData._id)
+                    const token = this.JWTToken.generateToken(userData._id as string)
                     return {
                         status: 200,
                         message: 'Success',
