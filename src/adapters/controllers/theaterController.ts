@@ -1,7 +1,10 @@
+import { Request, Response } from "express";
+import { ITheater } from "../../interfaces/schema/theaterSchema";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
+import { IAddress, ILocation } from "../../interfaces/schema/common";
 
 
 
@@ -15,20 +18,10 @@ export class TheaterController {
 
     async theaterRegister (req:Request, res:Response){
         try {
-            const { name, email, password, country, state, district, city, zip, liscenceId, landmark, latitude, longitude } = req.body as unknown as {
-                name: string;
-                email: string;
-                password: string;
-                country: string;
-                state: string;
-                district: string;
-                city: string;
-                zip: string;
-                liscenceId: string;
-                landmark: string;
-                latitude: number;
-                longitude: number;
-            };
+            const { name, email, password, liscenceId } = req.body as ITheater
+            const { latitude, longitude } = req.body as ILocation
+            const { country, state, district, city, zip, landmark  } = req.body as IAddress
+
             const isEmailExist = await this.theaterUseCase.isEmailExist(email);
 
             if(!isEmailExist){
@@ -36,14 +29,12 @@ export class TheaterController {
                 this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
                 req.app.locals.OTP = OTP;
-                // console.log(OTP, 'otp saved on app.locals');
-                // console.log(req.app.locals.OTP,'app.locals.OTP');
 
                 const securePassword = await this.encrypt.encryptPassword(password)
-                const address = { country, state, district, city, zip }
-                const coords = { latitude, longitude }
-                const theaterData = { 
-                    name, email, liscenceId, landmark, password: securePassword,
+                const address: IAddress = { country, state, district, city, zip, landmark }
+                const coords: ILocation = { latitude, longitude }
+                const theaterData: ITheater = { 
+                    name, email, liscenceId, password: securePassword,
                     address, coords
                 }
                 
@@ -91,13 +82,9 @@ export class TheaterController {
 
     async theaterLogin (req:Request, res:Response){
         try {
-            const { email, password } = req.body
-            const verifiedData = await this.theaterUseCase.verifyLogin(email, password)
-            if(verifiedData?.data.token !== '' ){
-                res.status(200).json({token: verifiedData?.data.token})
-            }else{
-                res.status(400).json({message: 'token not valid'})
-            }
+            const { email, password } = req.body as ITheater
+            const authData = await this.theaterUseCase.verifyLogin(email, password)
+            res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
         }

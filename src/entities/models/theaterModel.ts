@@ -30,6 +30,10 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         type: Boolean,
         default : false
     },
+    liscenceId: {
+        type: String,
+        required: true
+    },
     coords: {
         longitude: {
             type: Number
@@ -53,6 +57,9 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         },
         zip: {
             type: Number
+        },
+        landmark: {
+            type: String
         }
     },
     wallet: {

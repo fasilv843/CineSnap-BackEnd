@@ -1,57 +1,65 @@
+import { AuthRes } from "../Types/AuthRes";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IUser } from "../interfaces/schema/userSchema"; 
+import { IUser } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 
 
 
 export class UserUseCase {
-    constructor (
+    constructor(
         private userRepository: UserRepository,
-        private encrypt : Encrypt,
-        private JWTToken : JWTToken
-    ){}
+        private encrypt: Encrypt,
+        private JWTToken: JWTToken
+    ) { }
 
-    async isEmailExist (email:string):Promise<boolean> {
+    async isEmailExist(email: string): Promise<boolean> {
         const isUserExist = await this.userRepository.findByEmail(email)
         return Boolean(isUserExist)
     }
 
-    async saveUserDetails (userData:IUser){
+    async saveUserDetails(userData: IUser) {
         const user = await this.userRepository.saveUser(userData)
         return user;
     }
 
-    async verifyLogin(email: string, password: string) {
+    async verifyLogin(email: string, password: string): Promise<AuthRes> {
         const userData = await this.userRepository.findByEmail(email)
-        if(userData !== null) {
-            if(userData.isBlocked){
+        if (userData !== null) {
+            if (userData.isBlocked) {
                 return {
-                    status : 400,
-                    data: {
-                        messsage: 'You have been blocked by admin',
-                        token: ''
-                    }
-                    
+                    status: 400,
+                    message: 'You are blocked by admin',
+                    data: null,
+                    token: ''
                 }
-            }else{
+            } else {
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password)
-                if(passwordMatch){
+                if (passwordMatch) {
                     const token = this.JWTToken.generateToken(userData._id)
                     return {
                         status: 200,
-                        data: { userData, token }
+                        message: 'Success',
+                        data: userData,
+                        token
+                    }
+                }else{
+                    return {
+                        status: 400,
+                        message: 'Incorrect Password',
+                        data: null,
+                        token: ''
                     }
                 }
             }
-        }else{
-            return  {
-                status: 400,
-                data: {
-                    message: 'Invalid email or password!',
-                    token : ''
-                }
-            };
         }
+
+        return {
+            status: 400,
+            message: 'Invalid email or password!',
+            data: null,
+            token: ''
+        };
+
     }
 }

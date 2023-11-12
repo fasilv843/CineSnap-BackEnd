@@ -12,13 +12,8 @@ export class AdminController {
     async adminLogin(req:Request, res: Response ) {
         try {
             const { email, password } = req.body as IAdmin
-
-            const verifiedData = await this.adminUseCase.verifyLogin(email, password)
-            // if(verifiedData?.token !== '' ){
-                res.status(verifiedData.status).json(verifiedData)
-            // }else{
-            //     res.status(400).json({message: 'token not valid'})
-            // }
+            const authData = await this.adminUseCase.verifyLogin(email, password)
+            res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
         }

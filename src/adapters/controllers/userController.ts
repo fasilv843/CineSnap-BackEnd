@@ -3,6 +3,7 @@ import { UserUseCase } from "../../useCases/userUseCase";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
+import { IUser } from "../../interfaces/schema/userSchema";
 
 export class UserController {
     constructor (
@@ -14,25 +15,22 @@ export class UserController {
 
     async userRegister (req:Request, res: Response){
         try {
-            const { name, email, password } = req.body
+            const { name, email, password } = req.body as IUser
             console.log(name, email, password);
-            
-            console.log(this,'this keyword logged');
             
             const isEmailExist = await this.userUseCase.isEmailExist(email)
 
             if(!isEmailExist){  
                 const OTP = this.otpGenerator.generateOTP()
-                console.log('sending mail');
                 
                 this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
                 req.app.locals.OTP = OTP;
                 const securePassword = await this.encrypt.encryptPassword(password)
                 req.app.locals.userData = { name, email, password:securePassword }
-                res.status(200).send()
+                res.status(200).json({message: 'Success'})
             }else{
-                throw new Error("Email already Exist");
+                res.status(400).json({message: "Email already Exist"});
             }
         } catch (error) {
             console.log(error);
@@ -52,7 +50,7 @@ export class UserController {
                 await this.userUseCase.saveUserDetails(req.app.locals.userData)
                 req.app.locals.userData = null
                 console.log('user details saved, setting status 200');
-                res.status(200).send()
+                res.status(200).json({message: 'Success'})
             }else{
                 console.log('otp didnt match');
                 res.status(400).json({status: false, message: 'Invalid OTP'})
@@ -77,19 +75,9 @@ export class UserController {
 
     async userLogin(req:Request, res: Response){
         try {
-            
-            const { email, password } = req.body
-            // console.log(email, password);
-            const verifiedData = await this.userUseCase.verifyLogin(email, password)
-            if(verifiedData?.data.token !== '' ){
-                // console.log('responding with cookie',verifiedData?.data.token);
-                // res.cookie('JWT',verifiedData?.data.token, {
-                //     httpOnly: true,
-                //     // sameSite: 'strict',
-                //     maxAge: 30 * 24 * 60 * 60 * 1000
-                // })
-                res.status(200).json({token: verifiedData?.data.token})
-            }
+            const { email, password } = req.body as IUser
+            const authData = await this.userUseCase.verifyLogin(email, password)
+            res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
             // next(error)

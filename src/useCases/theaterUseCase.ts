@@ -1,3 +1,4 @@
+import { AuthRes } from "../Types/AuthRes";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { ITheater } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
@@ -21,17 +22,16 @@ export class TheaterUseCase {
         return Boolean(isUserExist)
     }
 
-    async verifyLogin(email: string, password: string){
+    async verifyLogin(email: string, password: string): Promise<AuthRes>{
         const theaterData = await this.theaterRepository.findByEmail(email)
         if(theaterData !== null) {
 
             if(theaterData.isBlocked){
                 return {
                     status : 400,
-                    data: {
-                        messsage: 'You have been blocked by admin',
-                        token: ''
-                    }
+                    message: 'You have been blocked by admin',
+                    data: null,
+                    token: ''
                 }
             }
 
@@ -40,24 +40,24 @@ export class TheaterUseCase {
                 const token = this.jwtToken.generateToken(theaterData._id)
                 return {
                     status: 200,
-                    data: { theaterData, token }
+                    message: 'Success',
+                    data: theaterData, 
+                    token,
                 }
             }else{
                 return {
                     status: 400,
-                    data : {
-                        message: 'Incorrect Password',
-                        token: ''
-                    }
+                    message: 'Incorrect Password',
+                    data : null,
+                    token: ''
                 }
             }
         }else{
             return {
                 status: 400,
-                data: {
-                    message: 'Invalid Email',
-                    token: ''
-                }
+                message: 'Invalid Email',
+                token: '',
+                data: null
             }
         }
     }
