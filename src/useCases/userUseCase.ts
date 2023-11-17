@@ -62,4 +62,12 @@ export class UserUseCase {
         };
 
     }
+
+    async getUsers(){
+        return await this.userRepository.findAllUsers()
+    }
+
+    async blockUser(userId: string) {
+        await this.userRepository.blockUnblockUser(userId)
+    }
 }

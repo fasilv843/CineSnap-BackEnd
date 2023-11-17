@@ -62,6 +62,12 @@ export class TheaterUseCase {
         }
     }
 
+    async getAllTheaters () {
+        return await this.theaterRepository.findAllTheaters()
+    }
 
+    async blockTheater (theaterId: string) {
+        return await this.theaterRepository.blockTheater(theaterId)
+    }
 
 }

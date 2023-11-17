@@ -18,7 +18,25 @@ export class UserRepository implements IUserRepo {
     }
 
     async findAllUsers(): Promise< IUser[] | [] > {
-        return await userModel.find({})
+        try {
+            return await userModel.find({})
+        } catch (error) {
+            throw Error("Error while finding users")
+        }
     }
+
+    async blockUnblockUser(userId: string) {
+        try {
+            const user = await userModel.findById({_id: userId})
+            if(user !== null) {
+                user.isBlocked = !user.isBlocked
+                await user.save()
+            }else{
+                throw Error('Something went wrong, userId didt received')
+            }
+        } catch (error) {
+            throw Error('Error while blocking/unblocking user')
+        }
+    } 
     
 }

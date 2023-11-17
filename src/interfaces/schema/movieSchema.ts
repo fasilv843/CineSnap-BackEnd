@@ -11,7 +11,7 @@ export interface IMovie {
     release_date: Date
     genre_ids: number[]
     review?: MovieReview[]
-    idDeleted?: boolean
+    isDeleted?: boolean
 }
 
 type MovieReview = {

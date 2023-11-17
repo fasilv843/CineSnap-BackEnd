@@ -12,13 +12,17 @@ export class MovieRepository implements IMovieRepo {
             return await new movieModel(movie).save()
         } catch (error) {
             console.log('Error while saving movie details');
-            console.log(error); 
+            console.log(error.message); 
             throw new Error('Failed to save movie details');
         }
     }
 
     async findAllMovies(): Promise<IMovie[]> {
         return await movieModel.find()
+    }
+
+    async findMovieByTmdbId(id: number): Promise<IMovie | null> {
+        return await movieModel.findOne({tmdbId: id})
     }
 
     async findMovieByLanguage(lang: string): Promise<IMovie[]> {

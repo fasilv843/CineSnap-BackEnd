@@ -15,6 +15,10 @@ export class MovieUseCase {
         return await this.movieRepository.findAllMovies()
     }
 
+    async findMovieByTmdbId(id: number){
+        return await this.movieRepository.findMovieByTmdbId(id)
+    }
+
     async searchMovie(title: string){
         return await this.movieRepository.findMovieByTitle(title)
     }

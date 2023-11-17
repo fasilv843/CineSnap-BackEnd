@@ -26,4 +26,18 @@ export class TheaterRepository implements ITheaterRepo {
         return await theaterModel.find()
     }
 
+    async blockTheater (theaterId: string) {
+        try {
+            const theater = await theaterModel.findById({_id: theaterId})
+            if(theater !== null){
+                theater.isBlocked = !theater.isBlocked
+                await theater.save()
+            }else{
+                throw Error('Something went wrong, theaterId did\'t received')
+            }
+        } catch (error) {
+            throw Error('Error while blocking/unblocking user')
+        }
+    }
+
 }

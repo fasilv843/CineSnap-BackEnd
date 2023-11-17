@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { AdminUseCase } from "../../useCases/adminUseCase";
 import { IAdmin } from "../../interfaces/schema/adminSchema";
-
+import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { UserUseCase } from "../../useCases/userUseCase";
+import { TheaterUseCase } from "../../useCases/theaterUseCase";
 
 
 export class AdminController {
     constructor(
-        private adminUseCase: AdminUseCase
+        private adminUseCase: AdminUseCase,
+        private userUseCase: UserUseCase,
+        private theaterUseCase: TheaterUseCase
     ) {}
 
     async adminLogin(req:Request, res: Response ) {
@@ -16,6 +20,48 @@ export class AdminController {
             res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async getAllUsers (req:Request, res: Response ) {
+        try {
+            const users = await this.userUseCase.getUsers()
+            res.status(200).json(users)
+        } catch (error) {
+            const err = error as Error
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
+        }
+    }
+
+    async getAllTheaters (req:Request, res: Response ) {
+        try {
+            const theaters = await this.theaterUseCase.getAllTheaters()
+            res.status(200).json(theaters)
+        } catch (error) {
+            const err = error as Error
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
+        }
+    }
+
+    async blockUser (req: Request, res: Response) {
+        try {
+            console.log(req.params, 'req.params');
+            await this.userUseCase.blockUser(req.params.userId as string)
+            res.status(200).json()
+        } catch (error) {
+            const err = error as Error
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
+        }
+    }
+
+    async blockTheater (req: Request, res: Response) {
+        try {
+            console.log(req.params, 'req.params');
+            await this.theaterUseCase.blockTheater(req.params.theaterId as string)
+            res.status(200).json()
+        } catch (error) {
+            const err = error as Error
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
         }
     }
 }

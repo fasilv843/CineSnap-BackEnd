@@ -1,3 +1,5 @@
+import { IAddress, ILocation } from "./common"
+
 export interface IUser {
     _id?: string
     name: string
@@ -8,15 +10,6 @@ export interface IUser {
     isBlocked: boolean
     profilePic: string
     wallet?: number | null
-    location?: {
-        longitude: number,
-        latitude: number
-    }
-    address?: {
-        country: string
-        state: string
-        district: string
-        city: string
-        zip: number
-    }
+    location?: ILocation
+    address?: IAddress
 }
