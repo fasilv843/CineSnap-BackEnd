@@ -4,7 +4,7 @@ import { Encrypt } from "../../providers/bcryptPassword";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { IAddress, ILocation } from "../../interfaces/schema/common";
+import { IAddress, ICoords } from "../../interfaces/schema/common";
 
 
 
@@ -19,9 +19,11 @@ export class TheaterController {
     async theaterRegister (req:Request, res:Response){
         try {
             const { name, email, password, liscenceId } = req.body as ITheater
-            const { latitude, longitude } = req.body as ILocation
+            const { longitude, latitude } = req.body as { longitude: number, latitude: number }
             const { country, state, district, city, zip, landmark  } = req.body as IAddress
 
+            console.log(longitude, latitude);
+            
             const isEmailExist = await this.theaterUseCase.isEmailExist(email);
 
             if(!isEmailExist){
@@ -32,7 +34,9 @@ export class TheaterController {
 
                 const securePassword = await this.encrypt.encryptPassword(password)
                 const address: IAddress = { country, state, district, city, zip, landmark }
-                const coords: ILocation = { latitude, longitude }
+                const coords: ICoords = {
+                    coordinates: [longitude, latitude]
+                } 
                 const theaterData: ITheater = { 
                     name, email, liscenceId, password: securePassword,
                     address, coords
@@ -45,6 +49,7 @@ export class TheaterController {
             }
 
         } catch (error) {
+            console.log(error);
             res.status(400).json({message: 'Error While registering'})
         }
     }
@@ -103,5 +108,24 @@ export class TheaterController {
     //         // next(error)
     //     }
     // }
+
+    async loadTheaters (req: Request, res: Response) {
+        try {
+            const longitude = parseFloat(req.query.longitude as string)
+            const latitude = parseFloat(req.query.latitude as string)
+
+            if ( isNaN(longitude) || isNaN(latitude) ) {
+                return res.status(400).json({ message: 'Invalid coordinates' });
+            }
+
+            const nearestTheater = this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, 6, 15)
+            console.log(nearestTheater);
+            
+            res.status(200).json({message: 'Success', data: nearestTheater})
+        } catch (error) {
+            const err = error as Error
+            res.status(400).json({messge: err.message})
+        }
+    }
 
 }

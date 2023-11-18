@@ -70,4 +70,12 @@ export class TheaterUseCase {
         return await this.theaterRepository.blockTheater(theaterId)
     }
 
+    async getNearestTheaters(lon:number, lat:number, radius:number){
+        return await this.theaterRepository.getNearestTheaters(lon, lat, radius)
+    }
+
+    async getNearestTheatersByLimit (lon:number, lat:number, limit:number, maxDistance: number) {
+        return await this.theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
+    }
+
 }

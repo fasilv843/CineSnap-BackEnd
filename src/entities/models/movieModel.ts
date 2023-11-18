@@ -1,5 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IMovie } from "../../interfaces/schema/movieSchema";
+import { GENRES } from "../../constants/genreIds";
+import { Languages } from "../../constants/langAbbreviation";
 
 
 
@@ -20,8 +22,9 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     },
     language: {
         type: String,
+        // index: true,
         required: true,
-        enum: ['ml','ta','en','hi','en']
+        enum: Object.values(Languages)
     },
     tmdbId: {
         type: Number,
@@ -33,7 +36,9 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     },
     genre_ids: {
         type: [Number],
-        default: []
+        default: [],
+        enum: Object.values(GENRES),
+        index: true
     },
     review: [{
         rating: {
@@ -48,4 +53,16 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     }]
 })
 
+movieSchema.index({ language: 1 });
+movieSchema.index({ genre_ids: 1 });
+movieSchema.index({ title: 'text' }, { default_language: 'en', language_override: 'en' });
+
+
 export const movieModel: Model< IMovie & Document> = mongoose.model<IMovie & Document>('Movies', movieSchema)
+
+
+// // Search for movies with a specific title
+// const moviesWithTitle = await movieModel.find({ $text: { $search: 'yourTitle' } });
+
+// // Search for movies in a specific language
+// const moviesInLanguage = await movieModel.find({ $text: { $search: 'en' } }).where({ language: 'en' });

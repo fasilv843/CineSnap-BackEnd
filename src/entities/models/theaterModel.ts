@@ -16,7 +16,8 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
     mobile: {
         type: Number,
         // required: true
-        unique: true
+        unique: true,
+        sparse: true, // Allows multiple documents with null values
     },
     password: {
         type: String,
@@ -28,18 +29,24 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
     },
     isBlocked: {
         type: Boolean,
-        default : false
+        default: false
     },
     liscenceId: {
         type: String,
         required: true
     },
     coords: {
-        longitude: {
-            type: Number
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point',
+            required: true
         },
-        latitude: {
-            type: Number
+        coordinates: {
+            type: [Number],
+            min: 2,
+            max: 2,
+            required: true,
         },
     },
     address: {
@@ -66,20 +73,25 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         type: Number,
         default: 0
     },
-    walletHistory : [{
-        date : {
-            type : Date,
+    walletHistory: [{
+        date: {
+            type: Date,
         },
-        amount : {
-            type : Number
+        amount: {
+            type: Number
         },
-        message : {
-            type : String
+        message: {
+            type: String
         }
     }],
 },
-{
-    timestamps : true
-})
+    {
+        timestamps: true
+    })
 
-export const theaterModel: Model< ITheater & Document> = mongoose.model< ITheater & Document>('Theaters', theaterSchema)
+theaterSchema.index({ 'coords': '2dsphere' });
+theaterSchema.index({ name: 'text' });
+
+export const theaterModel: Model<ITheater & Document> = mongoose.model<ITheater & Document>('Theaters', theaterSchema)
+
+

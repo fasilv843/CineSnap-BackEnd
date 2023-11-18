@@ -11,7 +11,7 @@ import { UserUseCase } from "../../useCases/userUseCase";
 import { UserRepository } from "../repositories/userRepository";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { TheaterRepository } from "../repositories/theaterRepository";
-// import { adminAuth } from "../middleware/adminAuth";
+import { adminAuth } from "../middleware/adminAuth";
 const adminRouter = express.Router()
 
 const encrypt = new Encrypt()
@@ -31,9 +31,9 @@ const aController = new AdminController(adminUseCase, userUseCase, theateUseCase
 const mController =  new MovieController(movieUseCase)
 
 
-adminRouter.post('/login', (req, res) => aController.adminLogin(req, res))
+adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))
 adminRouter.get('/movies', (req, res) => mController.loadMovies(req,res))
-adminRouter.post('/movies/add', (req, res) => mController.addMovie(req,res))
+adminRouter.post('/movies/add', adminAuth, (req, res) => mController.addMovie(req,res))
 adminRouter.get('/users',  (req, res) => aController.getAllUsers(req,res))
 adminRouter.patch('/users/block/:userId',  (req, res) => aController.blockUser(req,res))
 adminRouter.get('/theaters', (req, res) => aController.getAllTheaters(req,res))

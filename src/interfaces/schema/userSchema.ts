@@ -1,4 +1,4 @@
-import { IAddress, ILocation } from "./common"
+import { IAddress, Location } from "./common"
 
 export interface IUser {
     _id?: string
@@ -10,6 +10,6 @@ export interface IUser {
     isBlocked: boolean
     profilePic: string
     wallet?: number | null
-    location?: ILocation
+    location?: Location
     address?: IAddress
 }

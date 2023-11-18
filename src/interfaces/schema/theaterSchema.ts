@@ -1,4 +1,4 @@
-import { IAddress, ILocation, IWalletHistory } from "./common"
+import { IAddress, IWalletHistory, ICoords } from "./common"
 
 
 export interface ITheater {
@@ -12,6 +12,6 @@ export interface ITheater {
     liscenceId: string
     wallet?: number | null
     walletHistory?: IWalletHistory
-    coords?: ILocation
+    coords?: ICoords
     address: IAddress
 }

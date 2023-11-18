@@ -1,13 +1,72 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
+import { ICoords } from "../../interfaces/schema/common";
 import { ITheater } from "../../interfaces/schema/theaterSchema";
 
 
 
 export class TheaterRepository implements ITheaterRepo {
 
+    async getNearestTheaters(lon: number, lat: number, radius: number): Promise<[] | ITheater[]> {
+        try {
+
+            const searchLocation: ICoords = {
+                type: 'Point',
+                coordinates: [lon, lat],
+            };
+
+            const theaters = await theaterModel.find({
+                coords: {
+                    $near: {
+                        $geometry: searchLocation,
+                        $maxDistance: radius,
+                    },
+                },
+            });
+
+            return theaters;
+
+        } catch (error) {
+            console.log(error);
+            throw Error('error while getting nearest theaters')
+        }
+    }
+
+    async getNearestTheatersByLimit(lon: number, lat: number, limit: number, maxDistance: number): Promise<ITheater[]> {
+        try {
+
+            const nearestTheaters: ITheater[] = await theaterModel.aggregate([
+                {
+                    $geoNear: {
+                        near: {
+                            type: 'Point',
+                            coordinates: [lon, lat],
+                        },
+                        distanceField: 'distance',
+                        spherical: true,
+                        maxDistance: maxDistance * 1000, // Convert maxDistance to meters
+                    },
+                },
+                { $sort: { distance: 1 } },
+                { $limit: limit },
+            ]);
+
+            // console.log(nearestTheaters, 'nearest theaters from repository limit');
+            
+            return nearestTheaters;
+        } catch (error) {
+            throw new Error('Error fetching nearest theaters');
+        }
+    }
+
     async saveTheater(theater: ITheater): Promise<ITheater> {
-        return await new theaterModel(theater).save()
+        try {
+            console.log(theater);
+            return await new theaterModel(theater).save()    
+        } catch (error) {
+            console.log(error);
+            throw Error('Error during saving theater details')
+        }
     }
 
     async findByEmail(email: string): Promise<ITheater | null> {

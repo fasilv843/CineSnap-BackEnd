@@ -9,10 +9,12 @@ export class MovieRepository implements IMovieRepo {
 
     async saveMovieDetails(movie: IMovie): Promise<IMovie> {
         try {
+            console.log(movie.original_title);
+            
             return await new movieModel(movie).save()
         } catch (error) {
             console.log('Error while saving movie details');
-            console.log(error.message); 
+            console.log(error); 
             throw new Error('Failed to save movie details');
         }
     }
