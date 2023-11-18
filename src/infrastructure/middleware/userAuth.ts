@@ -8,7 +8,7 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
     try {
         const token = req.headers.authorization
         if(token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string ) as JwtPayload
+            const decoded = jwt.verify(token.slice(7), process.env.JWT_SECRET_KEY as string ) as JwtPayload
             const userData = await userRepository.findById(decoded.userId as string)
             if(userData !== null){
                 // req.userId = userData?._id

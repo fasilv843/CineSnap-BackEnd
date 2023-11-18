@@ -32,12 +32,12 @@ const mController =  new MovieController(movieUseCase)
 
 
 adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))
-adminRouter.get('/movies', (req, res) => mController.loadMovies(req,res))
+adminRouter.get('/movies', adminAuth, (req, res) => mController.loadMovies(req,res))
 adminRouter.post('/movies/add', adminAuth, (req, res) => mController.addMovie(req,res))
-adminRouter.get('/users',  (req, res) => aController.getAllUsers(req,res))
-adminRouter.patch('/users/block/:userId',  (req, res) => aController.blockUser(req,res))
-adminRouter.get('/theaters', (req, res) => aController.getAllTheaters(req,res))
-adminRouter.patch('/theaters/block/:theaterId',  (req, res) => aController.blockTheater(req,res))
+adminRouter.get('/users', adminAuth, (req, res) => aController.getAllUsers(req,res))
+adminRouter.patch('/users/block/:userId', adminAuth, (req, res) => aController.blockUser(req,res))
+adminRouter.get('/theaters', adminAuth, (req, res) => aController.getAllTheaters(req,res))
+adminRouter.patch('/theaters/block/:theaterId', adminAuth,  (req, res) => aController.blockTheater(req,res))
 
 
 export default adminRouter

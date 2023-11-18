@@ -8,7 +8,7 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
     try {
         const token = req.headers.authorization
         if(token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string ) as JwtPayload
+            const decoded = jwt.verify(token.slice(7), process.env.JWT_SECRET_KEY as string ) as JwtPayload
             const theaterData = await thrRepository.findById(decoded.theaterId as string)
             if(theaterData !== null){
                 // req.theaterId = theaterData?._id
