@@ -22,7 +22,7 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     },
     language: {
         type: String,
-        // index: true,
+        index: true,
         required: true,
         enum: Object.values(Languages)
     },

@@ -9,6 +9,9 @@ import { JWTToken } from "../../providers/jwtToken";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { TheaterController } from "../../adapters/controllers/theaterController";
 import { TheaterRepository } from "../repositories/theaterRepository";
+import { MovieController } from "../../adapters/controllers/movieController";
+import { MovieUseCase } from "../../useCases/movieUseCase";
+import { MovieRepository } from "../repositories/movieRepository";
 
 const userRouter = express.Router()
 
@@ -20,12 +23,15 @@ const otpGenerator = new GenerateOtp()
 
 const userRepository = new UserRepository()
 const thrRepository = new TheaterRepository()
+const movieRepository = new MovieRepository()
 
 const userUseCase = new UserUseCase(userRepository, encrypt, jwtToken)
 const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
+const movieUseCase = new MovieUseCase(movieRepository)
 
 const uController = new UserController(userUseCase, mailSender, otpGenerator, encrypt )
 const tController = new TheaterController(thrUseCase, mailer, otpGenerator, encrypt)
+const mController = new MovieController(movieUseCase)
 
 
 userRouter.post('/register', (req, res) => uController.userRegister(req,res))
@@ -35,6 +41,7 @@ userRouter.post('/login', (req,res) => uController.userLogin(req,res))
 userRouter.post('/logout', (req,res) => uController.logout(req,res))
 
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
+userRouter.get('/movies', (req, res) => mController.getMovies(req, res))
 
 
 export default userRouter

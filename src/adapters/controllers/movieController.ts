@@ -8,8 +8,13 @@ export class MovieController {
         private movieUseCase: MovieUseCase
     ) {}
 
-    async loadMovies(req: Request, res: Response){
+    async getMovies(req: Request, res: Response){
         try {
+            if(req.query.title){
+                console.log(req.query.title);
+                const movies = await this.movieUseCase.searchMovie(req.query.title as string) ///////
+                return res.status(200).json({movies})
+            }
             const movies = await this.movieUseCase.findAllMovies()
             res.status(200).json({movies})
         } catch (error) {

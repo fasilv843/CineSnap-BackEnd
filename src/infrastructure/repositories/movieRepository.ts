@@ -28,15 +28,15 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findMovieByLanguage(lang: string): Promise<IMovie[]> {
-        return await movieModel.find({language: lang})
+        return await movieModel.find({language: lang}).hint({ language: 1 });
     }
 
     async findMovieByGenre(genreId: number): Promise<IMovie[]> {
-        return await movieModel.find({ genre_ids: { $in: genreId } });
+        return await movieModel.find({ genre_ids: { $in: [genreId] } }).hint({ genre_ids: 1 });
     }
 
     async findMovieByTitle(title: string): Promise<IMovie[]> {
-        return await movieModel.find({ title: { $regex: new RegExp(title, 'i') } });
+        return await movieModel.find({ $text: { $search: title } });
     }
 
     async findMovieById(id: string): Promise<IMovie | null> {
