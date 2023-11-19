@@ -50,7 +50,11 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
         userId: {
             type: mongoose.Schema.Types.ObjectId
         }
-    }]
+    }],
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 })
 
 movieSchema.index({ language: 1 });

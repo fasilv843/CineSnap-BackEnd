@@ -20,7 +20,7 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findAllMovies(): Promise<IMovie[]> {
-        return await movieModel.find()
+        return await movieModel.find({isDeleted: false})
     }
 
     async findMovieByTmdbId(id: number): Promise<IMovie | null> {
@@ -48,7 +48,7 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async deleteMovie(id: string): Promise<void | null> {
-        return await movieModel.findByIdAndUpdate({_id: id},{isDeleted: false})
+        return await movieModel.findByIdAndUpdate({_id: id},{ isDeleted: true })
     }
 
 }

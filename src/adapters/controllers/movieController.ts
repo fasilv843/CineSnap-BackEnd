@@ -43,8 +43,8 @@ export class MovieController {
 
     async deleteMovie(req: Request, res: Response){
         try {
-            const { id } = req.params
-            await this.movieUseCase.deleteMovie(id)
+            const { movieId } = req.params
+            await this.movieUseCase.deleteMovie(movieId)
             res.status(200).json({message: 'Success'})
         } catch (error) {
             const err: Error = error as Error
