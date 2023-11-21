@@ -31,7 +31,7 @@ export class UserRepository implements IUserRepo {
             const userData =  await userModel.findById({ _id: id })
             if(userData){
                 userData.isGoogleAuth = true
-                if(userData.profilePic) userData.profilePic = profilePic
+                if(!userData.profilePic) userData.profilePic = profilePic
                 await userData.save()
             }
         } catch (error) {
