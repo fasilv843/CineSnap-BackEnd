@@ -41,7 +41,7 @@ userRouter.post('/login', (req,res) => uController.userLogin(req,res))
 userRouter.post('/logout', (req,res) => uController.logout(req,res))
 
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
-userRouter.get('/movies', (req, res) => mController.getMovies(req, res))
+userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))
 
 
 export default userRouter

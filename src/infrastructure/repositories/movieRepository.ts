@@ -20,6 +20,10 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findAllMovies(): Promise<IMovie[]> {
+        return await movieModel.find({})
+    }
+
+    async findAvailableMovies(): Promise<IMovie[]> {
         return await movieModel.find({isDeleted: false})
     }
 
@@ -36,7 +40,7 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findMovieByTitle(title: string): Promise<IMovie[]> {
-        return await movieModel.find({ $text: { $search: title } });
+        return await movieModel.find({ $text: { $search: title }, isDeleted: false });
     }
 
     async findMovieById(id: string): Promise<IMovie | null> {
@@ -48,7 +52,17 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async deleteMovie(id: string): Promise<void | null> {
-        return await movieModel.findByIdAndUpdate({_id: id},{ isDeleted: true })
+        try {
+            const movie = await movieModel.findById({_id: id})
+            if(movie !== null) {
+                movie.isDeleted = !movie.isDeleted
+                await movie.save()
+            }else{
+                throw Error('Something went wrong, movieId didt received')
+            }
+        } catch (error) {
+            throw Error('Error while deleting/adding movie')
+        }
     }
 
 }

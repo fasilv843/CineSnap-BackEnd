@@ -23,6 +23,21 @@ export class MovieController {
         }
     }
 
+    async getAvailableMovies(req: Request, res: Response){
+        try {
+            if(req.query.title){
+                console.log(req.query.title);
+                const movies = await this.movieUseCase.searchMovie(req.query.title as string) ///////
+                return res.status(200).json({movies})
+            }
+            const movies = await this.movieUseCase.findAvailableMovies()
+            res.status(200).json({movies})
+        } catch (error) {
+            const err: Error = error as Error
+            res.status(400).json({message: err.message})
+        }
+    }
+
     async addMovie(req:Request, res: Response) {
         try {
             const { movie } = req.body
