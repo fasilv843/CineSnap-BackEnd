@@ -15,18 +15,18 @@ export class UserController {
 
     async userRegister (req:Request, res: Response){
         try {
-            const { name, email, password } = req.body as IUser
+            const { name, email, password } = req.body as IUser & { isSocialSignUp: boolean }
             console.log(name, email, password);
-            
+        
             const isEmailExist = await this.userUseCase.isEmailExist(email)
 
-            if(!isEmailExist){  
+            if(isEmailExist !== null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
                 this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
                 req.app.locals.OTP = OTP;
-                const securePassword = await this.encrypt.encryptPassword(password)
+                const securePassword = await this.encrypt.encryptPassword(password as string)
                 req.app.locals.userData = { name, email, password:securePassword }
                 res.status(200).json({message: 'Success'})
             }else{
@@ -75,12 +75,23 @@ export class UserController {
 
     async userLogin(req:Request, res: Response){
         try {
-            const { email, password } = req.body as IUser
-            const authData = await this.userUseCase.verifyLogin(email, password)
+            const { email, password } = req.body as IUser & { isSocialSignUp: boolean}
+            const authData = await this.userUseCase.verifyLogin(email, password as string)
             res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
             // next(error)
+        }
+    }
+
+    async userSocialSignUp( req: Request, res: Response){
+        try {
+            const { name, email, profilePic } = req.body as IUser
+            const authData = await this.userUseCase.handleSocialSignUp(name, email, profilePic)
+            res.status(authData.status).json(authData)
+        } catch (error) {
+            const err = error as Error
+            res.status(500).json({message: err.message })
         }
     }
 

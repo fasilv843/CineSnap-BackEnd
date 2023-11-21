@@ -15,7 +15,6 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
     },
     mobile: {
         type: Number,
-        // required: true
         unique: true,
         sparse: true, // Allows multiple documents with null values
     },
@@ -85,9 +84,9 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         }
     }],
 },
-    {
-        timestamps: true
-    })
+{
+    timestamps: true
+})
 
 theaterSchema.index({ 'coords': '2dsphere' });
 theaterSchema.index({ name: 'text' });

@@ -6,6 +6,7 @@ import { IUser } from "../../interfaces/schema/userSchema";
 export class UserRepository implements IUserRepo {
 
     async saveUser(user: IUser): Promise<IUser> {
+        console.log('on user repository saving user'); 
         return new userModel(user).save()
     }
 
@@ -22,6 +23,20 @@ export class UserRepository implements IUserRepo {
             return await userModel.find({})
         } catch (error) {
             throw Error("Error while finding users")
+        }
+    }
+
+    async updateGoogleAuth(id: string, profilePic: string){
+        try {
+            const userData =  await userModel.findById({ _id: id })
+            if(userData){
+                userData.isGoogleAuth = true
+                if(userData.profilePic) userData.profilePic = profilePic
+                await userData.save()
+            }
+        } catch (error) {
+            console.log(error);
+            throw Error('Error while updating google auth')
         }
     }
 

@@ -16,15 +16,23 @@ const userSchema: Schema = new Schema<IUser & Document>({
     },
     mobile: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true,
     },
     password: {
         type: String,
-        required: true
+        required() {
+            return !this.isGoogleAuth
+        }
     },
     isBlocked: {
         type: Boolean,
         default : false
+    },
+    isGoogleAuth: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     dob:{
         type: Date,
@@ -35,12 +43,18 @@ const userSchema: Schema = new Schema<IUser & Document>({
     profilePic: {
         type: String
     },
-    location: {
-        longitude: {
-            type: Number
+    coords: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point',
+            // required: true
         },
-        latitude: {
-            type: Number
+        coordinates: {
+            type: [Number],
+            min: 2,
+            max: 2,
+            // required: true,
         },
     },
     address: {

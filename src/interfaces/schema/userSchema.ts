@@ -1,15 +1,16 @@
-import { IAddress, Location } from "./common"
+import { IAddress, ICoords } from "./common"
 
 export interface IUser {
     _id?: string
     name: string
     email: string
-    password: string
+    password?: string
     mobile?: number
     dob?: Date
-    isBlocked: boolean
+    isBlocked?: boolean
     profilePic: string
     wallet?: number | null
-    location?: Location
-    address?: IAddress
+    coords?: ICoords
+    address?: IAddress,
+    isGoogleAuth?: boolean
 }
