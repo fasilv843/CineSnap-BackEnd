@@ -1,5 +1,7 @@
 import { AuthRes } from "../Types/AuthRes";
+import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
+import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IUser } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
@@ -9,8 +11,9 @@ import { JWTToken } from "../providers/jwtToken";
 export class UserUseCase {
     constructor(
         private userRepository: UserRepository,
+        private tempUserRepository: TempUserRepository,
         private encrypt: Encrypt,
-        private JWTToken: JWTToken
+        private jwt: JWTToken
     ) { }
 
     async isEmailExist(email: string): Promise<IUser | null> {
@@ -24,13 +27,28 @@ export class UserUseCase {
         return user;
     }
 
+    async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
+        const user = await this.tempUserRepository.saveUser(userData)
+        console.log(user, 'temp user saved');
+        const userAuthToken = this.jwt.generateToken(user._id) 
+        return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
+    }
+
+    async unsetOtp(id: string, email: string) {
+        return await this.tempUserRepository.unsetOtp(id, email)
+    }
+
+    async findTempUserById(id: string){
+        return await this.tempUserRepository.findById(id)
+    }
+
     async handleSocialSignUp(name: string, email: string, profilePic: string){
         const emailData = await this.isEmailExist(email)
         if(emailData === null){
             const userToSave = { name, email, profilePic, isGoogleAuth: true }
             const savedUser = await this.saveUserDetails(userToSave)
             console.log('user details saved');
-            const token = this.JWTToken.generateToken(savedUser._id as string)
+            const token = this.jwt.generateToken(savedUser._id as string)
             return {
                 status: 200,
                 message: 'Success',
@@ -49,7 +67,7 @@ export class UserUseCase {
                 if(!emailData.isGoogleAuth) {
                     await this.userRepository.updateGoogleAuth(emailData._id as string, profilePic as string)
                 }
-                const token = this.JWTToken.generateToken(emailData._id as string)
+                const token = this.jwt.generateToken(emailData._id as string)
                 return {
                     status: 200,
                     message: 'Success',
@@ -74,7 +92,7 @@ export class UserUseCase {
             } else {
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password as string)
                 if (passwordMatch) {
-                    const token = this.JWTToken.generateToken(userData._id as string)
+                    const token = this.jwt.generateToken(userData._id as string)
                     return {
                         status: 200,
                         message: 'Success',

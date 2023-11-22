@@ -12,6 +12,7 @@ import { TheaterRepository } from "../repositories/theaterRepository";
 import { MovieController } from "../../adapters/controllers/movieController";
 import { MovieUseCase } from "../../useCases/movieUseCase";
 import { MovieRepository } from "../repositories/movieRepository";
+import { TempUserRepository } from "../repositories/tempUserRepository";
 
 const userRouter = express.Router()
 
@@ -24,8 +25,9 @@ const otpGenerator = new GenerateOtp()
 const userRepository = new UserRepository()
 const thrRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
+const tempUserRepository = new TempUserRepository()
 
-const userUseCase = new UserUseCase(userRepository, encrypt, jwtToken)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken)
 const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
 const movieUseCase = new MovieUseCase(movieRepository)
 

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { movieModel } from "../../entities/models/movieModel";
 import { theaterModel } from "../../entities/models/theaterModel";
+import { tempUserModel } from "../../entities/models/tempUserModel";
 
 
 export const mongoConnect = async () => {
@@ -10,6 +11,7 @@ export const mongoConnect = async () => {
             await mongoose.connect(MONGO_URI);
             await movieModel.createIndexes();
             await theaterModel.createIndexes();
+            await tempUserModel.createIndexes();
             console.log(`MongoDB connected: ${mongoose.connection.host}`);
         }
     } catch (error) {

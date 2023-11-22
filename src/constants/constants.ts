@@ -1,1 +1,1 @@
-export const OTP_TIMER = 60
+    export const OTP_TIMER = 1000 * 60 * 3  

@@ -8,7 +8,7 @@ export interface IUser {
     mobile?: number
     dob?: Date
     isBlocked?: boolean
-    profilePic: string
+    profilePic?: string
     wallet?: number | null
     coords?: ICoords
     address?: IAddress,

@@ -5,6 +5,9 @@ import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { IUser } from "../../interfaces/schema/userSchema";
 import { OTP_TIMER } from "../../constants/constants";
+import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
 
 export class UserController {
     constructor (
@@ -26,20 +29,21 @@ export class UserController {
                 
                 this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
-                req.app.locals.OTP = OTP;
-                setTimeout(() => {
-                    req.app.locals.OTP = null
-                }, OTP_TIMER)
                 const securePassword = await this.encrypt.encryptPassword(password as string)
-                req.app.locals.userData = { name, email, password:securePassword }
-                res.status(200).json({message: 'Success'})
+                const user: ITempUserReq = { name, email, password: securePassword, otp:OTP }
+                const tempUser = await this.userUseCase.saveUserTemporarily(user)
+
+                setTimeout(async() => {
+                    await this.userUseCase.unsetOtp(tempUser._id, tempUser.email)
+                }, OTP_TIMER)
+                console.log('responding with 200');
+                res.status(200).json({message: 'Success', token: tempUser.userAuthToken })
             }else{
                 res.status(400).json({message: "Email already Exist"});
             }
         } catch (error) {
             console.log(error);
-            
-            // next(error)
+            console.log('error while register');
         }
     }
 
@@ -47,18 +51,33 @@ export class UserController {
         try {
             console.log('validating otp');
             console.log(req.body.otp,'req.body.otp');
-            console.log(req.app.locals.OTP,'req.app.locals.OTP');
-            
-            if(req.body.otp == req.app.locals.OTP){
-                await this.userUseCase.saveUserDetails(req.app.locals.userData)
-                req.app.locals.userData = null
-                req.app.locals.OTP = null
-                console.log('user details saved, setting status 200');
-                res.status(200).json({message: 'Success'})
+            // console.log(req.app.locals.OTP,'req.app.locals.OTP');
+            const { otp, authToken } = req.body
+            if(authToken){
+                const decoded = jwt.verify(authToken, process.env.JWT_SECRET_KEY as string) as JwtPayload
+                const user = await this.userUseCase.findTempUserById(decoded.id)
+                if(user){
+                    if(otp == user.otp){
+                        await this.userUseCase.saveUserDetails({
+                            name: user.name,
+                            email: user.email,
+                            password: user.password
+                        })
+                        // req.app.locals.userData = null
+                        // req.app.locals.OTP = null
+                        console.log('user details saved, setting status 200');
+                        res.status(200).json({message: 'Success'})
+                    }else{
+                        console.log('otp didnt match');
+                        res.status(400).json({status: false, message: 'Invalid OTP'})
+                    }
+                } else {
+                    res.status(400).json({status: false, message: 'Timeout, Register again'})
+                }
             }else{
-                console.log('otp didnt match');
-                res.status(400).json({status: false, message: 'Invalid OTP'})
+                res.status(400).json({status: false, message: 'authToken missing, Register again'})
             }
+
         } catch (error) {
             console.log(error);
             // next(error)
@@ -99,7 +118,7 @@ export class UserController {
     async userSocialSignUp( req: Request, res: Response){
         try {
             const { name, email, profilePic } = req.body as IUser
-            const authData = await this.userUseCase.handleSocialSignUp(name, email, profilePic)
+            const authData = await this.userUseCase.handleSocialSignUp(name, email, profilePic as string)
             res.status(authData.status).json(authData)
         } catch (error) {
             const err = error as Error

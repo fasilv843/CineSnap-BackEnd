@@ -7,7 +7,7 @@ export class UserRepository implements IUserRepo {
 
     async saveUser(user: IUser): Promise<IUser> {
         console.log('on user repository saving user'); 
-        return new userModel(user).save()
+        return await new userModel(user).save()
     }
 
     async findById(id: string): Promise< IUser | null > {
