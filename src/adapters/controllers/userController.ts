@@ -4,6 +4,7 @@ import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { IUser } from "../../interfaces/schema/userSchema";
+import { OTP_TIMER } from "../../constants/constants";
 
 export class UserController {
     constructor (
@@ -15,17 +16,20 @@ export class UserController {
 
     async userRegister (req:Request, res: Response){
         try {
-            const { name, email, password } = req.body as IUser & { isSocialSignUp: boolean }
+            const { name, email, password } = req.body as IUser
             console.log(name, email, password);
         
             const isEmailExist = await this.userUseCase.isEmailExist(email)
-
-            if(isEmailExist !== null){  
+            console.log(isEmailExist);
+            if(isEmailExist === null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
                 this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
                 req.app.locals.OTP = OTP;
+                setTimeout(() => {
+                    req.app.locals.OTP = null
+                }, OTP_TIMER)
                 const securePassword = await this.encrypt.encryptPassword(password as string)
                 req.app.locals.userData = { name, email, password:securePassword }
                 res.status(200).json({message: 'Success'})
@@ -45,10 +49,10 @@ export class UserController {
             console.log(req.body.otp,'req.body.otp');
             console.log(req.app.locals.OTP,'req.app.locals.OTP');
             
-            
             if(req.body.otp == req.app.locals.OTP){
                 await this.userUseCase.saveUserDetails(req.app.locals.userData)
                 req.app.locals.userData = null
+                req.app.locals.OTP = null
                 console.log('user details saved, setting status 200');
                 res.status(200).json({message: 'Success'})
             }else{
@@ -65,11 +69,19 @@ export class UserController {
         try {
             const OTP = this.otpGenerator.generateOTP()
             req.app.locals.OTP = OTP
+            console.log(OTP, 'resend otp');
+            
+            setTimeout(() => {
+                req.app.locals.OTP = null
+            }, OTP_TIMER * 1000)
+            console.log(req.app.locals.userData, 'userData');
+            
             this.mailer.sendMail(req.app.locals.userData.email, OTP)
             res.status(200).json({message: 'OTP has been sent'})
         } catch (error) {
+            const err = error as Error
             console.log(error);
-            // next(error)
+            res.status(500).json({message: err.message})
         }
     }
 

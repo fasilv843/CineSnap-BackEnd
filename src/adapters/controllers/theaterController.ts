@@ -114,11 +114,13 @@ export class TheaterController {
             const longitude = parseFloat(req.query.longitude as string)
             const latitude = parseFloat(req.query.latitude as string)
 
+            console.log('on load theateres controller', longitude, latitude);
+            
             if ( isNaN(longitude) || isNaN(latitude) ) {
                 return res.status(400).json({ message: 'Invalid coordinates' });
             }
 
-            const nearestTheater = this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, 6, 15)
+            const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, 6, 15)
             console.log(nearestTheater);
             
             res.status(200).json({message: 'Success', data: nearestTheater})

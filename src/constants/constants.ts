@@ -1,0 +1,1 @@
+export const OTP_TIMER = 60
