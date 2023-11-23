@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
-import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { IUser } from "../../interfaces/schema/userSchema";
-import { OTP_TIMER } from "../../constants/constants";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
@@ -12,7 +10,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 export class UserController {
     constructor (
         private userUseCase : UserUseCase,
-        private mailer: MailSender,
         private otpGenerator : GenerateOtp,
         private encrypt : Encrypt
     ){}
@@ -26,15 +23,13 @@ export class UserController {
             if(isEmailExist === null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
-                this.mailer.sendMail(email, OTP)
                 console.log(OTP,'OTP');
                 const securePassword = await this.encrypt.encryptPassword(password as string)
                 const user: ITempUserReq = { name, email, password: securePassword, otp:OTP }
                 const tempUser = await this.userUseCase.saveUserTemporarily(user)
 
-                setTimeout(async() => {
-                    await this.userUseCase.unsetOtp(tempUser._id, tempUser.email)
-                }, OTP_TIMER)
+                this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
+
                 console.log('responding with 200');
                 res.status(200).json({message: 'Success', token: tempUser.userAuthToken })
             }else{
@@ -90,18 +85,13 @@ export class UserController {
             console.log(authToken, 'authToken from resend otp');
             if(authToken){
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
-                const user = await this.userUseCase.findTempUserById(decoded.id)
-                if(user){
+                const tempUser = await this.userUseCase.findTempUserById(decoded.id)
+                if(tempUser){
                     const OTP = this.otpGenerator.generateOTP()
-                    console.log(user, 'userData');
+                    console.log(tempUser, 'userData');
                     console.log(OTP, 'new resend otp');
-                    await this.userUseCase.updateOtp(user._id, user.email, OTP)
-                    this.mailer.sendMail(user.email, OTP)
-                    
-                    setTimeout(async() => {
-                        await this.userUseCase.unsetOtp(user._id, user.email)
-                    }, OTP_TIMER)
-                    
+                    await this.userUseCase.updateOtp(tempUser._id, tempUser.email, OTP)
+                    this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
                     res.status(200).json({message: 'OTP has been sent'})
                 } else {
                     res.status(400).json({message: 'user timeout, register again'})

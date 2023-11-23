@@ -27,11 +27,11 @@ const thrRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
 const tempUserRepository = new TempUserRepository()
 
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender,)
 const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
 const movieUseCase = new MovieUseCase(movieRepository)
 
-const uController = new UserController(userUseCase, mailSender, otpGenerator, encrypt )
+const uController = new UserController(userUseCase, otpGenerator, encrypt )
 const tController = new TheaterController(thrUseCase, mailer, otpGenerator, encrypt)
 const mController = new MovieController(movieUseCase)
 

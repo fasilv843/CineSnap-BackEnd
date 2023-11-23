@@ -1,10 +1,12 @@
 import { AuthRes } from "../Types/AuthRes";
+import { OTP_TIMER } from "../constants/constants";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IUser } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
+import { MailSender } from "../providers/nodemailer";
 
 
 
@@ -13,7 +15,8 @@ export class UserUseCase {
         private userRepository: UserRepository,
         private tempUserRepository: TempUserRepository,
         private encrypt: Encrypt,
-        private jwt: JWTToken
+        private jwt: JWTToken,
+        private mailer: MailSender,
     ) { }
 
     async isEmailExist(email: string): Promise<IUser | null> {
@@ -80,6 +83,20 @@ export class UserUseCase {
                     token
                 }
             }
+        }
+    }
+
+    sendTimeoutOTP(id: string, email: string, OTP: number) {
+        try {
+            this.mailer.sendMail(email, OTP)
+                    
+            setTimeout(async() => {
+                await this.unsetOtp(id, email)
+            }, OTP_TIMER)
+
+        } catch (error) {
+            console.log(error);
+            throw Error('Error while sending timeout otp')
         }
     }
 
