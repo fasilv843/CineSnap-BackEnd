@@ -44,4 +44,19 @@ export class TempUserRepository implements ITempUserRepo {
             throw Error('error while unsetting otp')
         }
     }
+
+    async updateOTP(id: string, email: string, OTP: number): Promise<ITempUserRes | null> {
+        try {
+            return tempUserModel.findOneAndUpdate(
+                {_id: id, email },
+                {
+                    $set: { otp: OTP }
+                },
+                { new: true }
+            )
+        } catch (error) {
+            console.log(error, 'error while updating otp');
+            throw Error('error while updating otp')
+        }
+    }
 }

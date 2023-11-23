@@ -23,7 +23,6 @@ export class UserController {
             console.log(name, email, password);
         
             const isEmailExist = await this.userUseCase.isEmailExist(email)
-            console.log(isEmailExist);
             if(isEmailExist === null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
@@ -51,22 +50,22 @@ export class UserController {
         try {
             console.log('validating otp');
             console.log(req.body.otp,'req.body.otp');
-            // console.log(req.app.locals.OTP,'req.app.locals.OTP');
-            const { otp, authToken } = req.body
+            const { otp } = req.body
+            const authToken = req.headers.authorization;
+            console.log(authToken, 'authToken from validate otp');
+            
             if(authToken){
-                const decoded = jwt.verify(authToken, process.env.JWT_SECRET_KEY as string) as JwtPayload
+                const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
                 const user = await this.userUseCase.findTempUserById(decoded.id)
                 if(user){
                     if(otp == user.otp){
-                        await this.userUseCase.saveUserDetails({
+                        const savedData = await this.userUseCase.saveUserDetails({
                             name: user.name,
                             email: user.email,
                             password: user.password
-                        })
-                        // req.app.locals.userData = null
-                        // req.app.locals.OTP = null
+                        }) 
                         console.log('user details saved, setting status 200');
-                        res.status(200).json({message: 'Success'})
+                        res.status(savedData.status).json(savedData)
                     }else{
                         console.log('otp didnt match');
                         res.status(400).json({status: false, message: 'Invalid OTP'})
@@ -86,17 +85,31 @@ export class UserController {
 
     async resendOTP(req:Request, res: Response) {
         try {
-            const OTP = this.otpGenerator.generateOTP()
-            req.app.locals.OTP = OTP
-            console.log(OTP, 'resend otp');
-            
-            setTimeout(() => {
-                req.app.locals.OTP = null
-            }, OTP_TIMER * 1000)
-            console.log(req.app.locals.userData, 'userData');
-            
-            this.mailer.sendMail(req.app.locals.userData.email, OTP)
-            res.status(200).json({message: 'OTP has been sent'})
+
+            const authToken = req.headers.authorization;
+            console.log(authToken, 'authToken from resend otp');
+            if(authToken){
+                const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
+                const user = await this.userUseCase.findTempUserById(decoded.id)
+                if(user){
+                    const OTP = this.otpGenerator.generateOTP()
+                    console.log(user, 'userData');
+                    console.log(OTP, 'new resend otp');
+                    await this.userUseCase.updateOtp(user._id, user.email, OTP)
+                    this.mailer.sendMail(user.email, OTP)
+                    
+                    setTimeout(async() => {
+                        await this.userUseCase.unsetOtp(user._id, user.email)
+                    }, OTP_TIMER)
+                    
+                    res.status(200).json({message: 'OTP has been sent'})
+                } else {
+                    res.status(400).json({message: 'user timeout, register again'})
+                }
+            } else {
+                res.status(400).json({message: 'AuthToken missing'})
+            }
+
         } catch (error) {
             const err = error as Error
             console.log(error);

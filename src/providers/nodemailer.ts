@@ -21,7 +21,7 @@ export class MailSender implements sendMail {
             <p>This OTP is valid for a single use and will expire after a short period of time.</p>
             <p>If you did not request this OTP, please ignore this email.</p>
             <p>Thank you,</p>
-            <p>Your Company Name</p>
+            <p>CineSnap</p>
         </body>
         </html>
     `;
@@ -39,7 +39,7 @@ export class MailSender implements sendMail {
         const details = {
             from: process.env.EMAIL,
             to: email,
-            subject: "One-Time Password (Derby Dome)",
+            subject: "CineSnap Verification",
             html: mailData
         };
         mailTransporter.sendMail(details, ( err:Error | null ) => {

@@ -24,7 +24,13 @@ export class UserUseCase {
     async saveUserDetails(userData: IUser) {
         const user = await this.userRepository.saveUser(userData)
         console.log('user data saved, on usecase');
-        return user;
+        const token = this.jwt.generateToken(user._id as string)
+        return {
+            status: 200,
+            data: user,
+            message: 'Success',
+            token
+        }
     }
 
     async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
@@ -38,6 +44,10 @@ export class UserUseCase {
         return await this.tempUserRepository.unsetOtp(id, email)
     }
 
+    async updateOtp(id: string, email: string, OTP: number) {
+        return await this.tempUserRepository.updateOTP(id, email, OTP)
+    }
+
     async findTempUserById(id: string){
         return await this.tempUserRepository.findById(id)
     }
@@ -46,15 +56,10 @@ export class UserUseCase {
         const emailData = await this.isEmailExist(email)
         if(emailData === null){
             const userToSave = { name, email, profilePic, isGoogleAuth: true }
-            const savedUser = await this.saveUserDetails(userToSave)
+            const savedData = await this.saveUserDetails(userToSave)
             console.log('user details saved');
-            const token = this.jwt.generateToken(savedUser._id as string)
-            return {
-                status: 200,
-                message: 'Success',
-                data: savedUser,
-                token
-            }
+            // const token = this.jwt.generateToken(savedUser._id as string)
+            return savedData
         } else {
             if(emailData.isBlocked){
                 return {
