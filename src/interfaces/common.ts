@@ -1,5 +1,8 @@
+import { Schema } from "mongoose";
 
 export type Location = [number, number];
+
+export type ID = Schema.Types.ObjectId
 
 export interface ITheaterAddress {
     country: string
@@ -28,3 +31,7 @@ export interface ICoords {
     type: 'Point'
     coordinates: [number, number];
 }
+
+// export interface IRow {
+//     row: Set<number>;
+// }
