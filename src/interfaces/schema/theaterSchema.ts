@@ -1,17 +1,55 @@
-import { IAddress, IWalletHistory, ICoords } from "./common"
+import { IWalletHistory, ICoords, ITheaterAddress } from "../common"
 
 
 export interface ITheater {
-    _id?: string
+    _id: string
     name: string
     email: string
     mobile?: number
     password: string
-    isBlocked?: boolean
+    isBlocked: boolean
     profilePic?: string
     liscenceId: string
-    wallet?: number | null
-    walletHistory?: IWalletHistory
-    coords?: ICoords
-    address: IAddress
+    wallet: number
+    walletHistory: IWalletHistory[] | []
+    isGoogleAuth: boolean
+    coords: ICoords
+    address: ITheaterAddress
+}
+
+export interface ITheaterRes {
+    _id: string
+    name: string
+    email: string
+    mobile?: number
+    isBlocked: boolean
+    profilePic?: string
+    liscenceId: string
+    wallet: number
+    walletHistory?: IWalletHistory[]
+    coords: ICoords
+    address: ITheaterAddress
+}
+
+export interface ITheaterAuth {
+    name: string
+    email: string,
+    password: string
+    liscenceId: string
+    coords: ICoords
+    address: ITheaterAddress
+}
+
+export interface IApiTheaterRes {
+    status: number
+    message: string
+    data: ITheaterRes | null
+    token: string
+}
+
+export interface IApiTheatersRes {
+    status: number
+    message: string
+    data: ITheaterRes[]
+    token: string
 }

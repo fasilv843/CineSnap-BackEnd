@@ -1,11 +1,11 @@
 import userModel from "../../entities/models/userModel";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
-import { IUser } from "../../interfaces/schema/userSchema"; 
+import { IUser, IUserAuth, IUserSocialAuth } from "../../interfaces/schema/userSchema"; 
 
 
 export class UserRepository implements IUserRepo {
 
-    async saveUser(user: IUser): Promise<IUser> {
+    async saveUser(user: IUserAuth | IUserSocialAuth): Promise<IUser> {
         console.log('on user repository saving user'); 
         return await new userModel(user).save()
     }
@@ -20,13 +20,13 @@ export class UserRepository implements IUserRepo {
 
     async findAllUsers(): Promise< IUser[] | [] > {
         try {
-            return await userModel.find({})
+            return await userModel.find({}).select('-password').exec()
         } catch (error) {
             throw Error("Error while finding users")
         }
     }
 
-    async updateGoogleAuth(id: string, profilePic: string){
+    async updateGoogleAuth(id: string, profilePic: string | undefined){
         try {
             const userData =  await userModel.findById({ _id: id })
             if(userData){

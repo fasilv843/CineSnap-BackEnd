@@ -25,8 +25,8 @@ export class AdminController {
 
     async getAllUsers (req:Request, res: Response ) {
         try {
-            const users = await this.userUseCase.getUsers()
-            res.status(200).json(users)
+            const apiRes = await this.userUseCase.getUsers()
+            res.status(apiRes.status).json(apiRes)
         } catch (error) {
             const err = error as Error
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
@@ -35,8 +35,8 @@ export class AdminController {
 
     async getAllTheaters (req:Request, res: Response ) {
         try {
-            const theaters = await this.theaterUseCase.getAllTheaters()
-            res.status(200).json(theaters)
+            const apiRes = await this.theaterUseCase.getAllTheaters()
+            res.status(apiRes.status).json(apiRes)
         } catch (error) {
             const err = error as Error
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
@@ -47,7 +47,7 @@ export class AdminController {
         try {
             console.log(req.params, 'req.params');
             await this.userUseCase.blockUser(req.params.userId as string)
-            res.status(200).json()
+            res.status(STATUS_CODES.OK).json()
         } catch (error) {
             const err = error as Error
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
@@ -58,7 +58,7 @@ export class AdminController {
         try {
             console.log(req.params, 'req.params');
             await this.theaterUseCase.blockTheater(req.params.theaterId as string)
-            res.status(200).json()
+            res.status(STATUS_CODES.OK).json()
         } catch (error) {
             const err = error as Error
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })

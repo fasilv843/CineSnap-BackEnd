@@ -1,6 +1,6 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ICoords } from "../../interfaces/schema/common";
+import { ICoords } from "../../interfaces/common";
 import { ITheater } from "../../interfaces/schema/theaterSchema";
 
 
@@ -61,7 +61,7 @@ export class TheaterRepository implements ITheaterRepo {
 
     async saveTheater(theater: ITheater): Promise<ITheater> {
         try {
-            console.log(theater);
+            console.log(theater, 'theater before saving from repository ...............................');
             return await new theaterModel(theater).save()    
         } catch (error) {
             console.log(error);

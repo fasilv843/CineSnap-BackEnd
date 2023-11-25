@@ -5,7 +5,9 @@ import { ITempUserRes } from "../../interfaces/schema/tempUserSchema";
 const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
     name:{
         type: String,
-        required: true
+        required: true,
+        minlength: 3,
+        maxlength: 20
     },
     email: {
         type: String,

@@ -1,6 +1,7 @@
-import { AuthRes } from "../Types/AuthRes";
+// import { AuthRes } from "../Types/AuthRes";
+import { STATUS_CODES } from "../constants/httpStausCodes";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { ITheater } from "../interfaces/schema/theaterSchema";
+import { IApiTheaterRes, IApiTheatersRes, ITheater } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 
@@ -22,13 +23,13 @@ export class TheaterUseCase {
         return Boolean(isUserExist)
     }
 
-    async verifyLogin(email: string, password: string): Promise<AuthRes>{
+    async verifyLogin(email: string, password: string): Promise<IApiTheaterRes>{
         const theaterData = await this.theaterRepository.findByEmail(email)
         if(theaterData !== null) {
 
             if(theaterData.isBlocked){
                 return {
-                    status : 400,
+                    status : STATUS_CODES.FORBIDDEN,
                     message: 'You have been blocked by admin',
                     data: null,
                     token: ''
@@ -37,16 +38,16 @@ export class TheaterUseCase {
 
             const passwordMatch = await this.encrypt.comparePasswords(password, theaterData.password)
             if(passwordMatch){
-                const token = this.jwtToken.generateToken(theaterData._id as string)
+                const token = this.jwtToken.generateToken(theaterData._id)
                 return {
-                    status: 200,
+                    status: STATUS_CODES.OK,
                     message: 'Success',
                     data: theaterData, 
                     token,
                 }
             }else{
                 return {
-                    status: 400,
+                    status: STATUS_CODES.UNAUTHORIZED,
                     message: 'Incorrect Password',
                     data : null,
                     token: ''
@@ -54,7 +55,7 @@ export class TheaterUseCase {
             }
         }else{
             return {
-                status: 400,
+                status: STATUS_CODES.UNAUTHORIZED,
                 message: 'Invalid Email',
                 token: '',
                 data: null
@@ -62,8 +63,24 @@ export class TheaterUseCase {
         }
     }
 
-    async getAllTheaters () {
-        return await this.theaterRepository.findAllTheaters()
+    async getAllTheaters (): Promise<IApiTheatersRes> {
+        try {
+            const theaters = await this.theaterRepository.findAllTheaters()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: theaters,
+                token: ''
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: 'Something went wrong',
+                data: [],
+                token: ''
+            }
+        }
     }
 
     async blockTheater (theaterId: string) {

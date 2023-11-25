@@ -1,5 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { ITheater } from "../../interfaces/schema/theaterSchema";
+import { theaterAddressSchema } from "./common/addressSchema";
+import { walletHistorySchema } from "./common/walletHistorySchema";
 
 
 
@@ -22,13 +24,11 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         type: String,
         required: true
     },
-    profilePic: {
-        type: String,
-
-    },
+    profilePic: String,
     isBlocked: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
     },
     liscenceId: {
         type: String,
@@ -48,41 +48,18 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
             required: true,
         },
     },
-    address: {
-        country: {
-            type: String
-        },
-        state: {
-            type: String
-        },
-        district: {
-            type: String
-        },
-        city: {
-            type: String
-        },
-        zip: {
-            type: Number
-        },
-        landmark: {
-            type: String
-        }
+    address: theaterAddressSchema,
+    isGoogleAuth: {
+        type: Boolean,
+        default: false,
+        required: true
     },
     wallet: {
         type: Number,
-        default: 0
+        default: 0,
+        required: true
     },
-    walletHistory: [{
-        date: {
-            type: Date,
-        },
-        amount: {
-            type: Number
-        },
-        message: {
-            type: String
-        }
-    }],
+    walletHistory: [walletHistorySchema],
 },
 {
     timestamps: true

@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { IUser } from "../../interfaces/schema/userSchema"; 
+import { emailRegex } from "../../constants/constants";
+import { userAddressSchema } from "./common/addressSchema";
+import { walletHistorySchema } from "./common/walletHistorySchema";
 
 
 const userSchema: Schema = new Schema<IUser & Document>({
@@ -13,6 +16,7 @@ const userSchema: Schema = new Schema<IUser & Document>({
         type: String,
         required: true,
         unique: true,
+        match: new RegExp(emailRegex)
     },
     mobile: {
         type: String,
@@ -27,7 +31,8 @@ const userSchema: Schema = new Schema<IUser & Document>({
     },
     isBlocked: {
         type: Boolean,
-        default : false
+        default : false,
+        required: true
     },
     isGoogleAuth: {
         type: Boolean,
@@ -38,7 +43,8 @@ const userSchema: Schema = new Schema<IUser & Document>({
         type: Date,
         default: new Date('1990-01-01'),
         min: new Date('1900-01-01'),
-        max: new Date()
+        max: new Date(),
+        required: true
     },
     profilePic: {
         type: String
@@ -57,27 +63,13 @@ const userSchema: Schema = new Schema<IUser & Document>({
             // required: true,
         },
     },
-    address: {
-        country: {
-            type: String
-        },
-        state: {
-            type: String
-        },
-        district: {
-            type: String
-        },
-        city: {
-            type: String
-        },
-        zip: {
-            type: Number
-        }
-    },
+    address: userAddressSchema,
     wallet: {
         type: Number,
-        default: 0
-    }
+        default: 0,
+        required: true
+    },
+    walletHistory: [walletHistorySchema],
 },
 {
     timestamps : true

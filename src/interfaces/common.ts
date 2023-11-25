@@ -1,13 +1,21 @@
 
 export type Location = [number, number];
 
-export interface IAddress {
+export interface ITheaterAddress {
     country: string
     state: string
     district: string
     city: string
     zip: number
     landmark?: string
+}
+
+export interface IUserAddress {
+    country: string
+    state: string
+    district: string
+    city: string
+    zip: number
 }
 
 export interface IWalletHistory {
@@ -17,6 +25,6 @@ export interface IWalletHistory {
 }
 
 export interface ICoords {
-    type?: string
+    type: 'Point'
     coordinates: [number, number];
 }

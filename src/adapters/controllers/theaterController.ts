@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { ITheater } from "../../interfaces/schema/theaterSchema";
+import { ITheaterAuth } from "../../interfaces/schema/theaterSchema";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { IAddress, ICoords } from "../../interfaces/schema/common";
+import { ICoords, ITheaterAddress } from "../../interfaces/common";
+import { STATUS_CODES } from "../../constants/httpStausCodes";
 
 
 
@@ -18,9 +19,9 @@ export class TheaterController {
 
     async theaterRegister (req:Request, res:Response){
         try {
-            const { name, email, password, liscenceId } = req.body as ITheater
+            const { name, email, password, liscenceId } = req.body as ITheaterAuth
             const { longitude, latitude } = req.body as { longitude: number, latitude: number }
-            const { country, state, district, city, zip, landmark  } = req.body as IAddress
+            const { country, state, district, city, zip, landmark  } = req.body as ITheaterAddress
 
             console.log(longitude, latitude);
             
@@ -33,17 +34,18 @@ export class TheaterController {
                 req.app.locals.OTP = OTP;
 
                 const securePassword = await this.encrypt.encryptPassword(password)
-                const address: IAddress = { country, state, district, city, zip, landmark }
+                const address: ITheaterAddress = { country, state, district, city, zip, landmark }
                 const coords: ICoords = {
+                    type: 'Point',
                     coordinates: [longitude, latitude]
                 } 
-                const theaterData: ITheater = { 
+                const theaterData: ITheaterAuth = { 
                     name, email, liscenceId, password: securePassword,
                     address, coords
                 }
                 
                 req.app.locals.theaterData = theaterData;
-                res.status(200).json({message: 'OTP Successfully sent'})
+                res.status(STATUS_CODES.OK).json({message: 'OTP Successfully sent'})
             }else{
                 res.status(400).json({message: 'Email Already Exist in CineSnap'})
             }
@@ -62,7 +64,7 @@ export class TheaterController {
                 await this.theaterUseCase.saveTheater(req.app.locals.theaterData)
                 req.app.locals.theaterData = null
                 console.log('user details saved, setting status 200');
-                res.status(200).send()
+                res.status(STATUS_CODES.OK).json()
             }else{
                 console.log('otp didnt match');
                 res.status(400).json({status: false, message: 'Invalid OTP'})
@@ -87,7 +89,7 @@ export class TheaterController {
 
     async theaterLogin (req:Request, res:Response){
         try {
-            const { email, password } = req.body as ITheater
+            const { email, password } = req.body as ITheaterAuth
             const authData = await this.theaterUseCase.verifyLogin(email, password)
             res.status(authData.status).json(authData)
         } catch (error) {
@@ -117,13 +119,13 @@ export class TheaterController {
             console.log('on load theateres controller', longitude, latitude);
             
             if ( isNaN(longitude) || isNaN(latitude) ) {
-                return res.status(400).json({ message: 'Invalid coordinates' });
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
             }
 
             const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, 6, 15)
             console.log(nearestTheater);
             
-            res.status(200).json({message: 'Success', data: nearestTheater})
+            res.status(STATUS_CODES.OK).json({message: 'Success', data: nearestTheater})
         } catch (error) {
             const err = error as Error
             res.status(400).json({messge: err.message})

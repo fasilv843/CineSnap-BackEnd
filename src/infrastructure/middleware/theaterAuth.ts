@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TheaterRepository } from "../repositories/theaterRepository"
+import { STATUS_CODES } from "../../constants/httpStausCodes";
 
 const thrRepository = new TheaterRepository()
+const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = STATUS_CODES
 
 export const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,18 +15,18 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
             if(theaterData !== null){
                 // req.theaterId = theaterData?._id
                 if(theaterData.isBlocked){
-                    res.status(401).json({message: 'You are blocked'})
+                    res.status(FORBIDDEN).json({message: 'You are blocked'})
                 }else{
                     next()
                 }
             }else{
-                res.status(401).json({message: 'Not authorized, invalid token'})
+                res.status(UNAUTHORIZED).json({message: 'Not authorized, invalid token'})
             }
         }else{
-            res.status(401).json({message: 'Token not available'})
+            res.status(UNAUTHORIZED).json({message: 'Token not available'})
         }
     } catch (error) {
         console.log(error)
-        res.status(401).json({message: 'Not authorized, invalid token'})
+        res.status(INTERNAL_SERVER_ERROR).json({message: 'Not authorized, invalid token'})
     }
 }

@@ -1,9 +1,10 @@
-import { AuthRes } from "../Types/AuthRes";
+// import { AuthRes } from "../Types/AuthRes";
 import { OTP_TIMER } from "../constants/constants";
+import { STATUS_CODES } from "../constants/httpStausCodes";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IUser } from "../interfaces/schema/userSchema";
+import { IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserSocialAuth } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -24,12 +25,14 @@ export class UserUseCase {
         return isUserExist
     }
 
-    async saveUserDetails(userData: IUser) {
+    async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserRes> {
         const user = await this.userRepository.saveUser(userData)
-        console.log('user data saved, on usecase');
-        const token = this.jwt.generateToken(user._id as string)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // const userRes: IUserRes = (({ ['password']: _, ...rest }) => rest)(user);
+        console.log('user data saved, on usecase', user);
+        const token = this.jwt.generateToken(user._id)
         return {
-            status: 200,
+            status: STATUS_CODES.OK,
             data: user,
             message: 'Success',
             token
@@ -55,29 +58,28 @@ export class UserUseCase {
         return await this.tempUserRepository.findById(id)
     }
 
-    async handleSocialSignUp(name: string, email: string, profilePic: string){
+    async handleSocialSignUp(name: string, email: string, profilePic: string | undefined){
         const emailData = await this.isEmailExist(email)
         if(emailData === null){
             const userToSave = { name, email, profilePic, isGoogleAuth: true }
             const savedData = await this.saveUserDetails(userToSave)
             console.log('user details saved');
-            // const token = this.jwt.generateToken(savedUser._id as string)
             return savedData
         } else {
             if(emailData.isBlocked){
                 return {
-                    status: 400,
+                    status: STATUS_CODES.FORBIDDEN,
                     message: 'You are blocked by admin',
                     data: null,
                     token: ''
                 }
             }else{
                 if(!emailData.isGoogleAuth) {
-                    await this.userRepository.updateGoogleAuth(emailData._id as string, profilePic as string)
+                    await this.userRepository.updateGoogleAuth(emailData._id, profilePic)
                 }
-                const token = this.jwt.generateToken(emailData._id as string)
+                const token = this.jwt.generateToken(emailData._id)
                 return {
-                    status: 200,
+                    status: STATUS_CODES.OK,
                     message: 'Success',
                     data: emailData,
                     token
@@ -101,12 +103,12 @@ export class UserUseCase {
     }
 
 
-    async verifyLogin(email: string, password: string): Promise<AuthRes> {
+    async verifyLogin(email: string, password: string): Promise<IApiUserRes> {
         const userData = await this.userRepository.findByEmail(email)
         if (userData !== null) {
             if (userData.isBlocked) {
                 return {
-                    status: 400,
+                    status: STATUS_CODES.FORBIDDEN,
                     message: 'You are blocked by admin',
                     data: null,
                     token: ''
@@ -114,16 +116,16 @@ export class UserUseCase {
             } else {
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password as string)
                 if (passwordMatch) {
-                    const token = this.jwt.generateToken(userData._id as string)
+                    const token = this.jwt.generateToken(userData._id)
                     return {
-                        status: 200,
+                        status: STATUS_CODES.OK,
                         message: 'Success',
                         data: userData,
                         token
                     }
                 }else{
                     return {
-                        status: 400,
+                        status: STATUS_CODES.UNAUTHORIZED,
                         message: 'Incorrect Password',
                         data: null,
                         token: ''
@@ -133,7 +135,7 @@ export class UserUseCase {
         }
 
         return {
-            status: 400,
+            status: STATUS_CODES.UNAUTHORIZED,
             message: 'Invalid email or password!',
             data: null,
             token: ''
@@ -141,8 +143,24 @@ export class UserUseCase {
 
     }
 
-    async getUsers(){
-        return await this.userRepository.findAllUsers()
+    async getUsers(): Promise<IApiUsersRes>{
+        try {
+            const users = await this.userRepository.findAllUsers()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: users,
+                token: ''
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: 'Something went wrong',
+                data: [],
+                token: ''
+            }
+        }
     }
 
     async blockUser(userId: string) {

@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
-import { IUser } from "../../interfaces/schema/userSchema";
+import { IUser, IUserAuth, IUserSocialAuth } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { STATUS_CODES } from "../../constants/httpStausCodes";
 
 
 export class UserController {
@@ -16,7 +17,7 @@ export class UserController {
 
     async userRegister (req:Request, res: Response){
         try {
-            const { name, email, password } = req.body as IUser
+            const { name, email, password } = req.body as IUserAuth
             console.log(name, email, password);
         
             const isEmailExist = await this.userUseCase.isEmailExist(email)
@@ -24,16 +25,16 @@ export class UserController {
                 const OTP = this.otpGenerator.generateOTP()
                 
                 console.log(OTP,'OTP');
-                const securePassword = await this.encrypt.encryptPassword(password as string)
+                const securePassword = await this.encrypt.encryptPassword(password)
                 const user: ITempUserReq = { name, email, password: securePassword, otp:OTP }
                 const tempUser = await this.userUseCase.saveUserTemporarily(user)
 
                 this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
 
                 console.log('responding with 200');
-                res.status(200).json({message: 'Success', token: tempUser.userAuthToken })
+                res.status(STATUS_CODES.OK).json({message: 'Success', token: tempUser.userAuthToken })
             }else{
-                res.status(400).json({message: "Email already Exist"});
+                res.status(STATUS_CODES.FORBIDDEN).json({message: "Email already Exist"});
             }
         } catch (error) {
             console.log(error);
@@ -63,13 +64,13 @@ export class UserController {
                         res.status(savedData.status).json(savedData)
                     }else{
                         console.log('otp didnt match');
-                        res.status(400).json({status: false, message: 'Invalid OTP'})
+                        res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'Invalid OTP'})
                     }
                 } else {
-                    res.status(400).json({status: false, message: 'Timeout, Register again'})
+                    res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'Timeout, Register again'})
                 }
             }else{
-                res.status(400).json({status: false, message: 'authToken missing, Register again'})
+                res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'authToken missing, Register again'})
             }
 
         } catch (error) {
@@ -92,12 +93,12 @@ export class UserController {
                     console.log(OTP, 'new resend otp');
                     await this.userUseCase.updateOtp(tempUser._id, tempUser.email, OTP)
                     this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
-                    res.status(200).json({message: 'OTP has been sent'})
+                    res.status(STATUS_CODES.OK).json({message: 'OTP has been sent'})
                 } else {
-                    res.status(400).json({message: 'user timeout, register again'})
+                    res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'user timeout, register again'})
                 }
             } else {
-                res.status(400).json({message: 'AuthToken missing'})
+                res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'AuthToken missing'})
             }
 
         } catch (error) {
@@ -120,7 +121,7 @@ export class UserController {
 
     async userSocialSignUp( req: Request, res: Response){
         try {
-            const { name, email, profilePic } = req.body as IUser
+            const { name, email, profilePic } = req.body as IUserSocialAuth
             const authData = await this.userUseCase.handleSocialSignUp(name, email, profilePic as string)
             res.status(authData.status).json(authData)
         } catch (error) {
@@ -135,7 +136,7 @@ export class UserController {
                 httpOnly: true,
                 expires: new Date()
             })
-            res.status(200).json({message: 'user logged out'})
+            res.status(STATUS_CODES.OK).json({message: 'user logged out'})
         } catch (error) {
             console.log(error);
             // next(error)
