@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 
 export interface IMovie {
     _id?: string
@@ -10,12 +11,12 @@ export interface IMovie {
     tmdbId: number
     release_date: Date
     genre_ids: number[]
-    review?: MovieReview[]
+    review?: IReview[]
     isDeleted?: boolean
 }
 
-type MovieReview = {
+export interface IReview {
     rating: number
-    review: string
-    userId: string
+    review?: string
+    userId: mongoose.Schema.Types.ObjectId 
 }

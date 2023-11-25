@@ -32,7 +32,7 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
     },
     liscenceId: {
         type: String,
-        required: true
+        required: [true, 'Provide your Liscence ID']
     },
     coords: {
         type: {
@@ -48,7 +48,10 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
             required: true,
         },
     },
-    address: theaterAddressSchema,
+    address:{ 
+        type: theaterAddressSchema,
+        required: [true, 'Address is required']
+    },
     isGoogleAuth: {
         type: Boolean,
         default: false,
@@ -60,6 +63,13 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         required: true
     },
     walletHistory: [walletHistorySchema],
+    socialMediaHandles: {
+        // `socialMediaHandles` is a map whose values are strings. 
+        // A map's keys are always strings.
+        // You specify the type of values using `of`.
+        type: Map,
+        of: String
+    }
 },
 {
     timestamps: true

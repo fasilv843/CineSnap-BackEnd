@@ -14,7 +14,8 @@ export interface ITheater {
     walletHistory: IWalletHistory[] | []
     isGoogleAuth: boolean
     coords: ICoords
-    address: ITheaterAddress
+    address: ITheaterAddress,
+    socialMediaHandles?: Map<string, string>
 }
 
 export interface ITheaterRes {
@@ -28,7 +29,8 @@ export interface ITheaterRes {
     wallet: number
     walletHistory?: IWalletHistory[]
     coords: ICoords
-    address: ITheaterAddress
+    address: ITheaterAddress,
+    socialMediaHandles?: Map<string, string>
 }
 
 export interface ITheaterAuth {

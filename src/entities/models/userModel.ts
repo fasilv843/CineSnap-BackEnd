@@ -8,9 +8,9 @@ import { walletHistorySchema } from "./common/walletHistorySchema";
 const userSchema: Schema = new Schema<IUser & Document>({
     name: {
         type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 20
+        required: [true, 'Name is required'],
+        minlength: [3, 'Name must contain atleast 3 characters'],
+        maxlength: [20, 'Name contain atmost 20 characters']
     },
     email: {
         type: String,
@@ -46,9 +46,7 @@ const userSchema: Schema = new Schema<IUser & Document>({
         max: new Date(),
         required: true
     },
-    profilePic: {
-        type: String
-    },
+    profilePic: String,
     coords: {
         type: {
             type: String,

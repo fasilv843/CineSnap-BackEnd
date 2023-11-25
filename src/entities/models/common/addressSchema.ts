@@ -5,24 +5,24 @@ import { ZipRegex } from "../../../constants/constants";
 export const userAddressSchema: Schema = new Schema<IUserAddress & Document>({
     country: {
         type: String,
-        required: true
+        required: [true, 'Country is required']
     },
     state: {
         type: String,
-        required: true
+        required: [true, 'State is required']
     },
     district: {
         type: String,
-        required: true
+        required: [true, 'District is required']
     },
     city: {
         type: String,
-        required: true
+        required: [true, 'City is required']
     },
     zip: {
         type: Number,
-        match: new RegExp(ZipRegex),
-        required: true
+        match: [new RegExp(ZipRegex), 'Invalid ZIP code. Please enter a valid 6-digit ZIP code.'],
+        required: [true, 'Zip is required']
     }
 })
 
