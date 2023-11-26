@@ -2,10 +2,12 @@ import { ID } from "../common";
 
 export interface IScreen {
     _id: ID
-    theaterId: ID,
+    theaterId: ID
     name: string
-    defaultPrice: number,
-    seatsCount: number,
+    defaultPrice: number
+    row: string
+    col: number
+    seatsCount: number
     seats: Map<string, number[]>
 }
 

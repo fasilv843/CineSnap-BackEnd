@@ -19,10 +19,18 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
         type: Number,
         required: [true, 'Provide seat count']
     },
+    row: {
+        type: String,
+        required: true
+    },
+    col: {
+        type: Number,
+        required: true
+    },
     seats: {
         type: Map,
-        of: { type: [Number] },
-    }    
+        of: [Number]
+    }
 })
 
 export const screenModel: Model<IScreen & Document> = mongoose.model<IScreen & Document>('Screens', ScreenSchema)
