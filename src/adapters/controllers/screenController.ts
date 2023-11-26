@@ -25,6 +25,7 @@ export class ScreenController {
   async findScreensInTheater(req: Request, res: Response) {
     const theaterId = req.params.theaterId as unknown as ID
     const apiRes = await this.screenUseCase.findScreensInTheater(theaterId)
+    console.log(apiRes.data, 'screens that returned to client');
     res.status(apiRes.status).json(apiRes)
   }
 }

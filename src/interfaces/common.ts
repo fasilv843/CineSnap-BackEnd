@@ -4,21 +4,16 @@ export type Location = [number, number];
 
 export type ID = Schema.Types.ObjectId
 
-export interface ITheaterAddress {
-    country: string
-    state: string
-    district: string
-    city: string
-    zip: number
-    landmark?: string
-}
-
 export interface IUserAddress {
     country: string
     state: string
     district: string
     city: string
     zip: number
+}
+
+export interface ITheaterAddress extends IUserAddress {
+    landmark?: string
 }
 
 export interface IWalletHistory {
