@@ -9,6 +9,7 @@ export interface IMovie {
     overview: string
     language: string
     tmdbId: number
+    duration: IDuration
     release_date: Date
     genre_ids: number[]
     review?: IReview[]
@@ -19,4 +20,9 @@ export interface IReview {
     rating: number
     review?: string
     userId: mongoose.Schema.Types.ObjectId 
+}
+
+export interface IDuration {
+    hours: number,
+    minutes: number
 }

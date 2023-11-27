@@ -29,7 +29,24 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     },
     tmdbId: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
+    },
+    duration: {
+        hours: {
+            type: Number,
+            min: 1,
+            max: 5,
+            default: 2,
+            required: true
+        },
+        minutes: {
+            type: Number,
+            min: 0,
+            max: 59,
+            default: 30,
+            required: true
+        }
     },
     release_date:{
         type: Date,
