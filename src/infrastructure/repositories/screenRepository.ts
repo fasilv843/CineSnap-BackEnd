@@ -63,4 +63,8 @@ export class ScreenRepository implements IScreenRepo {
             { new: true }
         )
     }
+
+    async deleteScreen (screenId: ID) {
+        return await screenModel.findByIdAndDelete(screenId)
+    }
 }

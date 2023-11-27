@@ -78,7 +78,7 @@ export class ScreenUseCase {
 
     async deleteScreen (screenId: ID): Promise<IApiScreenRes> {
         try {
-            // const screens = await this.screenRepository.findScreensInTheater(theaterId)
+            await this.screenRepository.deleteScreen(screenId)
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
