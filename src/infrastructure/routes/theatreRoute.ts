@@ -32,5 +32,8 @@ thrRouter.post('/login', (req, res) => tController.theaterLogin(req, res))
 
 thrRouter.get('/screens/:theaterId', (req, res) => scnController.findScreensInTheater(req, res))
 thrRouter.post('/screens/add/:theaterId', (req, res) => scnController.saveScreen(req, res))
+thrRouter.get('/screens/get/:screenId', (req, res) => scnController.findScreenById(req, res))
+thrRouter.put('/screens/edit/:screenId', (req, res) => scnController.editScreen(req, res))
+thrRouter.delete('/screens/delete/:screenId', (req, res) => scnController.deleteScreen(req, res))
 
 export default thrRouter

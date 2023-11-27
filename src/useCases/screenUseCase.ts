@@ -58,4 +58,38 @@ export class ScreenUseCase {
             }
         }
     }
+
+    async editScreen (screenId: ID, screenReq: IScreenRequirements): Promise<IApiScreenRes> {
+        try {
+            const screenData = await this.screenRepository.editScreen(screenId, screenReq)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: screenData
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null
+            }
+        }
+    }
+
+    async deleteScreen (screenId: ID): Promise<IApiScreenRes> {
+        try {
+            // const screens = await this.screenRepository.findScreensInTheater(theaterId)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: null
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null
+            }
+        }
+    }
 }
