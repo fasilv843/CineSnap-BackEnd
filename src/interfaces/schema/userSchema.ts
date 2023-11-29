@@ -33,6 +33,9 @@ export interface IUserRes {
     walletHistory: IWalletHistory[] | []
 }
 
+export interface IUserUpdate extends Omit<IUserRes, '_id' | 'email' | 'password' | 'isBlocked' | 'wallet' | 'walletHistory'> { }
+
+
 // for social auth credentials
 export interface IUserSocialAuth {
     name: string

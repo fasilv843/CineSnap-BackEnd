@@ -43,6 +43,9 @@ userRouter.get('/resendOtp', (req,res) => uController.resendOTP(req,res))
 userRouter.post('/login', (req,res) => uController.userLogin(req,res))
 userRouter.post('/logout', (req,res) => uController.logout(req,res))
 
+userRouter.put('/update/:userId', (req,res) => uController.updateProfile(req,res))
+
+userRouter.get('/get/:userId',  (req,res) => uController.getUserData(req,res))
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
 userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))
 

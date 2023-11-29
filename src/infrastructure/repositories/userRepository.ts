@@ -1,6 +1,7 @@
 import userModel from "../../entities/models/userModel";
+import { ID } from "../../interfaces/common";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
-import { IUser, IUserAuth, IUserSocialAuth } from "../../interfaces/schema/userSchema"; 
+import { IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
 
 
 export class UserRepository implements IUserRepo {
@@ -52,6 +53,24 @@ export class UserRepository implements IUserRepo {
         } catch (error) {
             throw Error('Error while blocking/unblocking user')
         }
-    } 
+    }
+
+    async getUserData (userId: ID): Promise<IUserRes | null> {
+        return await userModel.findById(userId)
+    }
+
+    async updateUser (userId: ID, user: IUserUpdate): Promise<IUserRes | null> {
+        return await userModel.findByIdAndUpdate(
+            { _id: userId },
+            {
+                name: user.name,
+                mobile: user.mobile,
+                dob: user.dob,
+                address: user.address,
+                coords: user.coords
+            },
+            { new: true }
+        )
+    }
     
 }

@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { Encrypt } from "../../providers/bcryptPassword";
-import { IUser, IUserAuth, IUserSocialAuth } from "../../interfaces/schema/userSchema";
+import { IUser, IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { ID } from "../../interfaces/common";
 
 
 export class UserController {
@@ -141,6 +142,18 @@ export class UserController {
             console.log(error);
             // next(error)
         }
+    }
 
+    async getUserData (req:Request, res: Response) {
+        const userId: ID = req.params.userId as unknown as ID
+        const apiRes = await this.userUseCase.getUserData(userId)
+        res.json(apiRes.status).json(apiRes)
+    }
+
+    async updateProfile(req: Request, res: Response) {
+        const user = req.body as IUserUpdate
+        const userId: ID = req.params.userId as unknown as ID
+        const apiRes = await this.userUseCase.updateUserData(userId, user)
+        res.status(apiRes.status).json(apiRes)
     }
 }

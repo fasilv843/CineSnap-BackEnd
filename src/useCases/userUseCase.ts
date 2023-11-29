@@ -3,8 +3,9 @@ import { OTP_TIMER } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
+import { ID } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserSocialAuth } from "../interfaces/schema/userSchema";
+import { IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserSocialAuth, IUserUpdate } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -165,5 +166,43 @@ export class UserUseCase {
 
     async blockUser(userId: string) {
         await this.userRepository.blockUnblockUser(userId)
+    }
+
+    async getUserData (userId: ID): Promise<IApiUserRes> {
+        try {
+            const user = await this.userRepository.getUserData(userId)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: user,
+                token: ''
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null,
+                token: ''
+            }
+        }
+    }
+
+    async updateUserData (userId: ID, user: IUserUpdate): Promise<IApiUserRes> {
+        try {
+            const updatedUser = await this.userRepository.updateUser(userId, user)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: updatedUser,
+                token: ''
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null,
+                token: ''
+            }
+        }
     }
 }
