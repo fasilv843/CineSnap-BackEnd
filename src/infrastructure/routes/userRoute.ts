@@ -47,6 +47,7 @@ userRouter.put('/update/:userId', (req,res) => uController.updateProfile(req,res
 
 userRouter.get('/get/:userId',  (req,res) => uController.getUserData(req,res))
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
+userRouter.get('/theater/:theaterId', (req,res) => tController.getTheaterData(req,res))
 userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))
 
 

@@ -73,7 +73,7 @@ export class TheaterRepository implements ITheaterRepo {
         return await theaterModel.findOne({email})
     }
 
-    async findById(id: string): Promise<ITheater | null> {
+    async findById(id: ID): Promise<ITheater | null> {
         return await theaterModel.findById({_id: id})
     }
     

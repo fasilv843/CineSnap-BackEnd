@@ -124,4 +124,23 @@ export class TheaterUseCase {
         }
     }
 
+    async getTheaterData (theaterId: ID): Promise<IApiTheaterRes> {
+        try {
+            const theater = await this.theaterRepository.findById(theaterId)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: theater,
+                token: ''
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null,
+                token: ''
+            }
+        }
+    }
+
 }

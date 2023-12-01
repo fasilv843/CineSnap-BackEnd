@@ -141,4 +141,10 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    async getTheaterData (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const apiRes = await this.theaterUseCase.getTheaterData(theaterId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
 }
