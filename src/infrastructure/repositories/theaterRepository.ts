@@ -1,7 +1,7 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ICoords } from "../../interfaces/common";
-import { ITheater } from "../../interfaces/schema/theaterSchema";
+import { ICoords, ID } from "../../interfaces/common";
+import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 
 
 
@@ -97,6 +97,19 @@ export class TheaterRepository implements ITheaterRepo {
         } catch (error) {
             throw Error('Error while blocking/unblocking user')
         }
+    }
+
+    async updateTheater (theaterId: ID, theater: ITheaterUpdate): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            {
+                name: theater.name,
+                mobile: theater.mobile,
+                address: theater.address,
+                coords: theater.coords
+            },
+            { new: true }
+        )
     }
 
 }

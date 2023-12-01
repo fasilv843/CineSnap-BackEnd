@@ -1,4 +1,6 @@
 export const OTP_TIMER = 1000 * 60 * 3  
+export const TheaterShowLimit = 6
+export const maxDistance = 100 // users can see theaters in 100 km radius
 
 export const emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
 export const passwordMinLength = 8

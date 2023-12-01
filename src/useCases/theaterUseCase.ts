@@ -1,7 +1,8 @@
 // import { AuthRes } from "../Types/AuthRes";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { IApiTheaterRes, IApiTheatersRes, ITheater } from "../interfaces/schema/theaterSchema";
+import { ID } from "../interfaces/common";
+import { IApiTheaterRes, IApiTheatersRes, ITheater, ITheaterUpdate } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 
@@ -93,6 +94,34 @@ export class TheaterUseCase {
 
     async getNearestTheatersByLimit (lon:number, lat:number, limit:number, maxDistance: number) {
         return await this.theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
+    }
+
+    async updateTheater (theaterId: ID, theater: ITheaterUpdate): Promise<IApiTheaterRes> {
+        try {
+            const theaterData = await this.theaterRepository.updateTheater(theaterId, theater)
+            if (theaterData !== null ) {
+                return {
+                    status: STATUS_CODES.OK,
+                    message: 'Success',
+                    data: theaterData,
+                    token: ''
+                }
+            } else {
+                return {
+                    status: STATUS_CODES.BAD_REQUEST,
+                    message: 'Bad Request, theaterId is not availble',
+                    data: null,
+                    token: ''
+                }
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null,
+                token: ''
+            }
+        }
     }
 
 }

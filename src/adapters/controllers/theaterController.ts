@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { ITheaterAuth } from "../../interfaces/schema/theaterSchema";
+import { ITheaterAuth, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { Encrypt } from "../../providers/bcryptPassword";
 import { MailSender } from "../../providers/nodemailer";
 import { GenerateOtp } from "../../providers/otpGenerator";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { ICoords, ITheaterAddress } from "../../interfaces/common";
+import { ICoords, ID, ITheaterAddress } from "../../interfaces/common";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { TheaterShowLimit, maxDistance } from "../../constants/constants";
 
 
 
@@ -122,7 +123,7 @@ export class TheaterController {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
             }
 
-            const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, 6, 15)
+            const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, TheaterShowLimit, maxDistance)
             console.log(nearestTheater);
             
             res.status(STATUS_CODES.OK).json({message: 'Success', data: nearestTheater})
@@ -130,6 +131,14 @@ export class TheaterController {
             const err = error as Error
             res.status(400).json({messge: err.message})
         }
+    }
+
+    async updateTheaterData (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const { address, coords, mobile, name } = req.body as ITheaterUpdate
+        const theater: ITheaterUpdate = { name, mobile, address, coords }
+        const apiRes = await this.theaterUseCase.updateTheater(theaterId, theater)
+        res.status(apiRes.status).json(apiRes)
     }
 
 }

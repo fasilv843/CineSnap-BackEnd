@@ -33,6 +33,8 @@ export interface ITheaterRes {
     socialMediaHandles?: Map<string, string>
 }
 
+export interface ITheaterUpdate extends Omit<ITheaterRes, '_id' | 'email' | 'isBlocked' | 'wallet' | 'walletHistory' | 'liscenceId'> {}
+
 export interface ITheaterAuth {
     name: string
     email: string,

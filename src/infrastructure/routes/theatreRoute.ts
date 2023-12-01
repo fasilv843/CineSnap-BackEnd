@@ -30,6 +30,8 @@ thrRouter.post('/register', (req, res) => tController.theaterRegister(req, res))
 thrRouter.post('/validateOTP', (req, res) =>  tController.validateTheaterOTP(req, res))
 thrRouter.post('/login', (req, res) => tController.theaterLogin(req, res))
 
+thrRouter.put('/update/:theaterId', (req, res) => tController.updateTheaterData(req, res))
+
 thrRouter.get('/screens/:theaterId', (req, res) => scnController.findScreensInTheater(req, res))
 thrRouter.post('/screens/add/:theaterId', (req, res) => scnController.saveScreen(req, res))
 thrRouter.get('/screens/get/:screenId', (req, res) => scnController.findScreenById(req, res))
