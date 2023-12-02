@@ -138,4 +138,21 @@ export class MovieUseCase {
             }
         }
     }
+
+    async getMovieIds (): Promise<{status: number, message: string, data: number[]}> {
+        try {
+            const ids = await this.movieRepository.fetchTmdbMovieIds()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: ids
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: []
+            }
+        }
+    }
 }

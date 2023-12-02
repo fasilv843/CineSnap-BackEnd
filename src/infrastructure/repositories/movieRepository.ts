@@ -90,4 +90,12 @@ export class MovieRepository implements IMovieRepo {
         ).limit(5)
     }
 
+    async fetchTmdbMovieIds (): Promise<number[]> {
+        const tmdbIds = await movieModel.aggregate([
+            {
+                $group: { _id: '$tmdbId' }
+            }
+        ])
+        return tmdbIds.map(item => item._id)
+    }
 }

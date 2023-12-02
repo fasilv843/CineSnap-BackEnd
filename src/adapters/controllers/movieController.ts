@@ -47,4 +47,9 @@ export class MovieController {
         const deleteRes = await this.movieUseCase.deleteMovie(movieId)
         res.status(deleteRes.status).json()
     }
+
+    async getCineSnapMovieIds (req: Request, res: Response) {
+        const apiRes = await this.movieUseCase.getMovieIds()
+        res.status(apiRes.status).json(apiRes)
+    }
 }

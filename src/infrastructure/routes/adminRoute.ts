@@ -14,21 +14,25 @@ import { TheaterRepository } from "../repositories/theaterRepository";
 import { adminAuth } from "../middleware/adminAuth";
 import { TempUserRepository } from "../repositories/tempUserRepository";
 import { MailSender } from "../../providers/nodemailer";
+import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
+import { GenerateOtp } from "../../providers/otpGenerator";
 const adminRouter = express.Router()
 
 const encrypt = new Encrypt()
 const jwtToken = new JWTToken()
 const mailSender = new MailSender()
+const otpGenerator = new GenerateOtp()
 
 const adminRepository = new AdminRepository()
 const userRepository = new UserRepository()
 const theaterRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
 const tempUserRepository = new TempUserRepository()
+const tempTheaterRepository = new TempTheaterRepository()
 
 const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
 const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const theateUseCase = new TheaterUseCase(theaterRepository, encrypt, jwtToken)
+const theateUseCase = new TheaterUseCase(theaterRepository, tempTheaterRepository, encrypt, jwtToken, mailSender, otpGenerator)
 const movieUseCase = new MovieUseCase(movieRepository)
 
 const aController = new AdminController(adminUseCase, userUseCase, theateUseCase)
@@ -43,6 +47,6 @@ adminRouter.get('/users', adminAuth, (req, res) => aController.getAllUsers(req,r
 adminRouter.patch('/users/block/:userId', adminAuth, (req, res) => aController.blockUser(req,res))
 adminRouter.get('/theaters', adminAuth, (req, res) => aController.getAllTheaters(req,res))
 adminRouter.patch('/theaters/block/:theaterId', adminAuth,  (req, res) => aController.blockTheater(req,res))
-
+adminRouter.get('/csmovies/get', adminAuth,  (req, res) => mController.getCineSnapMovieIds(req,res))
 
 export default adminRouter
