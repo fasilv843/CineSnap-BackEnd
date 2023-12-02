@@ -18,8 +18,13 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
         type: String,
         required: true
     },
-    overview: {
+    backdrop_path: {
         type: String
+    },
+    overview: {
+        type: String,
+        default: 'Overview not available',
+        required: true
     },
     language: {
         type: String,

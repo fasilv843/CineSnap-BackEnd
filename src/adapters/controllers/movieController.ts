@@ -1,69 +1,50 @@
 import { Request, Response } from "express";
 import { MovieUseCase } from "../../useCases/movieUseCase";
+import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
+import { ID } from "../../interfaces/common";
 
 
 
-export class MovieController { 
-    constructor (
+export class MovieController {
+    constructor(
         private movieUseCase: MovieUseCase
-    ) {}
+    ) { }
 
-    async getMovies(req: Request, res: Response){
-        try {
-            if(req.query.title){
-                console.log(req.query.title);
-                const movies = await this.movieUseCase.searchMovie(req.query.title as string) ///////
-                return res.status(200).json({movies})
-            }
-            const movies = await this.movieUseCase.findAllMovies()
-            res.status(200).json({movies})
-        } catch (error) {
-            const err: Error = error as Error
-            res.status(400).json({message: err.message})
+    async getMovies(req: Request, res: Response) {
+        const title = req.query.title as string
+        if (title) {
+            const apiRes = await this.movieUseCase.searchMovie(title)
+            return res.status(apiRes.status).json(apiRes)
         }
+        const apiRes = await this.movieUseCase.findAllMovies()
+        res.status(apiRes.status).json(apiRes)
     }
 
-    async getAvailableMovies(req: Request, res: Response){
-        try {
-            if(req.query.title){
-                console.log(req.query.title);
-                const movies = await this.movieUseCase.searchMovie(req.query.title as string) ///////
-                return res.status(200).json({movies})
-            }
-            const movies = await this.movieUseCase.findAvailableMovies()
-            res.status(200).json({movies})
-        } catch (error) {
-            const err: Error = error as Error
-            res.status(400).json({message: err.message})
-        }
+    async getBannerMovies(req: Request, res: Response) {
+        const apiRes = await this.movieUseCase.getBannerMovies()
+        res.status(apiRes.status).json(apiRes)
     }
 
-    async addMovie(req:Request, res: Response) {
-        try {
-            const { movie } = req.body
-            if(movie === undefined) throw Error('Movie is undefined, req.body dont have movie')
-            console.log(movie, 'movie from controller');
-            const isMovieExist = await this.movieUseCase.findMovieByTmdbId(movie.tmdbId)
-            if(isMovieExist !== null){
-                throw Error('Movie already exist in database')
-            }else{
-                await this.movieUseCase.saveMovie(movie)
-                res.status(200).json({message: 'Success'})
-            }
-        } catch (error) {
-            const err: Error = error as Error
-            res.status(400).json({message: err.message})
+    async getAvailableMovies(req: Request, res: Response) {
+        const title = req.query.title as string
+        if (title) {
+            const apiRes = await this.movieUseCase.searchMovie(title)
+            return res.status(apiRes.status).json(apiRes)
         }
+        const apiRes = await this.movieUseCase.findAvailableMovies()
+        res.status(apiRes.status).json(apiRes)
     }
 
-    async deleteMovie(req: Request, res: Response){
-        try {
-            const { movieId } = req.params
-            await this.movieUseCase.deleteMovie(movieId)
-            res.status(200).json({message: 'Success'})
-        } catch (error) {
-            const err: Error = error as Error
-            res.status(400).json({message: err.message})
-        }
+    async addMovie(req: Request, res: Response) {
+        const movie: ITMDBMovie = req.body
+        console.log(movie, 'movie from controller');
+        const apiRes = await this.movieUseCase.saveMovie(movie)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async deleteMovie(req: Request, res: Response) {
+        const movieId: ID = req.params.movieId as unknown as ID
+        const deleteRes = await this.movieUseCase.deleteMovie(movieId)
+        res.status(deleteRes.status).json()
     }
 }

@@ -27,7 +27,7 @@ const thrRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
 const tempUserRepository = new TempUserRepository()
 
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender,)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
 const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
 const movieUseCase = new MovieUseCase(movieRepository)
 
@@ -50,5 +50,6 @@ userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
 userRouter.get('/theater/:theaterId', (req,res) => tController.getTheaterData(req,res))
 userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))
 
+userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
 
 export default userRouter

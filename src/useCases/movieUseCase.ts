@@ -1,5 +1,7 @@
+import { STATUS_CODES } from "../constants/httpStausCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
-import { IMovie } from "../interfaces/schema/movieSchema";
+import { ID } from "../interfaces/common";
+import { IApiCSMovieRes, IApiCSMoviesRes, ITMDBMovie } from "../interfaces/schema/movieSchema";
 
 
 export class MovieUseCase {
@@ -7,24 +9,84 @@ export class MovieUseCase {
         private movieRepository: MovieRepository
     ) {}
 
-    async saveMovie(movieData: IMovie){
-        return await this.movieRepository.saveMovieDetails(movieData)
+    async saveMovie(movieData: ITMDBMovie): Promise<IApiCSMovieRes>{
+        try {
+            if(movieData === undefined) {
+                return {
+                    status: STATUS_CODES.BAD_REQUEST,
+                    message: 'Movie data did\'t recieved',
+                    data: null
+                }
+            }
+            const movie =  await this.movieRepository.saveMovieDetails(movieData)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: movie
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null
+            }
+        }
+
     }
 
-    async findAllMovies(){
-        return await this.movieRepository.findAllMovies()
+    async findAllMovies(): Promise<IApiCSMoviesRes>{
+        try {
+            const movies = await this.movieRepository.findAllMovies()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: movies
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: []
+            }
+        }
     }
 
-    async findAvailableMovies(){
-        return await this.movieRepository.findAvailableMovies()
+    async findAvailableMovies(): Promise<IApiCSMoviesRes>{
+        try {
+            const movies = await this.movieRepository.findAvailableMovies()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: movies
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: []
+            }
+        }
     }
 
-    async findMovieByTmdbId(id: number){
-        return await this.movieRepository.findMovieByTmdbId(id)
-    }
+    // async findMovieByTmdbId(id: number): Promise<IApiCSMovieRes>{
+    //     return await this.movieRepository.findMovieByTmdbId(id)
+    // }
 
-    async searchMovie(title: string){
-        return await this.movieRepository.findMovieByTitle(title)
+    async searchMovie(title: string): Promise<IApiCSMoviesRes>{
+        try {
+            const movies = await this.movieRepository.findMovieByTitle(title)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: movies
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: []
+            }
+        }
     }
 
     async findMovieByGenre(genreId: number){
@@ -43,7 +105,37 @@ export class MovieUseCase {
         return await this.movieRepository.findUpcomingMovies()
     }
 
-    async deleteMovie(id: string){
-        return await this.movieRepository.deleteMovie(id)
+    async deleteMovie(id: ID): Promise<IApiCSMovieRes>{
+        try {
+            await this.movieRepository.deleteMovie(id)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: null
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null
+            }
+        }
+    }
+
+    async getBannerMovies (): Promise<IApiCSMoviesRes> {
+        try {
+            const movies = await this.movieRepository.findBannerMovies()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: movies
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: []
+            }
+        }
     }
 }

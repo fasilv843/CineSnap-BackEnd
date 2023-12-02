@@ -1,22 +1,30 @@
 import { movieModel } from "../../entities/models/movieModel";
+import { ID } from "../../interfaces/common";
 import { IMovieRepo } from "../../interfaces/repos/movieRepo";
-import { IMovie } from "../../interfaces/schema/movieSchema";
+import { IMovie, ITMDBMovie } from "../../interfaces/schema/movieSchema";
 
 
 
 
 export class MovieRepository implements IMovieRepo {
 
-    async saveMovieDetails(movie: IMovie): Promise<IMovie> {
-        try {
-            console.log(movie.original_title);
-            
-            return await new movieModel(movie).save()
-        } catch (error) {
-            console.log('Error while saving movie details');
-            console.log(error); 
-            throw new Error('Failed to save movie details');
-        }
+    async saveMovieDetails(movie: ITMDBMovie): Promise<IMovie | null> {
+
+        return await movieModel.findOneAndUpdate(
+            { tmdbId: movie.tmdbId },
+            {
+                title: movie.title,
+                original_title: movie.original_title,
+                poster_path: movie.poster_path,
+                backdrop_path: movie.backdrop_path,
+                overview: movie.overview,
+                language: movie.language,
+                tmdbId: movie.tmdbId,
+                release_date: movie.release_date,
+                genre_ids: movie.genre_ids
+            },
+            { upsert: true }
+        )
     }
 
     async findAllMovies(): Promise<IMovie[]> {
@@ -24,15 +32,15 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findAvailableMovies(): Promise<IMovie[]> {
-        return await movieModel.find({isDeleted: false})
+        return await movieModel.find({ isDeleted: false })
     }
 
     async findMovieByTmdbId(id: number): Promise<IMovie | null> {
-        return await movieModel.findOne({tmdbId: id})
+        return await movieModel.findOne({ tmdbId: id })
     }
 
     async findMovieByLanguage(lang: string): Promise<IMovie[]> {
-        return await movieModel.find({language: lang}).hint({ language: 1 });
+        return await movieModel.find({ language: lang }).hint({ language: 1 });
     }
 
     async findMovieByGenre(genreId: number): Promise<IMovie[]> {
@@ -44,25 +52,42 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findMovieById(id: string): Promise<IMovie | null> {
-        return await movieModel.findById({_id: id})
-    }
-    
-    async findUpcomingMovies(): Promise<IMovie[]> {
-        return await movieModel.find({ release_date: { $gt: new Date()}})
+        return await movieModel.findById({ _id: id })
     }
 
-    async deleteMovie(id: string): Promise<void | null> {
-        try {
-            const movie = await movieModel.findById({_id: id})
-            if(movie !== null) {
-                movie.isDeleted = !movie.isDeleted
-                await movie.save()
-            }else{
-                throw Error('Something went wrong, movieId didt received')
-            }
-        } catch (error) {
-            throw Error('Error while deleting/adding movie')
+    async findUpcomingMovies(): Promise<IMovie[]> {
+        return await movieModel.find({ release_date: { $gt: new Date() } })
+    }
+
+    async deleteMovie(id: ID): Promise<void | null> {
+        const movie = await movieModel.findById({ _id: id })
+        if (movie !== null) {
+            movie.isDeleted = !movie.isDeleted
+            await movie.save()
+        } else {
+            throw Error('Something went wrong, movieId didt received')
         }
+    }
+
+    async findBannerMovies(): Promise<IMovie[]> {
+        const last10Days = new Date();
+        const upcoming15Days = new Date();
+
+        // Set last 10 days
+        last10Days.setDate(new Date().getDate() - 10);
+
+        // Set upcoming 15 days
+        upcoming15Days.setDate(new Date().getDate() + 15);
+
+        return await movieModel.find(
+            {
+                backdrop_path: { $ne: null },
+                release_date: {
+                    $gte: last10Days,
+                    $lte: upcoming15Days
+                }
+            }
+        ).limit(5)
     }
 
 }

@@ -12,18 +12,22 @@ import { UserRepository } from "../repositories/userRepository";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { TheaterRepository } from "../repositories/theaterRepository";
 import { adminAuth } from "../middleware/adminAuth";
+import { TempUserRepository } from "../repositories/tempUserRepository";
+import { MailSender } from "../../providers/nodemailer";
 const adminRouter = express.Router()
 
 const encrypt = new Encrypt()
 const jwtToken = new JWTToken()
+const mailSender = new MailSender()
 
 const adminRepository = new AdminRepository()
 const userRepository = new UserRepository()
 const theaterRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
+const tempUserRepository = new TempUserRepository()
 
 const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
-const userUseCase = new UserUseCase(userRepository ,encrypt, jwtToken)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
 const theateUseCase = new TheaterUseCase(theaterRepository, encrypt, jwtToken)
 const movieUseCase = new MovieUseCase(movieRepository)
 
