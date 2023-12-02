@@ -24,7 +24,7 @@ export class TempTheaterRepository implements ITempTheaterRepo {
         )
     }
 
-    async unsetTheaterOTP (id: ID, email: string ): Promise<ITempTheaterRes | null> {
+    async unsetTheaterOTP(id: ID, email: string): Promise<ITempTheaterRes | null> {
         return await tempTheaterModel.findByIdAndUpdate(
             { _id: id, email },
             { $unset: { otp: 1 } },
@@ -33,6 +33,16 @@ export class TempTheaterRepository implements ITempTheaterRepo {
     }
 
     async findTempTheaterById(id: ID): Promise<ITempTheaterRes | null> {
-        return await tempTheaterModel.findById({_id: id})
+        return await tempTheaterModel.findById({ _id: id })
+    }
+
+    async updateTheaterOTP(id: ID, email: string, OTP: number): Promise<ITempTheaterRes | null> {
+        return tempTheaterModel.findOneAndUpdate(
+            { _id: id, email },
+            {
+                $set: { otp: OTP }
+            },
+            { new: true }
+        )
     }
 }

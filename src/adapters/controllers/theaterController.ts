@@ -37,17 +37,11 @@ export class TheaterController {
         res.status(validationRes.status).json(validationRes)
     }
 
-    // async resendOTP(req:Request, res: Response) {
-    //     try {
-    //         const OTP = this.otpGenerator.generateOTP()
-    //         req.app.locals.OTP = OTP
-    //         this.mailer.sendMail(req.app.locals.userData.email, OTP)
-    //         res.status(200).json({message: 'OTP has been sent'})
-    //     } catch (error) {
-    //         console.log(error);
-    //         // next(error)
-    //     }
-    // }
+    async resendOTP(req:Request, res: Response) {
+        const authToken = req.headers.authorization;
+        const apiRes = await this.theaterUseCase.verifyAndSendNewOTP(authToken)
+        res.status(apiRes.status).json(apiRes)
+    }
 
     async theaterLogin(req: Request, res: Response) {
         const { email, password } = req.body as ITheaterAuth

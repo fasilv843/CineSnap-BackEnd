@@ -1,8 +1,8 @@
-import { IUserAddress, ICoords, IWalletHistory } from "../common"
+import { IUserAddress, ICoords, IWalletHistory, ID } from "../common"
 
 // interface specifically for userSchema
 export interface IUser {
-    _id: string
+    _id: ID
     name: string
     email: string
     password?: string
@@ -19,7 +19,7 @@ export interface IUser {
 
 // interface to respond to front end
 export interface IUserRes {
-    _id: string
+    _id: ID
     name: string
     email: string
     password?: string

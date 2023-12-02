@@ -11,7 +11,7 @@ export class UserRepository implements IUserRepo {
         return await new userModel(user).save()
     }
 
-    async findById(id: string): Promise< IUser | null > {
+    async findById(id: ID): Promise< IUser | null > {
         return await userModel.findById({_id: id})
     }
 
@@ -27,7 +27,7 @@ export class UserRepository implements IUserRepo {
         }
     }
 
-    async updateGoogleAuth(id: string, profilePic: string | undefined){
+    async updateGoogleAuth(id: ID, profilePic: string | undefined){
         try {
             const userData =  await userModel.findById({ _id: id })
             if(userData){

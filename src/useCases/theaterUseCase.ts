@@ -66,6 +66,47 @@ export class TheaterUseCase {
         }, OTP_TIMER)
     }
 
+    async verifyAndSendNewOTP(authToken: string | undefined): Promise<IApiTempTheaterRes> {
+        try {
+            if(authToken) {
+                const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
+                const tempTheater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
+                if (tempTheater) {
+                    const newOTP = this.otpGenerator.generateOTP()
+                    await this.tempTheaterRepository.updateTheaterOTP(tempTheater._id, tempTheater.email, newOTP)
+                    this.sendTimeoutOTP(tempTheater._id, tempTheater.email, newOTP)
+                    return {
+                        status: STATUS_CODES.OK,
+                        message: 'Success',
+                        data: null,
+                        token: ''
+                    }
+                } else {
+                    return {
+                        status: STATUS_CODES.UNAUTHORIZED,
+                        message: 'Unautherized',
+                        data: null,
+                        token: ''
+                    }
+                }
+            } else {
+                return {
+                    status: STATUS_CODES.BAD_REQUEST,
+                    message: 'Token in missing',
+                    data: null,
+                    token: ''
+                }
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null,
+                token: ''
+            }
+        }
+    }
+
     async validateAndSaveTheater (authToken: string | undefined, otp: number): Promise<IApiTheaterRes> {
         try {
             if(authToken) {

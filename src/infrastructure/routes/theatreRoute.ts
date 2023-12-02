@@ -32,6 +32,7 @@ const scnController = new ScreenController(scnUseCase)
 thrRouter.post('/register', (req, res) => tController.theaterRegister(req, res))
 thrRouter.post('/validateOTP', (req, res) =>  tController.validateTheaterOTP(req, res))
 thrRouter.post('/login', (req, res) => tController.theaterLogin(req, res))
+thrRouter.get('/resendOtp', (req, res) => tController.resendOTP(req, res))
 
 thrRouter.put('/update/:theaterId', (req, res) => tController.updateTheaterData(req, res))
 

@@ -47,15 +47,15 @@ export class UserUseCase {
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
-    async unsetOtp(id: string, email: string) {
+    async unsetOtp(id: ID, email: string) {
         return await this.tempUserRepository.unsetOtp(id, email)
     }
 
-    async updateOtp(id: string, email: string, OTP: number) {
+    async updateOtp(id: ID, email: string, OTP: number) {
         return await this.tempUserRepository.updateOTP(id, email, OTP)
     }
 
-    async findTempUserById(id: string){
+    async findTempUserById(id: ID){
         return await this.tempUserRepository.findById(id)
     }
 
@@ -89,7 +89,7 @@ export class UserUseCase {
         }
     }
 
-    sendTimeoutOTP(id: string, email: string, OTP: number) {
+    sendTimeoutOTP(id: ID, email: string, OTP: number) {
         try {
             this.mailer.sendMail(email, OTP)
                     
