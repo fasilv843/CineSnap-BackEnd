@@ -2,6 +2,7 @@ import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
 import { ICoords, ID } from "../../interfaces/common";
 import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
+import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 
 
 
@@ -59,14 +60,9 @@ export class TheaterRepository implements ITheaterRepo {
         }
     }
 
-    async saveTheater(theater: ITheater): Promise<ITheater> {
-        try {
-            console.log(theater, 'theater before saving from repository ...............................');
-            return await new theaterModel(theater).save()    
-        } catch (error) {
-            console.log(error);
-            throw Error('Error during saving theater details')
-        }
+    async saveTheater(theater: ITempTheaterRes): Promise<ITheater> {
+        const theaterData: Omit<ITempTheaterRes, '_id' | 'otp'> ={ ...JSON.parse(JSON.stringify(theater)), _id: undefined, otp: undefined }
+        return await new theaterModel(theaterData).save()
     }
 
     async findByEmail(email: string): Promise<ITheater | null> {

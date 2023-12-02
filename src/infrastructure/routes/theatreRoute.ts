@@ -9,21 +9,24 @@ import { JWTToken } from "../../providers/jwtToken";
 import { ScreenController } from "../../adapters/controllers/screenController";
 import { ScreenUseCase } from "../../useCases/screenUseCase";
 import { ScreenRepository } from "../repositories/screenRepository";
+import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
 
 // thr = theater
 const thrRouter = express.Router()
 
 const thrRepository = new TheaterRepository()
 const scnRepositoty = new ScreenRepository()
+const tempThrRepository = new TempTheaterRepository()
+
 const encrypt = new Encrypt()
 const jwtToken = new JWTToken()
-
-const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
-const scnUseCase = new ScreenUseCase(scnRepositoty)
 const mailer = new MailSender()
 const otpGenerator = new GenerateOtp()
 
-const tController = new TheaterController(thrUseCase, mailer, otpGenerator, encrypt)
+const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
+const scnUseCase = new ScreenUseCase(scnRepositoty)
+
+const tController = new TheaterController(thrUseCase)
 const scnController = new ScreenController(scnUseCase)
 
 thrRouter.post('/register', (req, res) => tController.theaterRegister(req, res))

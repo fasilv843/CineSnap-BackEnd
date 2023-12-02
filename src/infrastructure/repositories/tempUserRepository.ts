@@ -5,7 +5,7 @@ import { ITempUserReq, ITempUserRes } from "../../interfaces/schema/tempUserSche
 
 export class TempUserRepository implements ITempUserRepo {
     async saveUser(user: ITempUserReq): Promise<ITempUserRes> {
-        try {
+
             return await tempUserModel.findOneAndUpdate(
                 {email: user.email}, 
                 {
@@ -19,10 +19,7 @@ export class TempUserRepository implements ITempUserRepo {
                 }, 
                 {upsert: true, new: true, setDefaultsOnInsert: true}
             )  
-        } catch (error) {
-            console.log('error during saving user data on tempUsers');
-            throw Error('error during saving user data on tempUsers')
-        }
+
     }
     async findByEmail(email: string): Promise<ITempUserRes | null> {
         return await tempUserModel.findOne({ email })

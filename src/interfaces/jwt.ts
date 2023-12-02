@@ -1,3 +1,5 @@
+import { ID } from "./common";
+
 export interface JWT {
-    generateToken (userId: string) :string;
+    generateToken (userId: ID) :string;
 }

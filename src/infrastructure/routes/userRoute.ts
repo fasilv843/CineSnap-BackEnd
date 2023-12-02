@@ -13,6 +13,7 @@ import { MovieController } from "../../adapters/controllers/movieController";
 import { MovieUseCase } from "../../useCases/movieUseCase";
 import { MovieRepository } from "../repositories/movieRepository";
 import { TempUserRepository } from "../repositories/tempUserRepository";
+import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
 
 const userRouter = express.Router()
 
@@ -26,13 +27,14 @@ const userRepository = new UserRepository()
 const thrRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
 const tempUserRepository = new TempUserRepository()
+const tempThrRepository = new TempTheaterRepository()
 
 const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const thrUseCase = new TheaterUseCase(thrRepository, encrypt, jwtToken)
+const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
 const movieUseCase = new MovieUseCase(movieRepository)
 
 const uController = new UserController(userUseCase, otpGenerator, encrypt )
-const tController = new TheaterController(thrUseCase, mailer, otpGenerator, encrypt)
+const tController = new TheaterController(thrUseCase)
 const mController = new MovieController(movieUseCase)
 
 

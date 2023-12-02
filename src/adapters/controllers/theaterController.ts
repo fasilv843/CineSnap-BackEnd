@@ -1,79 +1,40 @@
 import { Request, Response } from "express";
 import { ITheaterAuth, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
-import { Encrypt } from "../../providers/bcryptPassword";
-import { MailSender } from "../../providers/nodemailer";
-import { GenerateOtp } from "../../providers/otpGenerator";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { ICoords, ID, ITheaterAddress } from "../../interfaces/common";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { TheaterShowLimit, maxDistance } from "../../constants/constants";
+import { ITempTheaterReq } from "../../interfaces/schema/tempTheaterSchema";
 
 
 
 export class TheaterController {
-    constructor (
-        private theaterUseCase : TheaterUseCase,
-        private mailer: MailSender,
-        private otpGenerator : GenerateOtp,
-        private encrypt : Encrypt
-    ){}
+    constructor(
+        private theaterUseCase: TheaterUseCase
+    ) { }
 
-    async theaterRegister (req:Request, res:Response){
-        try {
-            const { name, email, password, liscenceId } = req.body as ITheaterAuth
-            const { longitude, latitude } = req.body as { longitude: number, latitude: number }
-            const { country, state, district, city, zip, landmark  } = req.body as ITheaterAddress
+    async theaterRegister(req: Request, res: Response) {
+        const { name, email, password, liscenceId } = req.body as ITheaterAuth
+        const { longitude, latitude } = req.body as { longitude: number, latitude: number }
+        const { country, state, district, city, zip, landmark } = req.body as ITheaterAddress
 
-            console.log(longitude, latitude);
-            
-            const isEmailExist = await this.theaterUseCase.isEmailExist(email);
-
-            if(!isEmailExist){
-                const OTP = this.otpGenerator.generateOTP()
-                this.mailer.sendMail(email, OTP)
-                console.log(OTP,'OTP');
-                req.app.locals.OTP = OTP;
-
-                const securePassword = await this.encrypt.encryptPassword(password)
-                const address: ITheaterAddress = { country, state, district, city, zip, landmark }
-                const coords: ICoords = {
-                    type: 'Point',
-                    coordinates: [longitude, latitude]
-                } 
-                const theaterData: ITheaterAuth = { 
-                    name, email, liscenceId, password: securePassword,
-                    address, coords
-                }
-                
-                req.app.locals.theaterData = theaterData;
-                res.status(STATUS_CODES.OK).json({message: 'OTP Successfully sent'})
-            }else{
-                res.status(400).json({message: 'Email Already Exist in CineSnap'})
-            }
-
-        } catch (error) {
-            console.log(error);
-            res.status(400).json({message: 'Error While registering'})
+        const address: ITheaterAddress = { country, state, district, city, zip, landmark }
+        const coords: ICoords = {
+            type: 'Point',
+            coordinates: [longitude, latitude]
         }
+        console.log(coords, 'coords');
+        const theaterData: ITempTheaterReq = { name, email, liscenceId, password, address, coords, otp: 0 }
+
+        const authRes = await this.theaterUseCase.verifyAndSaveTemporarily(theaterData)
+        res.status(authRes.status).json(authRes)
     }
 
-    async validateTheaterOTP (req:Request, res:Response){
-        try {
-            console.log(req.body?.otp, req.app.locals.OTP)
-            console.log(req.body);
-            if(req.body?.otp == req.app.locals.OTP){
-                await this.theaterUseCase.saveTheater(req.app.locals.theaterData)
-                req.app.locals.theaterData = null
-                console.log('user details saved, setting status 200');
-                res.status(STATUS_CODES.OK).json()
-            }else{
-                console.log('otp didnt match');
-                res.status(400).json({status: false, message: 'Invalid OTP'})
-            }
-        } catch (error) {
-            console.log(error);
-            
-        }
+    async validateTheaterOTP(req: Request, res: Response) {
+        const { otp } = req.body
+        const authToken = req.headers.authorization;
+        const validationRes = await this.theaterUseCase.validateAndSaveTheater(authToken, otp)
+        res.status(validationRes.status).json(validationRes)
     }
 
     // async resendOTP(req:Request, res: Response) {
@@ -88,52 +49,34 @@ export class TheaterController {
     //     }
     // }
 
-    async theaterLogin (req:Request, res:Response){
-        try {
-            const { email, password } = req.body as ITheaterAuth
-            const authData = await this.theaterUseCase.verifyLogin(email, password)
-            res.status(authData.status).json(authData)
-        } catch (error) {
-            console.log(error);
-        }
+    async theaterLogin(req: Request, res: Response) {
+        const { email, password } = req.body as ITheaterAuth
+        const authData = await this.theaterUseCase.verifyLogin(email, password)
+        res.status(authData.status).json(authData)
     }
 
-    
-    // async logout(req:Request, res: Response){
-    //     try {
-    //         res.cookie('JWT','',{
-    //             httpOnly: true,
-    //             expires: new Date()
-    //         })
-    //         res.status(200).json({message: 'user logged out'})
-    //     } catch (error) {
-    //         console.log(error);
-    //         // next(error)
-    //     }
-    // }
-
-    async loadTheaters (req: Request, res: Response) {
+    async loadTheaters(req: Request, res: Response) {
         try {
             const longitude = parseFloat(req.query.longitude as string)
             const latitude = parseFloat(req.query.latitude as string)
 
             console.log('on load theateres controller', longitude, latitude);
-            
-            if ( isNaN(longitude) || isNaN(latitude) ) {
+
+            if (isNaN(longitude) || isNaN(latitude)) {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
             }
 
             const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, TheaterShowLimit, maxDistance)
             console.log(nearestTheater);
-            
-            res.status(STATUS_CODES.OK).json({message: 'Success', data: nearestTheater})
+
+            res.status(STATUS_CODES.OK).json({ message: 'Success', data: nearestTheater })
         } catch (error) {
             const err = error as Error
-            res.status(400).json({messge: err.message})
+            res.status(400).json({ messge: err.message })
         }
     }
 
-    async updateTheaterData (req: Request, res: Response) {
+    async updateTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const { address, coords, mobile, name } = req.body as ITheaterUpdate
         const theater: ITheaterUpdate = { name, mobile, address, coords }
@@ -141,7 +84,7 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
-    async getTheaterData (req: Request, res: Response) {
+    async getTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const apiRes = await this.theaterUseCase.getTheaterData(theaterId)
         res.status(apiRes.status).json(apiRes)
