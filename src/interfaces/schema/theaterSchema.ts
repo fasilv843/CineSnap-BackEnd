@@ -10,6 +10,7 @@ export interface ITheater {
     isBlocked: boolean
     profilePic?: string
     liscenceId: string
+    screenCount: number
     wallet: number
     walletHistory: IWalletHistory[] | []
     isGoogleAuth: boolean
@@ -26,6 +27,7 @@ export interface ITheaterRes {
     isBlocked: boolean
     profilePic?: string
     liscenceId: string
+    screenCount: number
     wallet: number
     walletHistory?: IWalletHistory[]
     coords: ICoords

@@ -34,6 +34,11 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         type: String,
         required: [true, 'Provide your Liscence ID']
     },
+    screenCount: {
+        type: Number,
+        default: 0,
+        required: true
+    },
     coords: {
         type: {
             type: String,

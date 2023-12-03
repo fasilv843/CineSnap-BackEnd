@@ -1,10 +1,12 @@
 import { IScreenRepo } from "../../interfaces/repos/screenRepo";
 import { IScreenRequirements, IScreen } from "../../interfaces/schema/screenSchema";
 import { screenModel } from "../../entities/models/screensModel";
+import { theaterModel } from "../../entities/models/theaterModel"; 
 import { ID } from "../../interfaces/common";
+import mongoose from "mongoose";
 
 export class ScreenRepository implements IScreenRepo {
-    async saveScreen(screen: IScreenRequirements): Promise<IScreen> {
+    async saveScreen(screen: IScreenRequirements): Promise<IScreen | null> {
         console.log(screen, 'screen data from repository');
         const { row, col } = screen
         console.log(row, col);
@@ -26,7 +28,24 @@ export class ScreenRepository implements IScreenRepo {
             screenData.seats.set(char, rowArr)
         }
         console.log(screenData, 'screen data that saved on db');
-        return await new screenModel(screenData).save()
+
+        const session = await mongoose.connection.startSession();
+
+        try {
+            let savedScreen: IScreen | null = null;
+            await session.withTransaction(async () => {
+                savedScreen = await new screenModel(screenData).save()
+                await theaterModel.updateOne({_id: screen.theaterId}, { $inc: { screenCount: 1 }})  
+            })
+            await session.commitTransaction()
+            return savedScreen
+        } catch (error) {
+            session.abortTransaction()
+            throw error
+        } finally {
+            session.endSession()
+        }
+        
     }
 
     async findScreenById(id: ID): Promise<IScreen | null> {
@@ -41,12 +60,9 @@ export class ScreenRepository implements IScreenRepo {
         const { row, col } = screen
         const rowCount = row.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
         const screenData: Omit<IScreen, '_id'> = {
-            theaterId: screen.theaterId,
-            name: screen.name,
+            theaterId: screen.theaterId, name: screen.name,
             defaultPrice: screen.defaultPrice,
-            row,
-            col,
-            seatsCount: rowCount * col,
+            row, col, seatsCount: rowCount * col,
             seats: new Map()
         }
 
@@ -65,6 +81,25 @@ export class ScreenRepository implements IScreenRepo {
     }
 
     async deleteScreen (screenId: ID) {
-        return await screenModel.findByIdAndDelete(screenId)
+
+        const session = await mongoose.connection.startSession(); // Use existing connection session
+
+        try {
+          await session.withTransaction(async () => {
+            const screen = await screenModel.findById(screenId);
+            if (!screen) throw Error('screen don\'t exist');
+      
+            await theaterModel.updateOne({ _id: screen.theaterId }, { $inc: { screenCount: -1 } });
+            await screenModel.deleteOne({ _id: screenId });
+          });
+      
+          await session.commitTransaction();
+          console.log('Screen deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting screen:', error);
+            await session.abortTransaction();
+        } finally {
+          await session.endSession(); // Close session after transaction
+        }
     }
 }
