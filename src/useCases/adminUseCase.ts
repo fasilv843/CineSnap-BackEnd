@@ -1,7 +1,7 @@
 // import { AuthRes } from "../Types/AuthRes";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
-import { IApiAdminRes } from "../interfaces/schema/adminSchema";
+import { IApiAdminAuthRes } from "../interfaces/schema/adminSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 
@@ -13,24 +13,27 @@ export class AdminUseCase {
         private jwtToken: JWTToken
     ){}
 
-    async verifyLogin(email:string, password: string): Promise<IApiAdminRes>{
+    async verifyLogin(email:string, password: string): Promise<IApiAdminAuthRes>{
         const adminData = await this.adminRepository.findByEmail(email)
         if(adminData !== null){
             const passwordMatch = await this.encrypt.comparePasswords(password, adminData.password)
             if(passwordMatch){
-                const token = this.jwtToken.generateToken(adminData._id)
+                const accessToken = this.jwtToken.generateAccessToken(adminData._id)
+                const refreshToken = this.jwtToken.generateRefreshToken(adminData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',
                     data: adminData,
-                    token
+                    accessToken,
+                    refreshToken
                 }
             }else{
                 return {
                     status: STATUS_CODES.UNAUTHORIZED,
                     message: 'Invalid Email or Password',
                     data : null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             }
         }else{
@@ -38,7 +41,8 @@ export class AdminUseCase {
                 status: STATUS_CODES.UNAUTHORIZED,
                 message: 'Invalid Email or Password',
                 data: null,
-                token: ''
+                accessToken: '',
+                refreshToken: ''
             }
         }
     }

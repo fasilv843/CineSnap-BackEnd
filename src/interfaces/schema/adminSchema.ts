@@ -1,7 +1,7 @@
-import { IWalletHistory } from "../common"
+import { ID, IWalletHistory } from "../common"
 
 export interface IAdmin {
-    _id: string
+    _id: ID
     email: string
     password: string,
     wallet: number
@@ -19,4 +19,12 @@ export interface IApiAdminRes {
     message: string
     data: IAdminRes | null
     token: string
+}
+
+export interface IApiAdminAuthRes {
+    status: number
+    message: string
+    data: IAdminRes | null
+    accessToken: string
+    refreshToken: string
 }
