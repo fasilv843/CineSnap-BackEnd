@@ -53,6 +53,14 @@ export interface IApiTheaterRes {
     token: string
 }
 
+export interface IApiTheaterAuthRes {
+    status: number
+    message: string
+    data: ITheaterRes | null
+    accessToken: string
+    refreshToken: string
+}
+
 export interface IApiTheatersRes {
     status: number
     message: string

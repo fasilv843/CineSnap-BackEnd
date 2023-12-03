@@ -4,7 +4,7 @@ import { TempTheaterRepository } from "../infrastructure/repositories/tempTheate
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { ID } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq } from "../interfaces/schema/tempTheaterSchema";
-import { IApiTheaterRes, IApiTheatersRes, ITheaterUpdate } from "../interfaces/schema/theaterSchema";
+import { IApiTheaterAuthRes, IApiTheaterRes, IApiTheatersRes, ITheaterUpdate } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -38,7 +38,7 @@ export class TheaterUseCase {
 
                 const tempTheater = await this.tempTheaterRepository.saveTheater(theaterData)
                 this.sendTimeoutOTP(tempTheater._id, tempTheater.email, tempTheater.otp)
-                const userAuthToken = this.jwtToken.generateToken(tempTheater._id)
+                const userAuthToken = this.jwtToken.generateTempToken(tempTheater._id)
 
                 return {
                     status: STATUS_CODES.OK,
@@ -107,7 +107,7 @@ export class TheaterUseCase {
         }
     }
 
-    async validateAndSaveTheater (authToken: string | undefined, otp: number): Promise<IApiTheaterRes> {
+    async validateAndSaveTheater (authToken: string | undefined, otp: number): Promise<IApiTheaterAuthRes> {
         try {
             if(authToken) {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
@@ -115,19 +115,22 @@ export class TheaterUseCase {
                 if(theater) {
                     if(otp == theater.otp) {
                         const savedTheater = await this.theaterRepository.saveTheater(theater)
-                        const token = this.jwtToken.generateToken(savedTheater._id)
+                        const accessToken = this.jwtToken.generateAccessToken(savedTheater._id)
+                        const refreshToken = this.jwtToken.generateRefreshToken(savedTheater._id)
                         return {
                             status: STATUS_CODES.OK,
                             message: 'Success',
                             data: savedTheater,
-                            token
+                            accessToken,
+                            refreshToken
                         }
                     } else {
                         return {
                             status: STATUS_CODES.UNAUTHORIZED,
                             message: 'Incorrect OTP',
                             data: null,
-                            token: ''
+                            accessToken: '',
+                            refreshToken: ''
                         }
                     }
                 } else {
@@ -135,7 +138,8 @@ export class TheaterUseCase {
                         status: STATUS_CODES.UNAUTHORIZED,
                         message: 'Unautherized',
                         data: null,
-                        token: ''
+                        accessToken: '',
+                        refreshToken: ''
                     }
                 }
 
@@ -144,7 +148,8 @@ export class TheaterUseCase {
                     status: STATUS_CODES.UNAUTHORIZED,
                     message: 'Token is Missing',
                     data: null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             }
         } catch (error) {
@@ -152,7 +157,8 @@ export class TheaterUseCase {
                 status: STATUS_CODES.INTERNAL_SERVER_ERROR,
                 message: (error as Error).message,
                 data: null,
-                token: ''
+                accessToken: '',
+                refreshToken: ''
             }
         }
     }
@@ -166,7 +172,7 @@ export class TheaterUseCase {
         return Boolean(isUserExist)
     }
 
-    async verifyLogin(email: string, password: string): Promise<IApiTheaterRes> {
+    async verifyLogin(email: string, password: string): Promise<IApiTheaterAuthRes> {
         const theaterData = await this.theaterRepository.findByEmail(email)
         if (theaterData !== null) {
 
@@ -175,33 +181,38 @@ export class TheaterUseCase {
                     status: STATUS_CODES.FORBIDDEN,
                     message: 'You have been blocked by admin',
                     data: null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             }
 
             const passwordMatch = await this.encrypt.comparePasswords(password, theaterData.password)
             if (passwordMatch) {
-                const token = this.jwtToken.generateToken(theaterData._id)
+                const accessToken = this.jwtToken.generateAccessToken(theaterData._id)
+                const refreshToken = this.jwtToken.generateRefreshToken(theaterData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',
                     data: theaterData,
-                    token,
+                    accessToken,
+                    refreshToken
                 }
             } else {
                 return {
                     status: STATUS_CODES.UNAUTHORIZED,
                     message: 'Incorrect Password',
                     data: null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             }
         } else {
             return {
                 status: STATUS_CODES.UNAUTHORIZED,
                 message: 'Invalid Email',
-                token: '',
-                data: null
+                data: null,
+                accessToken: '',
+                refreshToken: ''
             }
         }
     }

@@ -1,5 +1,6 @@
 import { ID } from "./common";
 
 export interface JWT {
-    generateToken (userId: ID) :string;
+    generateAccessToken(id: ID): string
+    generateRefreshToken(id: ID): string
 }

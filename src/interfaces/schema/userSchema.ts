@@ -58,6 +58,14 @@ export interface IApiUserRes {
     token: string
 }
 
+export interface IApiUserAuthRes {
+    status: number
+    message: string
+    data: IUserRes | null
+    accessToken: string
+    refreshToken: string
+}
+
 // api response for multiple users as data
 export interface IApiUsersRes {
     status: number

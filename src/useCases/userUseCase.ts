@@ -5,7 +5,7 @@ import { TempUserRepository } from "../infrastructure/repositories/tempUserRepos
 import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ID } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserSocialAuth, IUserUpdate } from "../interfaces/schema/userSchema";
+import { IApiUserAuthRes, IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserSocialAuth, IUserUpdate } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -26,24 +26,26 @@ export class UserUseCase {
         return isUserExist
     }
 
-    async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserRes> {
+    async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserAuthRes> {
         const user = await this.userRepository.saveUser(userData)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         // const userRes: IUserRes = (({ ['password']: _, ...rest }) => rest)(user);
         console.log('user data saved, on usecase', user);
-        const token = this.jwt.generateToken(user._id)
+        const accessToken = this.jwt.generateAccessToken(user._id)
+        const refreshToken = this.jwt.generateRefreshToken(user._id)
         return {
             status: STATUS_CODES.OK,
             data: user,
             message: 'Success',
-            token
+            accessToken,
+            refreshToken
         }
     }
 
     async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
         const user = await this.tempUserRepository.saveUser(userData)
         console.log(user, 'temp user saved');
-        const userAuthToken = this.jwt.generateToken(user._id) 
+        const userAuthToken = this.jwt.generateTempToken(user._id) 
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
@@ -59,7 +61,7 @@ export class UserUseCase {
         return await this.tempUserRepository.findById(id)
     }
 
-    async handleSocialSignUp(name: string, email: string, profilePic: string | undefined){
+    async handleSocialSignUp(name: string, email: string, profilePic: string | undefined): Promise<IApiUserAuthRes>{
         const emailData = await this.isEmailExist(email)
         if(emailData === null){
             const userToSave = { name, email, profilePic, isGoogleAuth: true }
@@ -72,18 +74,21 @@ export class UserUseCase {
                     status: STATUS_CODES.FORBIDDEN,
                     message: 'You are blocked by admin',
                     data: null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             }else{
                 if(!emailData.isGoogleAuth) {
                     await this.userRepository.updateGoogleAuth(emailData._id, profilePic)
                 }
-                const token = this.jwt.generateToken(emailData._id)
+                const accessToken = this.jwt.generateAccessToken(emailData._id)
+                const refreshToken = this.jwt.generateRefreshToken(emailData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',
                     data: emailData,
-                    token
+                    accessToken,
+                    refreshToken
                 }
             }
         }
@@ -104,7 +109,7 @@ export class UserUseCase {
     }
 
 
-    async verifyLogin(email: string, password: string): Promise<IApiUserRes> {
+    async verifyLogin(email: string, password: string): Promise<IApiUserAuthRes> {
         const userData = await this.userRepository.findByEmail(email)
         if (userData !== null) {
             if (userData.isBlocked) {
@@ -112,24 +117,28 @@ export class UserUseCase {
                     status: STATUS_CODES.FORBIDDEN,
                     message: 'You are blocked by admin',
                     data: null,
-                    token: ''
+                    accessToken: '',
+                    refreshToken: ''
                 }
             } else {
                 const passwordMatch = await this.encrypt.comparePasswords(password, userData.password as string)
                 if (passwordMatch) {
-                    const token = this.jwt.generateToken(userData._id)
+                const accessToken = this.jwt.generateAccessToken(userData._id)
+                const refreshToken = this.jwt.generateRefreshToken(userData._id)
                     return {
                         status: STATUS_CODES.OK,
                         message: 'Success',
                         data: userData,
-                        token
+                        accessToken,
+                        refreshToken
                     }
                 }else{
                     return {
                         status: STATUS_CODES.UNAUTHORIZED,
                         message: 'Incorrect Password',
                         data: null,
-                        token: ''
+                        accessToken: '',
+                        refreshToken: ''
                     }
                 }
             }
@@ -139,7 +148,8 @@ export class UserUseCase {
             status: STATUS_CODES.UNAUTHORIZED,
             message: 'Invalid email or password!',
             data: null,
-            token: ''
+            accessToken: '',
+            refreshToken: ''
         };
 
     }

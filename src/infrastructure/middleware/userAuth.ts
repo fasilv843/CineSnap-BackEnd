@@ -11,7 +11,7 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction) 
         const token = req.headers.authorization
         if(token) {
             const decoded = jwt.verify(token.slice(7), process.env.JWT_SECRET_KEY as string ) as JwtPayload
-            const userData = await userRepository.findById(decoded.userId)
+            const userData = await userRepository.findById(decoded.id)
             if(userData !== null){
                 // req.userId = userData?._id
                 if(userData.isBlocked){

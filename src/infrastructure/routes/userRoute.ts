@@ -14,6 +14,7 @@ import { MovieUseCase } from "../../useCases/movieUseCase";
 import { MovieRepository } from "../repositories/movieRepository";
 import { TempUserRepository } from "../repositories/tempUserRepository";
 import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
+import { userAuth } from "../middleware/userAuth";
 
 const userRouter = express.Router()
 
@@ -43,11 +44,10 @@ userRouter.post('/auth/google', (req, res) => uController.userSocialSignUp(req, 
 userRouter.post('/validateOtp', (req,res) => uController.validateUserOTP(req,res))
 userRouter.get('/resendOtp', (req,res) => uController.resendOTP(req,res))
 userRouter.post('/login', (req,res) => uController.userLogin(req,res))
-userRouter.post('/logout', (req,res) => uController.logout(req,res))
 
-userRouter.put('/update/:userId', (req,res) => uController.updateProfile(req,res))
+userRouter.put('/update/:userId', userAuth, (req,res) => uController.updateProfile(req,res))
 
-userRouter.get('/get/:userId',  (req,res) => uController.getUserData(req,res))
+userRouter.get('/get/:userId', userAuth,  (req,res) => uController.getUserData(req,res))
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
 userRouter.get('/theater/:theaterId', (req,res) => tController.getTheaterData(req,res))
 userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))

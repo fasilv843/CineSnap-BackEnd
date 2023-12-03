@@ -6,6 +6,7 @@ import cors from 'cors'
 import adminRouter from '../routes/adminRoute'
 import theatreRouter from '../routes/theatreRoute'
 import userRouter from '../routes/userRoute'
+import tokenRouter from '../routes/tokenRoute'
 
 export const createServer = () => {
     try {
@@ -24,7 +25,7 @@ export const createServer = () => {
         app.use('/api/admin', adminRouter)
         app.use('/api/theater', theatreRouter)
         app.use('/api/user', userRouter)
-
+        app.use('/api/token', tokenRouter)
         return app
 
     } catch (error) {
