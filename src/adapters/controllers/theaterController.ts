@@ -13,6 +13,7 @@ export class TheaterController {
         private theaterUseCase: TheaterUseCase
     ) { }
 
+    // To save non-verified theater data temporarily and send otp for verification
     async theaterRegister(req: Request, res: Response) {
         const { name, email, password, liscenceId } = req.body as ITheaterAuth
         const { longitude, latitude } = req.body as { longitude: number, latitude: number }
@@ -30,6 +31,7 @@ export class TheaterController {
         res.status(authRes.status).json(authRes)
     }
 
+    // To validate otp during registration
     async validateTheaterOTP(req: Request, res: Response) {
         const { otp } = req.body
         const authToken = req.headers.authorization;
@@ -37,12 +39,14 @@ export class TheaterController {
         res.status(validationRes.status).json(validationRes)
     }
 
+    // To resend otp if current one is already expired
     async resendOTP(req:Request, res: Response) {
         const authToken = req.headers.authorization;
         const apiRes = await this.theaterUseCase.verifyAndSendNewOTP(authToken)
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To authenticate theater login using email and password
     async theaterLogin(req: Request, res: Response) {
         const { email, password } = req.body as ITheaterAuth
         const authData = await this.theaterUseCase.verifyLogin(email, password)
@@ -70,6 +74,7 @@ export class TheaterController {
         }
     }
 
+    // to update a theater data, used in profile edit
     async updateTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const { address, coords, mobile, name } = req.body as ITheaterUpdate
@@ -78,6 +83,7 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To get all the data of a theater using theater id
     async getTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const apiRes = await this.theaterUseCase.getTheaterData(theaterId)

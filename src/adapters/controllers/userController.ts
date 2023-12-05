@@ -111,7 +111,7 @@ export class UserController {
 
     async userLogin(req:Request, res: Response){
         try {
-            const { email, password } = req.body as IUser & { isSocialSignUp: boolean}
+            const { email, password } = req.body as IUser
             const authData = await this.userUseCase.verifyLogin(email, password as string)
             res.status(authData.status).json(authData)
         } catch (error) {
@@ -131,25 +131,14 @@ export class UserController {
         }
     }
 
-    async logout(req:Request, res: Response){
-        try {
-            res.cookie('JWT','',{
-                httpOnly: true,
-                expires: new Date()
-            })
-            res.status(STATUS_CODES.OK).json({message: 'user logged out'})
-        } catch (error) {
-            console.log(error);
-            // next(error)
-        }
-    }
-
+    // to get user data using userId
     async getUserData (req:Request, res: Response) {
         const userId: ID = req.params.userId as unknown as ID
         const apiRes = await this.userUseCase.getUserData(userId)
         res.json(apiRes.status).json(apiRes)
     }
 
+    // To update user details from profile
     async updateProfile(req: Request, res: Response) {
         const user = req.body as IUserUpdate
         const userId: ID = req.params.userId as unknown as ID

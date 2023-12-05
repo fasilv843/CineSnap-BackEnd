@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from "mongoose";
 
-import { theaterAddressSchema } from "./common/addressSchema";
+import { theaterAddressSchema } from "./subSchema/addressSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 
 

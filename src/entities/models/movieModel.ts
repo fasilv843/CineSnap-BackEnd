@@ -2,7 +2,7 @@ import mongoose, { Model, Schema } from "mongoose";
 import { IMovie } from "../../interfaces/schema/movieSchema";
 import { GENRES } from "../../constants/genreIds";
 import { Languages } from "../../constants/langAbbreviation";
-import { reviewSchema } from "./common/reviewSchema";
+import { reviewSchema } from "./subSchema/reviewSchema";
 
 
 

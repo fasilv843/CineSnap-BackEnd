@@ -6,14 +6,8 @@ import { accessTokenExp, refreshTokenExp, tempTokenExp } from '../constants/cons
 
 
 export class JWTToken implements JWT{
-    // generateToken(id: ID): string {
-    //     const KEY = process.env.JWT_SECRET_KEY
-    //     if(KEY !== undefined){
-    //         return jwt.sign({id}, KEY)
-    //     }
-    //     throw new Error('JWT Key is not defined')
-    // }
 
+    // To generate access tokne
     generateAccessToken(id: ID): string {
         const KEY = process.env.JWT_SECRET_KEY
         if(KEY !== undefined){
@@ -23,6 +17,7 @@ export class JWTToken implements JWT{
         throw new Error('JWT Key is not defined')
     }
 
+    // To generate a refresh token
     generateRefreshToken(id: ID): string {
         const KEY = process.env.JWT_SECRET_KEY
         if(KEY !== undefined){
@@ -32,6 +27,7 @@ export class JWTToken implements JWT{
         throw new Error('JWT Key is not defined')
     }
 
+    // To generate a temporary token for authentication
     generateTempToken(id: ID): string {
         const KEY = process.env.JWT_SECRET_KEY
         if(KEY !== undefined){

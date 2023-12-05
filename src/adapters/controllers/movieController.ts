@@ -10,6 +10,7 @@ export class MovieController {
         private movieUseCase: MovieUseCase
     ) { }
 
+    // To get all the movies in database including deleted - For admin side
     async getMovies(req: Request, res: Response) {
         const title = req.query.title as string
         if (title) {
@@ -20,11 +21,13 @@ export class MovieController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To get movies to show on user Home, focusing on latest released movies
     async getBannerMovies(req: Request, res: Response) {
         const apiRes = await this.movieUseCase.getBannerMovies()
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To get all non deleted movies from the database
     async getAvailableMovies(req: Request, res: Response) {
         const title = req.query.title as string
         if (title) {
@@ -35,6 +38,7 @@ export class MovieController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To add a movie to CineSnap from TMDB
     async addMovie(req: Request, res: Response) {
         const movie: ITMDBMovie = req.body
         console.log(movie, 'movie from controller');
@@ -42,17 +46,20 @@ export class MovieController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To delete/hide a movie from users and theaters
     async deleteMovie(req: Request, res: Response) {
         const movieId: ID = req.params.movieId as unknown as ID
         const deleteRes = await this.movieUseCase.deleteMovie(movieId)
         res.status(deleteRes.status).json()
     }
 
+    // to get tmdb ids of movies that stored in CineSnap - used only in admin side
     async getCineSnapMovieIds (req: Request, res: Response) {
         const apiRes = await this.movieUseCase.getMovieIds()
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To get the filter data, based on which data that we are filtering
     async getFilters (req: Request, res: Response) {
         const apiRes = await this.movieUseCase.getFilters()
         res.status(apiRes.status).json(apiRes)

@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IAdmin } from "../../interfaces/schema/adminSchema";
-import { walletHistorySchema } from "./common/walletHistorySchema";
+import { walletHistorySchema } from "./subSchema/walletHistorySchema";
 
 const adminSchema: Schema = new Schema<IAdmin & Document>({
     email:{

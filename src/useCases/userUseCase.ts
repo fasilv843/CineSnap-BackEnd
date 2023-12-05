@@ -49,9 +49,9 @@ export class UserUseCase {
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
-    async unsetOtp(id: ID, email: string) {
-        return await this.tempUserRepository.unsetOtp(id, email)
-    }
+    // async unsetOtp(id: ID, email: string) {
+    //     return await this.tempUserRepository.unsetOtp(id, email)
+    // }
 
     async updateOtp(id: ID, email: string, OTP: number) {
         return await this.tempUserRepository.updateOTP(id, email, OTP)
@@ -94,12 +94,13 @@ export class UserUseCase {
         }
     }
 
+    // To send an otp to user that will expire after a certain period
     sendTimeoutOTP(id: ID, email: string, OTP: number) {
         try {
             this.mailer.sendMail(email, OTP)
                     
             setTimeout(async() => {
-                await this.unsetOtp(id, email)
+                await this.tempUserRepository.unsetOtp(id, email)
             }, OTP_TIMER)
 
         } catch (error) {

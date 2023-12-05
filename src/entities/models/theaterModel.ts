@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { ITheater } from "../../interfaces/schema/theaterSchema";
-import { theaterAddressSchema } from "./common/addressSchema";
-import { walletHistorySchema } from "./common/walletHistorySchema";
+import { theaterAddressSchema } from "./subSchema/addressSchema";
+import { walletHistorySchema } from "./subSchema/walletHistorySchema";
 
 
 

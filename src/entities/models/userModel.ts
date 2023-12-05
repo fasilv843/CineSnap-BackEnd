@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { IUser } from "../../interfaces/schema/userSchema"; 
 import { emailRegex } from "../../constants/constants";
-import { userAddressSchema } from "./common/addressSchema";
-import { walletHistorySchema } from "./common/walletHistorySchema";
+import { userAddressSchema } from "./subSchema/addressSchema";
+import { walletHistorySchema } from "./subSchema/walletHistorySchema";
 
 
 const userSchema: Schema = new Schema<IUser & Document>({
