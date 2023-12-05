@@ -92,7 +92,9 @@ export interface IApiCSMoviesRes {
     data: IMovie[] | []
 }
 
-// export interface IDuration {
-//     hours: number,
-//     minutes: number
-// }
+export interface IApiFilters {
+    status: number
+    message: string
+    genres: number[]
+    languages: string[]
+}

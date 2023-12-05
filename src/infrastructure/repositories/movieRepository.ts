@@ -48,8 +48,10 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findMovieByTitle(title: string): Promise<IMovie[]> {
-        return await movieModel.find({ $text: { $search: title }, isDeleted: false });
+        const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
+        return await movieModel.find({ title: regex, isDeleted: false });
     }
+    
 
     async findMovieById(id: string): Promise<IMovie | null> {
         return await movieModel.findById({ _id: id })
@@ -97,5 +99,17 @@ export class MovieRepository implements IMovieRepo {
             }
         ])
         return tmdbIds.map(item => item._id)
+    }
+
+    async getFilters () {
+        const languages = await movieModel.distinct('language').exec()
+        const result = await movieModel.aggregate([
+            { $unwind: '$genre_ids' }, // Unwind the array to individual documents
+            { $group: { _id: '$genre_ids' } }, // Group by genre_ids to get unique values
+            { $project: { _id: 0, genreId: '$_id' } }, // Project to rename _id to genreId
+        ]).exec();
+      
+        const genres = result.map(entry => entry.genreId);
+        return { languages, genres }
     }
 }

@@ -52,4 +52,9 @@ export class MovieController {
         const apiRes = await this.movieUseCase.getMovieIds()
         res.status(apiRes.status).json(apiRes)
     }
+
+    async getFilters (req: Request, res: Response) {
+        const apiRes = await this.movieUseCase.getFilters()
+        res.status(apiRes.status).json(apiRes)
+    }
 }

@@ -51,6 +51,7 @@ userRouter.get('/get/:userId', userAuth,  (req,res) => uController.getUserData(r
 userRouter.get('/theaters', (req,res) => tController.loadTheaters(req,res))
 userRouter.get('/theater/:theaterId', (req,res) => tController.getTheaterData(req,res))
 userRouter.get('/movies', (req, res) => mController.getAvailableMovies(req, res))
+userRouter.get('/filters', (req, res) => mController.getFilters(req, res))
 
 userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
 

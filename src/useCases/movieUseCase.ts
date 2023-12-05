@@ -1,7 +1,7 @@
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { ID } from "../interfaces/common";
-import { IApiCSMovieRes, IApiCSMoviesRes, ITMDBMovie } from "../interfaces/schema/movieSchema";
+import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../interfaces/schema/movieSchema";
 
 
 export class MovieUseCase {
@@ -152,6 +152,25 @@ export class MovieUseCase {
                 status: STATUS_CODES.INTERNAL_SERVER_ERROR,
                 message: (error as Error).message,
                 data: []
+            }
+        }
+    }
+
+    async getFilters (): Promise<IApiFilters> {
+        try {
+            const { languages, genres } = await this.movieRepository.getFilters()
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                genres,
+                languages 
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                genres: [],
+                languages: []
             }
         }
     }
