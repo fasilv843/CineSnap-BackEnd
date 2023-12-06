@@ -20,3 +20,15 @@ export interface IShow {
 export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' | 'availableSeatCount' | 'seats'> {}
 
 export interface IShowRes extends IShow {}
+
+export interface IApiShowsRes {
+    status: number
+    message: string
+    data: IShowRes[]
+}
+
+export interface IApiShowRes {
+    status: number
+    message: string
+    data: IShowRes | null
+}

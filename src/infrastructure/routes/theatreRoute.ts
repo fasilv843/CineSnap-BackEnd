@@ -11,6 +11,9 @@ import { ScreenUseCase } from "../../useCases/screenUseCase";
 import { ScreenRepository } from "../repositories/screenRepository";
 import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
 import { theaterAuth } from "../middleware/theaterAuth";
+import { ShowController } from "../../adapters/controllers/showController";
+import { ShowUseCase } from "../../useCases/showUseCase";
+import { ShowRepository } from "../repositories/showRepository";
 
 // thr = theater
 const thrRouter = express.Router()
@@ -18,6 +21,7 @@ const thrRouter = express.Router()
 const thrRepository = new TheaterRepository()
 const scnRepositoty = new ScreenRepository()
 const tempThrRepository = new TempTheaterRepository()
+const showRepository = new ShowRepository()
 
 const encrypt = new Encrypt()
 const jwtToken = new JWTToken()
@@ -26,9 +30,11 @@ const otpGenerator = new GenerateOtp()
 
 const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
 const scnUseCase = new ScreenUseCase(scnRepositoty)
+const showUseCase = new ShowUseCase(showRepository)
 
 const tController = new TheaterController(thrUseCase)
 const scnController = new ScreenController(scnUseCase)
+const showController = new ShowController(showUseCase)
 
 thrRouter.post('/register', (req, res) => tController.theaterRegister(req, res))
 thrRouter.post('/validateOTP', (req, res) =>  tController.validateTheaterOTP(req, res))
@@ -42,5 +48,7 @@ thrRouter.post('/screens/add/:theaterId', theaterAuth, (req, res) => scnControll
 thrRouter.get('/screens/get/:screenId', theaterAuth, (req, res) => scnController.findScreenById(req, res))
 thrRouter.put('/screens/edit/:screenId', theaterAuth, (req, res) => scnController.editScreen(req, res))
 thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnController.deleteScreen(req, res))
+
+thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
 
 export default thrRouter
