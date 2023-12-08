@@ -11,8 +11,19 @@ export const STATUS_CODES = {
     // Add more HTTP status codes as needed
   };
 
-  export const ERROR_MESSAGES = {
-    BAD_REQUEST: 'Your custom bad request message goes here.',
-    UNAUTHORIZED: 'Your custom unauthorized message goes here.',
-    // Add more custom error messages as needed
-  };
+interface ErrorMessage {
+  [errorCode: number]: string;
+}
+
+export const ERR_MESSAGE: ErrorMessage = {
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    500: 'Internal Server Error'
+    // Add more error codes and messages here
+};
+
+// // Example usage:
+// const errorCode = 403;
+// console.log(errorMessages[errorCode]); // Outputs: 'Forbidden'

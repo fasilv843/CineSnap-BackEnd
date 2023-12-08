@@ -17,9 +17,18 @@ export class ShowController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    // To add a new show
     async addShow (req: Request, res: Response) {
         const showReqs: IShowRequirements = req.body
         const apiRes = await this.showUseCase.addShow(showReqs)
         res.status(apiRes.status).json(apiRes)
     }
+
+    // Edit single fields instead of all details all at once
+    // async editShow (req: Request, res: Response) {
+    //     const showReqs: IShowRequirements = req.body
+    //     const showId = req.params.showId as unknown as ID
+    //     const apiRes = await this.showUseCase.editShow(showId, showReqs)
+    //     res.status(apiRes.status).json(apiRes)
+    // }
 }

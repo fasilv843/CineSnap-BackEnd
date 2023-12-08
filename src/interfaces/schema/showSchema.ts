@@ -19,6 +19,8 @@ export interface IShow {
 
 export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' | 'availableSeatCount' | 'seats'> {}
 
+export interface IShowUpdate extends Omit<IShowRequirements, 'seats'> {}
+
 export interface IShowRes extends IShow {}
 
 export interface IApiShowsRes {

@@ -30,7 +30,17 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
     seats: {
         type: Map,
         of: [Number]
-    }
+    },
+    // updatedSeats: {
+    //     type: Map,
+    //     of: [Number]
+    // },
+    // useSeatAfter: {
+    //     type: Date,
+    //     required(): boolean {
+    //         return this.updatedSeats !== null
+    //     }
+    // }
 })
 
 export const screenModel: Model<IScreen & Document> = mongoose.model<IScreen & Document>('Screens', ScreenSchema)

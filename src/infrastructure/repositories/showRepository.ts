@@ -48,6 +48,41 @@ export class ShowRepository implements IShowRepo {
         }
     }
 
+    // async editShow (showId: ID, show: IShowRequirements): Promise<IShowRes> {
+    //     const movie = await movieModel.findById(show.movieId) as IMovie
+    //     const screen = await screenModel.findById(show.screenId) as IScreen
+    //     if (screen !== null || movie !== null) {
+            // const showSeat: Map<string, Array<IShowSeat>> = new Map()
+
+            // for (const row of screen.seats.keys()) {
+            //     const rowArr = screen.seats.get(row)?.map(col => ({ col, isBooked: false })) || [];
+            //     showSeat.set(row, rowArr)
+            // }
+
+            // const startTime = new Date(show.startTime);
+            // console.log(startTime, 'show start time');
+
+            // const endTime = new Date(startTime);
+            // endTime.setHours(startTime.getHours() + movie.duration.hours);
+            // endTime.setMinutes(startTime.getMinutes() + movie.duration.minutes);
+
+            // const ticketPrice: number = show.ticketPrice ?? screen.defaultPrice
+            // const showTosave: Omit<IShow, '_id'> = {
+            //     movieId: show.movieId,
+            //     screenId: show.screenId,
+            //     startTime: show.startTime,
+            //     endTime,
+            //     ticketPrice,
+            //     seats: showSeat,
+            //     totalSeatCount: screen.seatsCount,
+            //     availableSeatCount: screen.seatsCount
+            // }
+            // return 
+    //     } else {
+    //         throw Error('screen or movie id is not available')
+    //     }
+    // }
+
     async findShowsOnDate  (theaterId: ID, date: Date): Promise<IShowRes[]> {
         console.log(date, 'date from repo');
         
