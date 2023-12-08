@@ -1,7 +1,7 @@
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { ID } from "../interfaces/common";
-import { IApiShowsRes } from "../interfaces/schema/showSchema";
+import { IApiShowRes, IApiShowsRes, IShowRequirements } from "../interfaces/schema/showSchema";
 
 export class ShowUseCase {
     constructor (
@@ -31,6 +31,32 @@ export class ShowUseCase {
                 status: STATUS_CODES.INTERNAL_SERVER_ERROR,
                 message: (error as Error).message,
                 data: []
+            }
+        }
+    }
+
+    async addShow(show: IShowRequirements): Promise<IApiShowRes> {
+        try {
+            console.log(show, 'show data from use case');
+            console.log(show.movieId, show.screenId, show.startTime);
+            if (!show.movieId || !show.screenId || !show.startTime) {
+                return {
+                    status: STATUS_CODES.BAD_REQUEST,
+                    message: 'Bad Request, data missing',
+                    data: null
+                }
+            }
+            const savedShow = await this.showRepository.saveShow(show)
+            return {
+                status: STATUS_CODES.OK,
+                message: 'Success',
+                data: savedShow
+            }
+        } catch (error) {
+            return {
+                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+                message: (error as Error).message,
+                data: null
             }
         }
     }

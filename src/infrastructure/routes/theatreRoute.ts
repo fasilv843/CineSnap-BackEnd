@@ -50,5 +50,7 @@ thrRouter.put('/screens/edit/:screenId', theaterAuth, (req, res) => scnControlle
 thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnController.deleteScreen(req, res))
 
 thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
+thrRouter.post('/show/add', (req, res) => showController.addShow(req, res))
+
 
 export default thrRouter
