@@ -1,4 +1,5 @@
-import { ID } from "../common"
+import { IApiRes, ID } from "../common"
+import { IMovie } from "./movieSchema"
 
 export interface IShowSeat {
     col: number
@@ -21,16 +22,21 @@ export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' 
 
 export interface IShowUpdate extends Omit<IShowRequirements, 'seats'> {}
 
-export interface IShowRes extends IShow {}
+export interface IShowRes {
+    movieId: IMovie
+    shows: Array<Omit<IShow, 'seats'>>
+}
 
 export interface IApiShowsRes {
     status: number
     message: string
-    data: IShowRes[]
+    data: IShowsOnAScreen[] | null
 }
 
-export interface IApiShowRes {
-    status: number
-    message: string
-    data: IShowRes | null
+export interface IApiShowRes extends IApiRes<IShow | null> { }
+
+export interface IShowsOnAScreen {
+    screenId: ID,
+    screenName: string
+    shows: IShowRes[]
 }

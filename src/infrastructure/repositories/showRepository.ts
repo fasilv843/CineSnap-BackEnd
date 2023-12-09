@@ -7,13 +7,13 @@ import { ID } from "../../interfaces/common";
 import { IShowRepo } from "../../interfaces/repos/showRepo";
 import { IMovie } from "../../interfaces/schema/movieSchema";
 import { IScreen } from "../../interfaces/schema/screenSchema";
-import { IShow, IShowRequirements, IShowRes, IShowSeat } from "../../interfaces/schema/showSchema";
+import { IShow, IShowRequirements, IShowRes, IShowSeat, IShowsOnAScreen } from "../../interfaces/schema/showSchema";
 
 
 
 
 export class ShowRepository implements IShowRepo {
-    async saveShow(show: IShowRequirements): Promise<IShowRes> {
+    async saveShow(show: IShowRequirements): Promise<IShow> {
         const movie = await movieModel.findById(show.movieId) as IMovie
         const screen = await screenModel.findById(show.screenId) as IScreen
         if (screen !== null || movie !== null) {
@@ -83,7 +83,7 @@ export class ShowRepository implements IShowRepo {
     //     }
     // }
 
-    async findShowsOnDate  (theaterId: ID, date: Date): Promise<IShowRes[]> {
+    async findShowsOnDate  (theaterId: ID, date: Date): Promise<IShowsOnAScreen[]> {
         console.log(date, 'date from repo');
         
         const startOfDay = new Date(date);
@@ -91,32 +91,81 @@ export class ShowRepository implements IShowRepo {
     
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
+        console.log('aggregate starting with ', theaterId);
 
-        const shows = await screenModel.aggregate([
-            { $match: { theaterId } },
-            {
-                $group: { _id: '$_id' }
-            },
-            {
-                $lookup: {
-                    from: 'Shows',
-                    localField: '_id',
-                    foreignField: 'screenId',
-                    as: 'shows'
-                }
-            },
-            {
-                $unwind: '$shows'
-            },
-            {
-                $match: {
-                    'shows.startTime': { $gte: startOfDay, $lte: endOfDay }
-                }
-            }
-        ])
+        // Step 1: Find screens that match the theaterId
+        const screens = await screenModel.find({ theaterId }) as unknown as IScreen[]
 
-        console.log(shows, 'shows from database');
-        return shows
+        // Step 2: Get shows for each screen within the specified time range
+        const showsPromises = screens.map(async (screen) => {
+            const screenShows = await showModel.find({
+                screenId: screen._id,
+                startTime: { $gte: startOfDay, $lte: endOfDay }
+            }).populate('movieId')
+            // const movieShows = screenShows.map((screen) => ({
+            //     movie: screen.movieId,
+            //     shows: [...screenShows]
+            // }));
+            const movieShowsMap: Record<string, IShowRes> = screenShows.reduce((acc: Record<string, IShowRes>, screen) => {
+                const { movieId, ...rest } = JSON.parse(JSON.stringify(screen));
+                const movie = movieId as unknown as IMovie
+                if (!acc[movie._id]) {
+                    acc[movie._id] = {
+                        movieId: movie,
+                        shows: []
+                    };
+                }
+                acc[movie._id].shows.push(rest);
+                return acc;
+            }, {});
+            
+            const movieShows = Object.values(movieShowsMap);
+                      
+            
+            return {
+                screenId: screen._id,
+                screenName: screen.name,
+                shows: movieShows
+            };
+        });
+
+        // Step 3: Wait for all show queries to complete
+        return await Promise.all(showsPromises) 
+
+        // const screens = await screenModel.find({ theaterId })
+        // console.log(screens, 'checking screens is available');
+        
+        // const theaterObjId = new mongoose.Types.ObjectId(theaterId as unknown as string)
+        // const shows = await screenModel.aggregate([
+        //     { $match: { theaterId: theaterObjId } },
+        //     {
+        //         $group: { _id: '$_id' }
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: 'Shows',
+        //             localField: '_id',
+        //             foreignField: 'screenId',
+        //             as: 'shows'
+        //         }
+        //     },
+        //     {
+        //         $unwind: '$shows'
+        //     },
+        //     {
+        //         $match: {
+        //             'shows.startTime': { $gte: startOfDay, $lte: endOfDay }
+        //         }
+        //     }
+        // ])
+        // const theaterObjId = new mongoose.Types.ObjectId(theaterId as unknown as string)
+        // const shows = await screenModel.aggregate([
+        //     { $match: { theaterId: theaterObjId } },
+        //     // Other stages...
+        // ]);
+
+        // console.log(shows, 'shows from database');
+        // return shows
     }
 
     // findShowsOnTheater (theaterId: ID) {

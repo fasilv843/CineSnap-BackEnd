@@ -1,5 +1,5 @@
-import { IShowRequirements, IShowRes } from "../schema/showSchema";
+import { IShow, IShowRequirements } from "../schema/showSchema";
 
 export interface IShowRepo {
-    saveShow(show: IShowRequirements): Promise<IShowRes>
+    saveShow(show: IShowRequirements): Promise<IShow>
 }

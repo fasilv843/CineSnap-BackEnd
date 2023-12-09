@@ -1,13 +1,7 @@
 import { ERR_MESSAGE, STATUS_CODES } from "../../constants/httpStausCodes";
-import { IShowRes } from "../../interfaces/schema/showSchema";
+import { SuccessTypes, IApiRes } from "../../interfaces/common";
 
-interface IApiRes<T extends IShowRes | null> {
-    status: number;
-    message: string;
-    data: T;
-}
-
-export function get200Response<T extends IShowRes>(data: T): IApiRes<T> {
+export function get200Response<T extends SuccessTypes>(data: T): IApiRes<T> {
     return {
         status: STATUS_CODES.OK,
         message: 'Success',

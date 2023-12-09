@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
 
 export type Location = [number, number];
 
@@ -27,6 +28,11 @@ export interface ICoords {
     coordinates: [number, number];
 }
 
-// export interface IRow {
-//     row: Set<number>;
-// }
+export type AllResTypes = IShowRes | IShowsOnAScreen[] | IShow | null;
+export type SuccessTypes = Exclude<AllResTypes, null>
+
+export interface IApiRes<T extends AllResTypes> {
+    status: number;
+    message: string;
+    data: T;
+}
