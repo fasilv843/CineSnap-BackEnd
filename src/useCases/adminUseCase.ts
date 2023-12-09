@@ -8,9 +8,9 @@ import { JWTToken } from "../providers/jwtToken";
 
 export class AdminUseCase {
     constructor(
-        private encrypt : Encrypt,
-        private adminRepository: AdminRepository,
-        private jwtToken: JWTToken
+        private readonly encrypt : Encrypt,
+        private readonly adminRepository: AdminRepository,
+        private readonly jwtToken: JWTToken
     ){}
 
     async verifyLogin(email:string, password: string): Promise<IApiAdminAuthRes>{

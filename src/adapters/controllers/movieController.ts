@@ -7,7 +7,7 @@ import { ID } from "../../interfaces/common";
 
 export class MovieController {
     constructor(
-        private movieUseCase: MovieUseCase
+        private readonly movieUseCase: MovieUseCase
     ) { }
 
     // To get all the movies in database including deleted - For admin side

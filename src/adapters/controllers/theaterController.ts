@@ -10,7 +10,7 @@ import { ITempTheaterReq } from "../../interfaces/schema/tempTheaterSchema";
 
 export class TheaterController {
     constructor(
-        private theaterUseCase: TheaterUseCase
+        private readonly theaterUseCase: TheaterUseCase
     ) { }
 
     // To save non-verified theater data temporarily and send otp for verification

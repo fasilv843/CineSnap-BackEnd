@@ -6,7 +6,7 @@ import { IApiShowRes, IApiShowsRes, IShowRequirements } from "../interfaces/sche
 
 export class ShowUseCase {
     constructor (
-        private showRepository: ShowRepository
+        private readonly showRepository: ShowRepository
     ) {}
 
     async findShowsOnTheater (theaterId: ID, dateStr: string | undefined): Promise<IApiShowsRes> {

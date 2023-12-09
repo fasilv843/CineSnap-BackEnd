@@ -1,43 +1,8 @@
 import express from "express";
-import { UserController } from "../../adapters/controllers/userController";
-import { UserUseCase } from "../../useCases/userUseCase";
-import { MailSender } from "../../providers/nodemailer";
-import { GenerateOtp } from "../../providers/otpGenerator";
-import { UserRepository } from "../repositories/userRepository";
-import { Encrypt } from "../../providers/bcryptPassword";
-import { JWTToken } from "../../providers/jwtToken"; 
-import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { TheaterController } from "../../adapters/controllers/theaterController";
-import { TheaterRepository } from "../repositories/theaterRepository";
-import { MovieController } from "../../adapters/controllers/movieController";
-import { MovieUseCase } from "../../useCases/movieUseCase";
-import { MovieRepository } from "../repositories/movieRepository";
-import { TempUserRepository } from "../repositories/tempUserRepository";
-import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
 import { userAuth } from "../middleware/userAuth";
+import { uController, tController, mController } from "../../providers/controllers";
 
 const userRouter = express.Router()
-
-const encrypt = new Encrypt()
-const jwtToken = new JWTToken()
-const mailer = new MailSender()
-const mailSender = new MailSender()
-const otpGenerator = new GenerateOtp()
-
-const userRepository = new UserRepository()
-const thrRepository = new TheaterRepository()
-const movieRepository = new MovieRepository()
-const tempUserRepository = new TempUserRepository()
-const tempThrRepository = new TempTheaterRepository()
-
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
-const movieUseCase = new MovieUseCase(movieRepository)
-
-const uController = new UserController(userUseCase, otpGenerator, encrypt )
-const tController = new TheaterController(thrUseCase)
-const mController = new MovieController(movieUseCase)
-
 
 userRouter.post('/register', (req, res) => uController.userRegister(req,res))
 userRouter.post('/auth/google', (req, res) => uController.userSocialSignUp(req, res))

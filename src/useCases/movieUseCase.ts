@@ -6,7 +6,7 @@ import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../int
 
 export class MovieUseCase {
     constructor (
-        private movieRepository: MovieRepository
+        private readonly movieRepository: MovieRepository
     ) {}
 
     async saveMovie(movieData: ITMDBMovie): Promise<IApiCSMovieRes>{

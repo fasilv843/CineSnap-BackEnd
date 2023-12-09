@@ -8,9 +8,9 @@ import { TheaterUseCase } from "../../useCases/theaterUseCase";
 
 export class AdminController {
     constructor(
-        private adminUseCase: AdminUseCase,
-        private userUseCase: UserUseCase,
-        private theaterUseCase: TheaterUseCase
+        private readonly adminUseCase: AdminUseCase,
+        private readonly userUseCase: UserUseCase,
+        private readonly theaterUseCase: TheaterUseCase
     ) {}
 
     async adminLogin(req:Request, res: Response ) {

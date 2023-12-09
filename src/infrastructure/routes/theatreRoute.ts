@@ -1,40 +1,9 @@
 import express from "express";
-import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { MailSender } from "../../providers/nodemailer";
-import { GenerateOtp } from "../../providers/otpGenerator";
-import { Encrypt } from "../../providers/bcryptPassword";
-import { TheaterController } from "../../adapters/controllers/theaterController";
-import { TheaterRepository } from "../repositories/theaterRepository";
-import { JWTToken } from "../../providers/jwtToken";
-import { ScreenController } from "../../adapters/controllers/screenController";
-import { ScreenUseCase } from "../../useCases/screenUseCase";
-import { ScreenRepository } from "../repositories/screenRepository";
-import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
 import { theaterAuth } from "../middleware/theaterAuth";
-import { ShowController } from "../../adapters/controllers/showController";
-import { ShowUseCase } from "../../useCases/showUseCase";
-import { ShowRepository } from "../repositories/showRepository";
+import { tController, scnController, showController } from "../../providers/controllers";
 
 // thr = theater
 const thrRouter = express.Router()
-
-const thrRepository = new TheaterRepository()
-const scnRepositoty = new ScreenRepository()
-const tempThrRepository = new TempTheaterRepository()
-const showRepository = new ShowRepository()
-
-const encrypt = new Encrypt()
-const jwtToken = new JWTToken()
-const mailer = new MailSender()
-const otpGenerator = new GenerateOtp()
-
-const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
-const scnUseCase = new ScreenUseCase(scnRepositoty)
-const showUseCase = new ShowUseCase(showRepository)
-
-const tController = new TheaterController(thrUseCase)
-const scnController = new ScreenController(scnUseCase)
-const showController = new ShowController(showUseCase)
 
 thrRouter.post('/register', (req, res) => tController.theaterRegister(req, res))
 thrRouter.post('/validateOTP', (req, res) =>  tController.validateTheaterOTP(req, res))

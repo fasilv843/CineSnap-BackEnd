@@ -11,9 +11,9 @@ import { ID } from "../../interfaces/common";
 
 export class UserController {
     constructor (
-        private userUseCase : UserUseCase,
-        private otpGenerator : GenerateOtp,
-        private encrypt : Encrypt
+        private readonly userUseCase : UserUseCase,
+        private readonly otpGenerator : GenerateOtp,
+        private readonly encrypt : Encrypt
     ){}
 
     async userRegister (req:Request, res: Response){

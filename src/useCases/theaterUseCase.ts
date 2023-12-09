@@ -14,12 +14,12 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export class TheaterUseCase {
     constructor(
-        private theaterRepository: TheaterRepository,
-        private tempTheaterRepository: TempTheaterRepository,
-        private encrypt: Encrypt,
-        private jwtToken: JWTToken,
-        private mailer: MailSender,
-        private otpGenerator: GenerateOtp,
+        private readonly theaterRepository: TheaterRepository,
+        private readonly tempTheaterRepository: TempTheaterRepository,
+        private readonly encrypt: Encrypt,
+        private readonly jwtToken: JWTToken,
+        private readonly mailer: MailSender,
+        private readonly otpGenerator: GenerateOtp,
     ) { }
 
     async verifyAndSaveTemporarily(theaterData: ITempTheaterReq): Promise<IApiTempTheaterRes> {

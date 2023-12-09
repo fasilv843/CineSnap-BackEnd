@@ -1,43 +1,7 @@
 import express from "express";
-import { AdminController } from "../../adapters/controllers/adminController";
-import { Encrypt } from "../../providers/bcryptPassword";
-import { AdminUseCase } from "../../useCases/adminUseCase";
-import { JWTToken } from "../../providers/jwtToken";
-import { AdminRepository } from "../repositories/adminRepository";
-import { MovieRepository } from "../repositories/movieRepository";
-import { MovieUseCase } from "../../useCases/movieUseCase";
-import { MovieController } from "../../adapters/controllers/movieController";
-import { UserUseCase } from "../../useCases/userUseCase";
-import { UserRepository } from "../repositories/userRepository";
-import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { TheaterRepository } from "../repositories/theaterRepository";
 import { adminAuth } from "../middleware/adminAuth";
-import { TempUserRepository } from "../repositories/tempUserRepository";
-import { MailSender } from "../../providers/nodemailer";
-import { TempTheaterRepository } from "../repositories/tempTheaterRepository";
-import { GenerateOtp } from "../../providers/otpGenerator";
+import { aController, mController } from "../../providers/controllers";
 const adminRouter = express.Router()
-
-const encrypt = new Encrypt()
-const jwtToken = new JWTToken()
-const mailSender = new MailSender()
-const otpGenerator = new GenerateOtp()
-
-const adminRepository = new AdminRepository()
-const userRepository = new UserRepository()
-const theaterRepository = new TheaterRepository()
-const movieRepository = new MovieRepository()
-const tempUserRepository = new TempUserRepository()
-const tempTheaterRepository = new TempTheaterRepository()
-
-const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const theateUseCase = new TheaterUseCase(theaterRepository, tempTheaterRepository, encrypt, jwtToken, mailSender, otpGenerator)
-const movieUseCase = new MovieUseCase(movieRepository)
-
-const aController = new AdminController(adminUseCase, userUseCase, theateUseCase)
-const mController =  new MovieController(movieUseCase)
-
 
 adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))
 adminRouter.get('/movies', adminAuth, (req, res) => mController.getMovies(req,res))

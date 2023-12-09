@@ -14,11 +14,11 @@ import { MailSender } from "../providers/nodemailer";
 
 export class UserUseCase {
     constructor(
-        private userRepository: UserRepository,
-        private tempUserRepository: TempUserRepository,
-        private encrypt: Encrypt,
-        private jwt: JWTToken,
-        private mailer: MailSender,
+        private readonly userRepository: UserRepository,
+        private readonly tempUserRepository: TempUserRepository,
+        private readonly encrypt: Encrypt,
+        private readonly jwt: JWTToken,
+        private readonly mailer: MailSender,
     ) { }
 
     async isEmailExist(email: string): Promise<IUser | null> {
@@ -28,8 +28,6 @@ export class UserUseCase {
 
     async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserAuthRes> {
         const user = await this.userRepository.saveUser(userData)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        // const userRes: IUserRes = (({ ['password']: _, ...rest }) => rest)(user);
         console.log('user data saved, on usecase', user);
         const accessToken = this.jwt.generateAccessToken(user._id)
         const refreshToken = this.jwt.generateRefreshToken(user._id)
@@ -48,10 +46,6 @@ export class UserUseCase {
         const userAuthToken = this.jwt.generateTempToken(user._id) 
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
-
-    // async unsetOtp(id: ID, email: string) {
-    //     return await this.tempUserRepository.unsetOtp(id, email)
-    // }
 
     async updateOtp(id: ID, email: string, OTP: number) {
         return await this.tempUserRepository.updateOTP(id, email, OTP)
