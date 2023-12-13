@@ -3,6 +3,7 @@ import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
 import { IChatRes } from "./schema/chatSchems";
 import { ITheaterRes } from "./schema/theaterSchema";
 import { IUserRes } from "./schema/userSchema";
+import { ITicketRes } from "./schema/ticketSchema";
 
 export type Location = [number, number];
 
@@ -31,7 +32,10 @@ export interface ICoords {
     coordinates: [number, number];
 }
 
-export type AllResTypes = ITheaterRes | ITheaterRes[] | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IShow | IChatRes | null;
+export type AllResTypes = ITheaterRes | ITheaterRes[] 
+            | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] 
+            | IShow | IChatRes | ITicketRes | ITicketRes[] | null;
+
 export type SuccessTypes = Exclude<AllResTypes, null>
 
 export interface IApiRes<T extends AllResTypes> {
