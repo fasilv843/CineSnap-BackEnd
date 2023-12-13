@@ -29,7 +29,8 @@ export const createServer = () => {
         return app
 
     } catch (error) {
-        const err : Error = error as Error
-        console.log(err.message);
+        console.log('error logging from createServer, from app.ts');
+        console.error('error caught from app')
+        console.log((error as Error).message);
     }
 }

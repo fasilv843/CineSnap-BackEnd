@@ -55,13 +55,9 @@ export interface IApiUserRes {
     status: number
     message: string
     data: IUserRes | null
-    token: string
 }
 
-export interface IApiUserAuthRes {
-    status: number
-    message: string
-    data: IUserRes | null
+export interface IApiUserAuthRes extends IApiUserRes {
     accessToken: string
     refreshToken: string
 }
@@ -70,6 +66,5 @@ export interface IApiUserAuthRes {
 export interface IApiUsersRes {
     status: number
     message: string
-    data: IUserRes[] | []
-    token: string
+    data: IUserRes[] | null
 }

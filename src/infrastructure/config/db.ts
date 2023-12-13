@@ -20,21 +20,3 @@ export const mongoConnect = async () => {
         process.exit(1);
     }
 }
-
-// const initializeIndexes = async () => {
-//     try {
-//         const moviesCollection: Collection = mongoose.connection.collection('movies');
-
-
-//         // Create a text index on the title and description fields
-//         await moviesCollection.createIndex(
-//             { title: 'text', overview: 'text' },
-//             { weights: { title: 3, overview: 1 }, default_language: 'english' }
-//         );
-
-//         console.log('Indexes initialized successfully');
-//     } catch (error) {
-//         const err: Error = error as Error;
-//         console.log(`Error initializing indexes: ${err.message}`);
-//     }
-// }

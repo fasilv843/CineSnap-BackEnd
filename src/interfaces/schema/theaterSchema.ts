@@ -50,7 +50,6 @@ export interface IApiTheaterRes {
     status: number
     message: string
     data: ITheaterRes | null
-    token: string
 }
 
 export interface IApiTheaterAuthRes {
@@ -64,6 +63,5 @@ export interface IApiTheaterAuthRes {
 export interface IApiTheatersRes {
     status: number
     message: string
-    data: ITheaterRes[]
-    token: string
+    data: ITheaterRes[] | null
 }

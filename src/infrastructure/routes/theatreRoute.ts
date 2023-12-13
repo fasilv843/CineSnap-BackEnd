@@ -1,6 +1,6 @@
 import express from "express";
 import { theaterAuth } from "../middleware/theaterAuth";
-import { tController, scnController, showController } from "../../providers/controllers";
+import { tController, scnController, showController, chatController } from "../../providers/controllers";
 
 // thr = theater
 const thrRouter = express.Router()
@@ -21,5 +21,7 @@ thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnCont
 thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
 thrRouter.post('/show/add', (req, res) => showController.addShow(req, res))
 
+thrRouter.get('/chat/users/:theaterId', (req, res) => chatController.getUsersChattedWith(req, res))
+thrRouter.get('/chat/history', (req, res) => chatController.getChatHistory(req, res))
 
 export default thrRouter

@@ -1,5 +1,8 @@
 import { Schema } from "mongoose";
 import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
+import { IChatRes } from "./schema/chatSchems";
+import { ITheaterRes } from "./schema/theaterSchema";
+import { IUserRes } from "./schema/userSchema";
 
 export type Location = [number, number];
 
@@ -28,7 +31,7 @@ export interface ICoords {
     coordinates: [number, number];
 }
 
-export type AllResTypes = IShowRes | IShowsOnAScreen[] | IShow | null;
+export type AllResTypes = ITheaterRes | ITheaterRes[] | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IShow | IChatRes | null;
 export type SuccessTypes = Exclude<AllResTypes, null>
 
 export interface IApiRes<T extends AllResTypes> {

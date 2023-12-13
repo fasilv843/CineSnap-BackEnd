@@ -1,5 +1,6 @@
 import { OTP_TIMER } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
+import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { ID } from "../interfaces/common";
@@ -220,20 +221,10 @@ export class TheaterUseCase {
     async getAllTheaters(): Promise<IApiTheatersRes> {
         try {
             const theaters = await this.theaterRepository.findAllTheaters()
-            return {
-                status: STATUS_CODES.OK,
-                message: 'Success',
-                data: theaters,
-                token: ''
-            }
+            return get200Response(theaters)
         } catch (error) {
             console.log(error);
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: 'Something went wrong',
-                data: [],
-                token: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -253,46 +244,23 @@ export class TheaterUseCase {
         try {
             const theaterData = await this.theaterRepository.updateTheater(theaterId, theater)
             if (theaterData !== null) {
-                return {
-                    status: STATUS_CODES.OK,
-                    message: 'Success',
-                    data: theaterData,
-                    token: ''
-                }
+                return get200Response(theaterData)
             } else {
-                return {
-                    status: STATUS_CODES.BAD_REQUEST,
-                    message: 'Bad Request, theaterId is not availble',
-                    data: null,
-                    token: ''
-                }
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Bad Request, theaterId is not availble')
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null,
-                token: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
     async getTheaterData(theaterId: ID): Promise<IApiTheaterRes> {
         try {
+            if (theaterId === undefined)  return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             const theater = await this.theaterRepository.findById(theaterId)
-            return {
-                status: STATUS_CODES.OK,
-                message: 'Success',
-                data: theater,
-                token: ''
-            }
+            if (theater === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            return get200Response(theater)
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null,
-                token: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
