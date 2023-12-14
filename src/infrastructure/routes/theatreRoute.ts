@@ -20,6 +20,7 @@ thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnCont
 
 thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
 thrRouter.post('/show/add', (req, res) => showController.addShow(req, res))
+// thrRouter.get('/show/get/:showId', (req, res) => showController.getShowDetails(req, res))
 
 thrRouter.get('/chat/users/:theaterId', (req, res) => chatController.getUsersChattedWith(req, res))
 thrRouter.get('/chat/history', (req, res) => chatController.getChatHistory(req, res))

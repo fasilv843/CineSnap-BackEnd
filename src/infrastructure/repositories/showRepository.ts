@@ -102,10 +102,7 @@ export class ShowRepository implements IShowRepo {
                 screenId: screen._id,
                 startTime: { $gte: startOfDay, $lte: endOfDay }
             }).populate('movieId')
-            // const movieShows = screenShows.map((screen) => ({
-            //     movie: screen.movieId,
-            //     shows: [...screenShows]
-            // }));
+
             const movieShowsMap: Record<string, IShowRes> = screenShows.reduce((acc: Record<string, IShowRes>, screen) => {
                 const { movieId, ...rest } = JSON.parse(JSON.stringify(screen));
                 const movie = movieId as unknown as IMovie
@@ -131,44 +128,9 @@ export class ShowRepository implements IShowRepo {
 
         // Step 3: Wait for all show queries to complete
         return await Promise.all(showsPromises) 
-
-        // const screens = await screenModel.find({ theaterId })
-        // console.log(screens, 'checking screens is available');
-        
-        // const theaterObjId = new mongoose.Types.ObjectId(theaterId as unknown as string)
-        // const shows = await screenModel.aggregate([
-        //     { $match: { theaterId: theaterObjId } },
-        //     {
-        //         $group: { _id: '$_id' }
-        //     },
-        //     {
-        //         $lookup: {
-        //             from: 'Shows',
-        //             localField: '_id',
-        //             foreignField: 'screenId',
-        //             as: 'shows'
-        //         }
-        //     },
-        //     {
-        //         $unwind: '$shows'
-        //     },
-        //     {
-        //         $match: {
-        //             'shows.startTime': { $gte: startOfDay, $lte: endOfDay }
-        //         }
-        //     }
-        // ])
-        // const theaterObjId = new mongoose.Types.ObjectId(theaterId as unknown as string)
-        // const shows = await screenModel.aggregate([
-        //     { $match: { theaterId: theaterObjId } },
-        //     // Other stages...
-        // ]);
-
-        // console.log(shows, 'shows from database');
-        // return shows
     }
 
-    // findShowsOnTheater (theaterId: ID) {
-
-    // }
+    async getShowDetails (showId: ID): Promise<IShow | null> {
+        return await showModel.findById(showId).populate('movieId')
+    }
 }

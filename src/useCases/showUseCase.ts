@@ -38,6 +38,20 @@ export class ShowUseCase {
         }
     }
 
+    async getShowDetails (showId: ID | undefined): Promise<IApiShowRes> {
+        try {
+            if (showId) {
+                const show = await this.showRepository.getShowDetails(showId)
+                if (show !== null) return get200Response(show)
+                else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            } else {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'showId is not availble')
+            }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
     // async editShow(showId: ID, show:IShowRequirements): Promise<IApiShowRes> {
     //     try {
     //         if (!show.movieId || !show.screenId || !show.startTime) {

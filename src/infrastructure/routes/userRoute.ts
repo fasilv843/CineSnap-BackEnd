@@ -1,6 +1,6 @@
 import express from "express";
 import { userAuth } from "../middleware/userAuth";
-import { uController, tController, mController, chatController } from "../../providers/controllers";
+import { uController, tController, mController, chatController, showController, ticketController } from "../../providers/controllers";
 
 const userRouter = express.Router()
 
@@ -20,5 +20,9 @@ userRouter.get('/filters', (req, res) => mController.getFilters(req, res))
 userRouter.get('/chat/theaters/:userId', (req, res) => chatController.getTheatersChattedWith(req, res))
 
 userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
+
+userRouter.get('/theater/show/get/:showId', (req, res) => showController.getShowDetails(req, res))
+userRouter.get('/show/seats/holded/:showId', (req, res) => ticketController.getHoldedSeats(req, res))
+userRouter.post('/book/ticket', (req, res) => ticketController.bookTicket(req, res))
 
 export default userRouter
