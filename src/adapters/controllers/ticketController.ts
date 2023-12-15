@@ -22,5 +22,12 @@ export class TicketController {
         const apiRes = await this.ticketUseCase.getHoldedSeats(showId)
         res.status(apiRes.status).json(apiRes)
     }
+
+    async getTempTicketData (req: Request, res: Response) { 
+        const ticketId = req.params.ticketId as unknown as ID
+        console.log('temp ticket id', ticketId);
+        const apiRes = await this.ticketUseCase.getTempTicketData(ticketId)
+        res.status(apiRes.status).json(apiRes)
+    }
 }
 

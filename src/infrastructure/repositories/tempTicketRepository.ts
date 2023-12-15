@@ -8,12 +8,12 @@ export class TempTicketRepository implements ITempTicketRepo {
     async saveTicketDataTemporarily (ticketData: ITicketReqs): Promise<ITempTicketRes> {
 
         const seats = getSeatMap(ticketData.seats)
-        console.log(ticketData, seats, 'ticket data from saveTickt, not implimented')
+        console.log(ticketData, seats, 'ticket data from saveTickt')
         return await new tempTicketModel({...ticketData, seats: seats}).save()
     }
 
     async getTicketData (ticketId: ID): Promise<ITempTicketRes | null> {
-        return await tempTicketModel.findById(ticketId)
+        return await tempTicketModel.findById(ticketId).populate('movieId').populate('showId').populate('screenId').populate('theaterId')
     }
 
     async deleteTicketData (tempTicketId: ID): Promise<boolean> {

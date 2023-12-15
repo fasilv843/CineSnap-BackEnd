@@ -30,4 +30,14 @@ export class TicketUseCase {
             return get500Response(error as Error)
         }
     }
+
+    async getTempTicketData (ticketId: ID): Promise<IApiTempTicketRes> {
+        try {
+            const ticketData = await this.tempTicketRepository.getTicketData(ticketId)
+            if (ticketData) return get200Response(ticketData)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
 }

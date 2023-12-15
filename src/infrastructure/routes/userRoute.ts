@@ -24,5 +24,6 @@ userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
 userRouter.get('/theater/show/get/:showId', (req, res) => showController.getShowDetails(req, res))
 userRouter.get('/show/seats/holded/:showId', (req, res) => ticketController.getHoldedSeats(req, res))
 userRouter.post('/book/ticket', (req, res) => ticketController.bookTicket(req, res))
+userRouter.get('/tempticket/get/:ticketId', (req, res) => ticketController.getTempTicketData(req, res) )
 
 export default userRouter
