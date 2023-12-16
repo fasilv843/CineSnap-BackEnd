@@ -34,7 +34,7 @@ export class ChatRepository { // implements IChatRepo
     // }
 
     async saveMessage (chatReqs: IChatReqs): Promise<IChatRes | null> {
-        console.log(chatReqs, 'chat data from repo');
+        // console.log(chatReqs, 'chat data from repo');
         
         return await chatModel.findOneAndUpdate(
             { 
@@ -64,14 +64,14 @@ export class ChatRepository { // implements IChatRepo
     async getTheatersChattedWith (userId: ID): Promise<ITheaterRes[]> {
         const allChats = await chatModel.find({ userId }).populate('theaterId')
         const theaters = allChats.map(chat => chat.theaterId)
-        console.log(theaters, 'theaters from get theaters for chats');
+        // console.log(theaters, 'theaters from get theaters for chats');
         return theaters as unknown as ITheaterRes[]
     }
 
     async getUsersChattedWith (theaterId: ID): Promise<IUserRes[]> {
         const allChats = await chatModel.find({ theaterId }).populate('userId')
         const users = allChats.map(chat => chat.userId)
-        console.log(users, 'users from get users for chats');
+        // console.log(users, 'users from get users for chats');
         return users as unknown as IUserRes[]
     }
 }

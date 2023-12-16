@@ -7,9 +7,9 @@ import mongoose from "mongoose";
 
 export class ScreenRepository implements IScreenRepo {
     async saveScreen(screen: IScreenRequirements): Promise<IScreen | null> {
-        console.log(screen, 'screen data from repository');
+        // console.log(screen, 'screen data from repository');
         const { row, col } = screen
-        console.log(row, col);
+        // console.log(row, col);
         const rowCount = row.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
         const screenData: Omit<IScreen, '_id'> = {
             theaterId: screen.theaterId,
@@ -27,7 +27,7 @@ export class ScreenRepository implements IScreenRepo {
         for(let char = 'A'; char <= row; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
             screenData.seats.set(char, rowArr)
         }
-        console.log(screenData, 'screen data that saved on db');
+        // console.log(screenData, 'screen data that saved on db');
 
         const session = await mongoose.connection.startSession();
 
@@ -72,7 +72,7 @@ export class ScreenRepository implements IScreenRepo {
         for(let char = 'A'; char <= row; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
             screenData.seats.set(char, rowArr)
         }
-        console.log(screenData, 'screen data that saved on db');
+        // console.log(screenData, 'screen data that saved on db');
         return await screenModel.findOneAndReplace(
             { _id: screenId, theaterId: screen.theaterId },
             screenData,
@@ -94,7 +94,7 @@ export class ScreenRepository implements IScreenRepo {
           });
       
           await session.commitTransaction();
-          console.log('Screen deleted successfully!');
+        //   console.log('Screen deleted successfully!');
         } catch (error) {
             console.error('Error deleting screen:', error);
             await session.abortTransaction();

@@ -25,6 +25,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@types/node": "^20.10.4",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -34,6 +35,7 @@
     "mongoose": "^8.0.0",
     "nodemailer": "^6.9.7",
     "socket.io": "^4.7.2",
+    "stripe": "^14.9.0",
     "sweetalert2": "^11.9.0"
   }
 }

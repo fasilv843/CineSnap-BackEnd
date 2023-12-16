@@ -9,6 +9,6 @@ export function getSeatMap(seats: ISelectedSeat[]): Map<string, number[]> {
             seatsMap.set(seat.row, [seat.col])
         }
     }
-    console.log(seatsMap, 'seatsMap from getSeatmap method')
+    // console.log(seatsMap, 'seatsMap from getSeatmap method')
     return seatsMap
 }

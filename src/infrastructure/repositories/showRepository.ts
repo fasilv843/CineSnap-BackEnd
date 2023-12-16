@@ -25,7 +25,7 @@ export class ShowRepository implements IShowRepo {
             }
 
             const startTime = new Date(show.startTime);
-            console.log(startTime, 'show start time');
+            // console.log(startTime, 'show start time');
 
             const endTime = new Date(startTime);
             endTime.setHours(startTime.getHours() + movie.duration.hours);
@@ -84,14 +84,14 @@ export class ShowRepository implements IShowRepo {
     // }
 
     async findShowsOnDate  (theaterId: ID, date: Date): Promise<IShowsOnAScreen[]> {
-        console.log(date, 'date from repo');
+        // console.log(date, 'date from repo');
         
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
     
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
-        console.log('aggregate starting with ', theaterId);
+        // console.log('aggregate starting with ', theaterId);
 
         // Step 1: Find screens that match the theaterId
         const screens = await screenModel.find({ theaterId }) as unknown as IScreen[]

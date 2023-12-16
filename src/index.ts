@@ -23,22 +23,22 @@ mongoConnect()
                   methods: ["GET", "POST"],
                 },
             });
-            console.log('created io from using Server');
+            // console.log('created io from using Server');
 
             const userSockets = new Map<string, string>();
             
             // Socket.IO logic for handling connections, events, etc.
             io.on('connection', (socket: Socket) => {
-                console.log('A user connected with socket id : ', socket.id);
+                // console.log('A user connected with socket id : ', socket.id);
                 const id = socket.handshake.query.id as string
-                console.log(id, 'user id from connection time');
+                // console.log(id, 'user id from connection time');
                 
                 userSockets.set(id, socket.id);
-                console.log(userSockets.get(id), 'socketid of user');
+                // console.log(userSockets.get(id), 'socketid of user');
                 
 
                 socket.on('send-message', async (chatData: IChatReqs) => {
-                    console.log(chatData, 'recieved message from id', socket.id)
+                    // console.log(chatData, 'recieved message from id', socket.id)
                     let recipientId: ID;
                     // let senderId: ID;
                     if (chatData.sender === 'User') {
@@ -52,7 +52,7 @@ mongoConnect()
                         // senderId = chatData.adminId as ID
                     }
                     // console.log(senderId, 'senderId');
-                    console.log(recipientId, 'recipientId');
+                    // console.log(recipientId, 'recipientId');
                     
                     const savedData = await chatUseCase.sendMessage(chatData)
                     socket.to(userSockets.get(recipientId as unknown as string) as string).emit('recieve-message', savedData);
@@ -60,7 +60,7 @@ mongoConnect()
                 });
 
                 socket.on('typing', (data: {name: string, sender: string, reciever: string}) => {
-                    console.log(data, 'typing data, emittig typing');
+                    // console.log(data, 'typing data, emittig typing');
                     const recipientId = data.reciever;
                     socket.to(userSockets.get(recipientId) as string).emit('typing', data);
                 });

@@ -10,7 +10,7 @@ const jwtToken = new JWTToken()
 tokenRouter.get('/', (req: Request, res: Response) => {
     try {
         const refreshToken = req.headers.authorization;
-        console.log(refreshToken, 'refresh token in tokenRouer');
+        // console.log(refreshToken, 'refresh token in tokenRouer');
         
         if(refreshToken) {
             const decoded = jwt.verify(refreshToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload;

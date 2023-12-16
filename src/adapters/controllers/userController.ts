@@ -19,20 +19,20 @@ export class UserController {
     async userRegister (req:Request, res: Response){
         try {
             const { name, email, password } = req.body as IUserAuth
-            console.log(name, email, password);
+            // console.log(name, email, password);
         
             const isEmailExist = await this.userUseCase.isEmailExist(email)
             if(isEmailExist === null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
-                console.log(OTP,'OTP');
+                // console.log(OTP,'OTP');
                 const securePassword = await this.encrypt.encryptPassword(password)
                 const user: ITempUserReq = { name, email, password: securePassword, otp:OTP }
                 const tempUser = await this.userUseCase.saveUserTemporarily(user)
 
                 this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
 
-                console.log('responding with 200');
+                // console.log('responding with 200');
                 res.status(STATUS_CODES.OK).json({message: 'Success', token: tempUser.userAuthToken })
             }else{
                 res.status(STATUS_CODES.FORBIDDEN).json({message: "Email already Exist"});
@@ -49,7 +49,7 @@ export class UserController {
             console.log(req.body.otp,'req.body.otp');
             const { otp } = req.body
             const authToken = req.headers.authorization;
-            console.log(authToken, 'authToken from validate otp');
+            // console.log(authToken, 'authToken from validate otp');
             
             if(authToken){
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
@@ -84,13 +84,13 @@ export class UserController {
         try {
 
             const authToken = req.headers.authorization;
-            console.log(authToken, 'authToken from resend otp');
+            // console.log(authToken, 'authToken from resend otp');
             if(authToken){
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
                 const tempUser = await this.userUseCase.findTempUserById(decoded.id)
                 if(tempUser){
                     const OTP = this.otpGenerator.generateOTP()
-                    console.log(tempUser, 'userData');
+                    // console.log(tempUser, 'userData');
                     console.log(OTP, 'new resend otp');
                     await this.userUseCase.updateOtp(tempUser._id, tempUser.email, OTP)
                     this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)

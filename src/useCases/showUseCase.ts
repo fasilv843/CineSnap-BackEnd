@@ -15,7 +15,7 @@ export class ShowUseCase {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Date is not available or invalid')
             }else {
                 const date = new Date(dateStr)
-                console.log(typeof date, 'type from usecase')
+                // console.log(typeof date, 'type from usecase')
                 const shows = await this.showRepository.findShowsOnDate(theaterId, date)
                 return get200Response(shows)
             }
@@ -26,8 +26,8 @@ export class ShowUseCase {
 
     async addShow(show: IShowRequirements): Promise<IApiShowRes> {
         try {
-            console.log(show, 'show data from use case');
-            console.log(show.movieId, show.screenId, show.startTime);
+            // console.log(show, 'show data from use case');
+            // console.log(show.movieId, show.screenId, show.startTime);
             if (!show.movieId || !show.screenId || !show.startTime) {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Bad Request, data missing')
             }

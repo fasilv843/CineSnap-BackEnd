@@ -11,7 +11,7 @@ export const theaterAuth = async (req: Request, res: Response, next: NextFunctio
         const token = req.headers.authorization
         if(token) {
             const decoded = jwt.verify(token.slice(7), process.env.JWT_SECRET_KEY as string ) as JwtPayload
-            console.log(decoded, 'decoded from theateAuth');
+            // console.log(decoded, 'decoded from theateAuth');
             
             const theaterData = await thrRepository.findById(decoded.id)
             if(theaterData !== null){

@@ -29,7 +29,7 @@ export class UserUseCase {
 
     async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserAuthRes> {
         const user = await this.userRepository.saveUser(userData)
-        console.log('user data saved, on usecase', user);
+        // console.log('user data saved, on usecase', user);
         const accessToken = this.jwt.generateAccessToken(user._id)
         const refreshToken = this.jwt.generateRefreshToken(user._id)
         return {
@@ -43,7 +43,7 @@ export class UserUseCase {
 
     async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
         const user = await this.tempUserRepository.saveUser(userData)
-        console.log(user, 'temp user saved');
+        // console.log(user, 'temp user saved');
         const userAuthToken = this.jwt.generateTempToken(user._id) 
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }

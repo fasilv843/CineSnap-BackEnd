@@ -29,9 +29,12 @@ export interface ITempTicketRes extends ITempTicket {}
 export interface IApiTempTicketRes extends IApiRes<ITempTicketRes | null> {}
 export interface IApiTempTicketsRes extends IApiRes<ITempTicketRes[]> {}
 
-export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | 'seats'> {
+export interface ITempTicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | 'seats'> {
     seats: ISelectedSeat[]
 }
+
+export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' > {}
+
 export interface ITicketRes extends ITicket {}
 export interface IApiTicketRes extends IApiRes<ITicketRes | null> {}
 export interface IApiTicketsRes extends IApiRes<ITicketRes[]> {}

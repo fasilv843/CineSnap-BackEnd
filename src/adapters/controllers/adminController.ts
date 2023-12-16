@@ -45,7 +45,7 @@ export class AdminController {
 
     async blockUser (req: Request, res: Response) {
         try {
-            console.log(req.params, 'req.params');
+            // console.log(req.params, 'req.params');
             await this.userUseCase.blockUser(req.params.userId as string)
             res.status(STATUS_CODES.OK).json()
         } catch (error) {
@@ -56,7 +56,7 @@ export class AdminController {
 
     async blockTheater (req: Request, res: Response) {
         try {
-            console.log(req.params, 'req.params');
+            // console.log(req.params, 'req.params');
             await this.theaterUseCase.blockTheater(req.params.theaterId as string)
             res.status(STATUS_CODES.OK).json()
         } catch (error) {

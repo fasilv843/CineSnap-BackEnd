@@ -54,7 +54,7 @@ chatSchema.index({ userId: 1, theaterId: 1, adminId: 1 }, { unique: true });
 // Custom validation function
 function validateParticipants(userId: ID | undefined, theaterId: ID | undefined, adminId: ID | undefined) {
     const fieldsCount = [userId, theaterId, adminId].filter(Boolean).length;
-    console.log('validating, count == 2', fieldsCount);
+    // console.log('validating, count == 2', fieldsCount);
     
     return fieldsCount === 2;
 }

@@ -24,7 +24,7 @@ export class TheaterController {
             type: 'Point',
             coordinates: [longitude, latitude]
         }
-        console.log(coords, 'coords');
+        // console.log(coords, 'coords');
         const theaterData: ITempTheaterReq = { name, email, liscenceId, password, address, coords, otp: 0 }
 
         const authRes = await this.theaterUseCase.verifyAndSaveTemporarily(theaterData)
@@ -58,14 +58,14 @@ export class TheaterController {
             const longitude = parseFloat(req.query.longitude as string)
             const latitude = parseFloat(req.query.latitude as string)
 
-            console.log('on load theateres controller', longitude, latitude);
+            // console.log('on load theateres controller', longitude, latitude);
 
             if (isNaN(longitude) || isNaN(latitude)) {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
             }
 
             const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, TheaterShowLimit, maxDistance)
-            console.log(nearestTheater);
+            // console.log(nearestTheater);
 
             res.status(STATUS_CODES.OK).json({ message: 'Success', data: nearestTheater })
         } catch (error) {

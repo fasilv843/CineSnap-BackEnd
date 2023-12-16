@@ -1,5 +1,5 @@
-import { ITempTicketRes, ITicketReqs } from "../schema/ticketSchema";
+import { ITempTicketRes, ITempTicketReqs } from "../schema/ticketSchema";
 
 export interface ITempTicketRepo {
-    saveTicketDataTemporarily (ticketData: ITicketReqs): Promise<ITempTicketRes>
+    saveTicketDataTemporarily (ticketData: ITempTicketReqs): Promise<ITempTicketRes>
 }

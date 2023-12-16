@@ -13,12 +13,12 @@ export const adminAuth = async (req: Request, res: Response, next: NextFunction)
       
       if (token) {
         
-        console.log(token.slice(7), 'token');
-        console.log(process.env.JWT_SECRET_KEY, 'jwt key');
+        // console.log(token.slice(7), 'token');
+        // console.log(process.env.JWT_SECRET_KEY, 'jwt key');
   
         try {
           const decoded = jwt.verify(token.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload;
-          console.log('decoded:', decoded); 
+          // console.log('decoded:', decoded); 
           
           const adminData = await adminRepository.findById(decoded.id);
   
