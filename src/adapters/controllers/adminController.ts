@@ -68,7 +68,8 @@ export class AdminController {
 
     async theaterApproval (req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
-        const action = req.query.action
-        const apiRes = this.theaterUseCase.theaterApproval(theaterId, action)
+        const action = req.query.action as string | undefined
+        const apiRes = await this.theaterUseCase.theaterApproval(theaterId, action)
+        res.status(apiRes.status).json(apiRes)
     }
 }

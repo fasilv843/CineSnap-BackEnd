@@ -23,6 +23,7 @@ export class TheaterRepository implements ITheaterRepo {
                         $maxDistance: radius,
                     },
                 },
+                approvalStatus: 'Approved'
             });
 
             return theaters;
@@ -34,45 +35,39 @@ export class TheaterRepository implements ITheaterRepo {
     }
 
     async getNearestTheatersByLimit(lon: number, lat: number, limit: number, maxDistance: number): Promise<ITheater[]> {
-        try {
-
-            const nearestTheaters: ITheater[] = await theaterModel.aggregate([
-                {
-                    $geoNear: {
-                        near: {
-                            type: 'Point',
-                            coordinates: [lon, lat],
-                        },
-                        distanceField: 'distance',
-                        spherical: true,
-                        maxDistance: maxDistance * 1000, // Convert maxDistance to meters
+        const nearestTheaters: ITheater[] = await theaterModel.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: 'Point',
+                        coordinates: [lon, lat],
                     },
+                    distanceField: 'distance',
+                    spherical: true,
+                    maxDistance: maxDistance * 1000, // Convert maxDistance to meters
                 },
-                { $sort: { distance: 1 } },
-                { $limit: limit },
-            ]);
+            },
+            { $match: { approvalStatus: 'Approved' } },
+            { $sort: { distance: 1 } },
+            { $limit: limit },
+        ]);
 
-            // console.log(nearestTheaters, 'nearest theaters from repository limit');
-            
-            return nearestTheaters;
-        } catch (error) {
-            throw new Error('Error fetching nearest theaters');
-        }
+        return nearestTheaters;
     }
 
     async saveTheater(theater: ITempTheaterRes): Promise<ITheater> {
-        const theaterData: Omit<ITempTheaterRes, '_id' | 'otp'> ={ ...JSON.parse(JSON.stringify(theater)), _id: undefined, otp: undefined }
+        const theaterData: Omit<ITempTheaterRes, '_id' | 'otp'> = { ...JSON.parse(JSON.stringify(theater)), _id: undefined, otp: undefined }
         return await new theaterModel(theaterData).save()
     }
 
     async findByEmail(email: string): Promise<ITheater | null> {
-        return await theaterModel.findOne({email})
+        return await theaterModel.findOne({ email })
     }
 
     async findById(id: ID): Promise<ITheater | null> {
-        return await theaterModel.findById({_id: id})
+        return await theaterModel.findById({ _id: id })
     }
-    
+
     // async findByLocation(location: ILocation): Promise<ITheater | null> {
     //     throw new Error("Method not implemented.");
     // }
@@ -81,13 +76,13 @@ export class TheaterRepository implements ITheaterRepo {
         return await theaterModel.find()
     }
 
-    async blockTheater (theaterId: string) {
+    async blockTheater(theaterId: string) {
         try {
-            const theater = await theaterModel.findById({_id: theaterId})
-            if(theater !== null){
+            const theater = await theaterModel.findById({ _id: theaterId })
+            if (theater !== null) {
                 theater.isBlocked = !theater.isBlocked
                 await theater.save()
-            }else{
+            } else {
                 throw Error('Something went wrong, theaterId did\'t received')
             }
         } catch (error) {
@@ -95,7 +90,7 @@ export class TheaterRepository implements ITheaterRepo {
         }
     }
 
-    async updateTheater (theaterId: ID, theater: ITheaterUpdate): Promise<ITheaterRes | null> {
+    async updateTheater(theaterId: ID, theater: ITheaterUpdate): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -108,7 +103,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async approveTheater (theaterId: ID): Promise<ITheaterRes | null> {
+    async approveTheater(theaterId: ID): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -118,7 +113,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async rejectTheater (theaterId: ID): Promise<ITheaterRes | null> {
+    async rejectTheater(theaterId: ID): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
