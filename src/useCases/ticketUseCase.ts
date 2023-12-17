@@ -3,7 +3,7 @@ import { get200Response, get500Response, getErrorResponse } from "../infrastruct
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { ID } from "../interfaces/common";
-import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, ITempTicketReqs, ITicketReqs } from "../interfaces/schema/ticketSchema";
+import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs } from "../interfaces/schema/ticketSchema";
 
 export class TicketUseCase {
     constructor (
@@ -65,6 +65,34 @@ export class TicketUseCase {
             } else {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getTicketsOfUser (userId: ID): Promise<IApiTicketsRes> {
+        try {
+            const ticketsOfUser = await this.ticketRepository.getTicketsByUserId(userId)
+            return get200Response(ticketsOfUser)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getTicketsOfShow (showId: ID): Promise<IApiTicketsRes> {
+        try {
+            const ticketsOfShow = await this.ticketRepository.getTicketsByShowId(showId)
+            return get200Response(ticketsOfShow)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async cancelTicket (ticketId: ID): Promise<IApiTicketRes> {
+        try {
+            const cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
+            if (cancelledTicket) return get200Response(cancelledTicket)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
             return get500Response(error as Error)
         }

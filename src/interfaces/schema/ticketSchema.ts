@@ -14,7 +14,7 @@ export interface ITicket {
     startTime: Date
     endTime: Date
     isCancelled: boolean
-    // status: string
+    paymentMethod: 'Wallet' | 'Stripe'
 }
 
 export interface ISelectedSeat {
@@ -37,7 +37,7 @@ export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' > {}
 
 export interface ITicketRes extends ITicket {}
 export interface IApiTicketRes extends IApiRes<ITicketRes | null> {}
-export interface IApiTicketsRes extends IApiRes<ITicketRes[]> {}
+export interface IApiTicketsRes extends IApiRes<ITicketRes[] | null> {}
 
 export type Seats = Map<string, number[]>[]
 export interface IApiSeatsRes extends IApiRes<Seats | null> {}

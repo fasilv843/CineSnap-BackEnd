@@ -3,7 +3,7 @@ import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
 import { ID } from "../../interfaces/common";
 import Stripe from "stripe";
-import { log } from "console";
+import { log, timeEnd } from "console";
 
 export class TicketController {
     constructor (
@@ -39,6 +39,25 @@ export class TicketController {
         const tempTicketId = req.body.ticketId as unknown as ID
         log(tempTicketId, 'tempId from controller')
         const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async getTicketsOfUser (req: Request, res: Response) { 
+        const userId = req.params.userId as unknown as ID
+        const apiRes = await this.ticketUseCase.getTicketsOfUser(userId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async getTicketsOfShow (req: Request, res: Response) { 
+        const showId = req.params.showId as unknown as ID
+        const apiRes = await this.ticketUseCase.getTicketsOfShow(showId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async cancelTicket (req: Request, res: Response) {
+        const ticketId = req.params.ticketId as unknown as ID
+        const apiRes = await this.ticketUseCase.cancelTicket(ticketId)
+        log(apiRes, 'response of cancelled ticket')
         res.status(apiRes.status).json(apiRes)
     }
 

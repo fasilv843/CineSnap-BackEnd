@@ -36,4 +36,23 @@ export class TicketRepository implements ITicketRepo {
         return await ticketModel.findById(ticketId).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
+
+    async getTicketsByUserId (userId: ID): Promise<ITicketRes[]> {
+        return ticketModel.find({ userId }).populate('movieId')
+        .populate('showId').populate('screenId').populate('theaterId')
+    }
+
+    async getTicketsByTheaterId (theaterId: ID): Promise<ITicketRes[]> {
+        return ticketModel.find({ theaterId }).populate('movieId')
+        .populate('showId').populate('screenId').populate('theaterId')
+    }
+
+    async getTicketsByShowId (showId: ID): Promise<ITicketRes[]> {
+        return ticketModel.find({ showId }).populate('movieId')
+        .populate('showId').populate('screenId').populate('theaterId')
+    }
+
+    async cancelTicket (ticketId: ID): Promise<ITicketRes | null> {
+        return ticketModel.findByIdAndUpdate({_id: ticketId}, { isCancelled: true })
+    }
 }

@@ -56,12 +56,12 @@ const ticketSchema: Schema = new Schema<ITicket & Document>({
         default: false,
         required: true
     },
-    // status: {
-    //     type: String,
-    //     default: 'Booked',
-    //     enum: ['Booked', 'Cancelled']
-    //     required: true
-    // }
+    paymentMethod: {
+        type: String,
+        enum: ['Wallet', 'Stripe'],
+        default: 'Stripe',  // Delete after Implementation
+        required: true
+    }
 })
 
 export const ticketModel: Model<ITicket & Document> = mongoose.model<ITicket & Document>('Tickets', ticketSchema)
