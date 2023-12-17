@@ -3,8 +3,8 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { ID } from "../interfaces/common";
-import { IApiTempTheaterRes, ITempTheaterReq } from "../interfaces/schema/tempTheaterSchema";
+import { IApiAuthRes, IApiTempAuthRes, ID } from "../interfaces/common";
+import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, IApiTheatersRes, ITheaterUpdate } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
@@ -23,16 +23,11 @@ export class TheaterUseCase {
         private readonly otpGenerator: GenerateOtp,
     ) { }
 
-    async verifyAndSaveTemporarily(theaterData: ITempTheaterReq): Promise<IApiTempTheaterRes> {
+    async verifyAndSaveTemporarily(theaterData: ITempTheaterReq): Promise<IApiTempAuthRes<ITempTheaterRes>> {
         try {
             const isEmailExist = await this.isEmailExist(theaterData.email);
             if (isEmailExist) {
-                return {
-                    status: STATUS_CODES.FORBIDDEN,
-                    message: 'Email Already Exist',
-                    data: null,
-                    token: ''
-                }
+                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Email Already Exist')
             } else {
                 theaterData.otp = this.otpGenerator.generateOTP()
                 theaterData.password = await this.encrypt.encryptPassword(theaterData.password)
@@ -49,12 +44,7 @@ export class TheaterUseCase {
                 }
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null,
-                token: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -69,52 +59,32 @@ export class TheaterUseCase {
 
     async verifyAndSendNewOTP(authToken: string | undefined): Promise<IApiTempTheaterRes> {
         try {
-            if(authToken) {
+            if (authToken) {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
                 const tempTheater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
                 if (tempTheater) {
                     const newOTP = this.otpGenerator.generateOTP()
                     await this.tempTheaterRepository.updateTheaterOTP(tempTheater._id, tempTheater.email, newOTP)
                     this.sendTimeoutOTP(tempTheater._id, tempTheater.email, newOTP)
-                    return {
-                        status: STATUS_CODES.OK,
-                        message: 'Success',
-                        data: null,
-                        token: ''
-                    }
+                    return get200Response(null)
                 } else {
-                    return {
-                        status: STATUS_CODES.UNAUTHORIZED,
-                        message: 'Unautherized',
-                        data: null,
-                        token: ''
-                    }
+                    return getErrorResponse(STATUS_CODES.UNAUTHORIZED, 'Unautherized')
                 }
             } else {
-                return {
-                    status: STATUS_CODES.BAD_REQUEST,
-                    message: 'Token in missing',
-                    data: null,
-                    token: ''
-                }
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Token in missing')
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null,
-                token: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
-    async validateAndSaveTheater (authToken: string | undefined, otp: number): Promise<IApiTheaterAuthRes> {
+    async validateAndSaveTheater(authToken: string | undefined, otp: number): Promise<IApiAuthRes> {
         try {
-            if(authToken) {
+            if (authToken) {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
                 const theater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
-                if(theater) {
-                    if(otp == theater.otp) {
+                if (theater) {
+                    if (otp == theater.otp) {
                         const savedTheater = await this.theaterRepository.saveTheater(theater)
                         const accessToken = this.jwtToken.generateAccessToken(savedTheater._id)
                         const refreshToken = this.jwtToken.generateRefreshToken(savedTheater._id)
@@ -126,41 +96,16 @@ export class TheaterUseCase {
                             refreshToken
                         }
                     } else {
-                        return {
-                            status: STATUS_CODES.UNAUTHORIZED,
-                            message: 'Incorrect OTP',
-                            data: null,
-                            accessToken: '',
-                            refreshToken: ''
-                        }
+                        return getErrorResponse(STATUS_CODES.UNAUTHORIZED, 'Incorrect OTP')
                     }
                 } else {
-                    return {
-                        status: STATUS_CODES.UNAUTHORIZED,
-                        message: 'Unautherized',
-                        data: null,
-                        accessToken: '',
-                        refreshToken: ''
-                    }
+                    return getErrorResponse(STATUS_CODES.UNAUTHORIZED, 'Unautherized')
                 }
-
             } else {
-                return {
-                    status: STATUS_CODES.UNAUTHORIZED,
-                    message: 'Token is Missing',
-                    data: null,
-                    accessToken: '',
-                    refreshToken: ''
-                }
+                return getErrorResponse(STATUS_CODES.UNAUTHORIZED, 'Token is Missing')
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null,
-                accessToken: '',
-                refreshToken: ''
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -240,6 +185,7 @@ export class TheaterUseCase {
         return await this.theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
     }
 
+    // To update theater data, from theater profile
     async updateTheater(theaterId: ID, theater: ITheaterUpdate): Promise<IApiTheaterRes> {
         try {
             const theaterData = await this.theaterRepository.updateTheater(theaterId, theater)
@@ -253,12 +199,35 @@ export class TheaterUseCase {
         }
     }
 
+    // To get theater data using theaterId
     async getTheaterData(theaterId: ID): Promise<IApiTheaterRes> {
         try {
-            if (theaterId === undefined)  return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            if (theaterId === undefined) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             const theater = await this.theaterRepository.findById(theaterId)
             if (theater === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             return get200Response(theater)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    // To approve or reject theater for admin when they register
+    async theaterApproval(theaterId: ID, action: string | undefined): Promise<IApiTheaterRes> {
+        try {
+            if (action !== 'approve' && action !== 'reject') {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            }
+
+            if (action === 'approve') {
+                const theater = await this.theaterRepository.approveTheater(theaterId)
+                if (theater) return get200Response(theater)
+                else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            } else {
+                const theater = await this.theaterRepository.rejectTheater(theaterId)
+                if (theater) return get200Response(theater)
+                else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            }
+
         } catch (error) {
             return get500Response(error as Error)
         }

@@ -1,4 +1,4 @@
-import { ICoords, ID, ITheaterAddress } from "../common"
+import { IApiRes, ICoords, ID, ITheaterAddress } from "../common"
 
 export interface ITempTheaterReq {
     name: string
@@ -16,9 +16,4 @@ export interface ITempTheaterRes extends ITempTheaterReq {
     expireAt: Date
 }
 
-export interface IApiTempTheaterRes {
-    status: number,
-    message: string,
-    data: ITempTheaterRes | null,
-    token: string
-}
+export interface IApiTempTheaterRes extends IApiRes<ITempTheaterRes | null> {}

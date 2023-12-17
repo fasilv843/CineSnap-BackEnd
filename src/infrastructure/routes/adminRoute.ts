@@ -11,6 +11,7 @@ adminRouter.get('/users', adminAuth, (req, res) => aController.getAllUsers(req,r
 adminRouter.patch('/users/block/:userId', adminAuth, (req, res) => aController.blockUser(req,res))
 adminRouter.get('/theaters', adminAuth, (req, res) => aController.getAllTheaters(req,res))
 adminRouter.patch('/theaters/block/:theaterId', adminAuth,  (req, res) => aController.blockTheater(req,res))
+adminRouter.patch('/theaters/approval/:theaterId', adminAuth,  (req, res) => aController.theaterApproval(req,res))
 adminRouter.get('/csmovies/get', adminAuth,  (req, res) => mController.getCineSnapMovieIds(req,res))
 
 export default adminRouter

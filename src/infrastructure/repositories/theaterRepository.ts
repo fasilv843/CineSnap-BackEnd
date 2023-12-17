@@ -108,4 +108,24 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
+    async approveTheater (theaterId: ID): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            {
+                approvalStatus: 'Approved'
+            },
+            { new: true }
+        )
+    }
+
+    async rejectTheater (theaterId: ID): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            {
+                approvalStatus: 'Rejected'
+            },
+            { new: true }
+        )
+    }
+
 }

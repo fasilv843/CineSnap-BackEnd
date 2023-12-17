@@ -4,6 +4,7 @@ import { IAdmin } from "../../interfaces/schema/adminSchema";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
+import { ID } from "../../interfaces/common";
 
 
 export class AdminController {
@@ -63,5 +64,11 @@ export class AdminController {
             const err = error as Error
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message: err.message })
         }
+    }
+
+    async theaterApproval (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const action = req.query.action
+        const apiRes = this.theaterUseCase.theaterApproval(theaterId, action)
     }
 }

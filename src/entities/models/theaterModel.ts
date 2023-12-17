@@ -74,6 +74,12 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         // You specify the type of values using `of`.
         type: Map,
         of: String
+    },
+    approvalStatus: {
+        type: String,
+        enum: ['Approved', 'Pending', 'Rejected'],
+        default: 'Pending',
+        required: true
     }
 },
 {

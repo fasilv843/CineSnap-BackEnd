@@ -17,6 +17,7 @@ export interface ITheater {
     coords: ICoords
     address: ITheaterAddress,
     socialMediaHandles?: Map<string, string>
+    approvalStatus: string
 }
 
 export interface ITheaterRes {
@@ -33,9 +34,10 @@ export interface ITheaterRes {
     coords: ICoords
     address: ITheaterAddress,
     socialMediaHandles?: Map<string, string>
+    approvalStatus: string
 }
 
-export interface ITheaterUpdate extends Omit<ITheaterRes, '_id' | 'email' | 'isBlocked' | 'wallet' | 'walletHistory' | 'liscenceId' | 'screenCount'> {}
+export interface ITheaterUpdate extends Omit<ITheaterRes, '_id' | 'email' | 'isBlocked' | 'wallet' | 'walletHistory' | 'liscenceId' | 'screenCount' | 'approvalStatus'> {}
 
 export interface ITheaterAuth {
     name: string

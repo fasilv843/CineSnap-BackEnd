@@ -1,7 +1,7 @@
 import { ERR_MESSAGE, STATUS_CODES } from "../../constants/httpStausCodes";
-import { SuccessTypes, IApiRes } from "../../interfaces/common";
+import { AllResTypes, IApiRes } from "../../interfaces/common";
 
-export function get200Response<T extends SuccessTypes>(data: T): IApiRes<T> {
+export function get200Response<T extends AllResTypes>(data: T): IApiRes<T> {
     return {
         status: STATUS_CODES.OK,
         message: 'Success',
