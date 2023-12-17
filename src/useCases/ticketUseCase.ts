@@ -1,14 +1,21 @@
+import { QuarterRefundTime } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
+// import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
+// import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
+// import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ID } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs } from "../interfaces/schema/ticketSchema";
 
 export class TicketUseCase {
     constructor (
         private readonly ticketRepository: TicketRepository,
-        private readonly tempTicketRepository: TempTicketRepository
+        private readonly tempTicketRepository: TempTicketRepository,
+        // private readonly showRepository: ShowRepository,
+        // private readonly theaterRepository: TheaterRepository,
+        // private readonly userRepository: UserRepository,
     ) {}
 
     async bookTicketDataTemporarily (ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
@@ -24,7 +31,6 @@ export class TicketUseCase {
     async getHoldedSeats (showId: ID): Promise<IApiSeatsRes> {
         try {
             const seats = await this.tempTicketRepository.getHoldedSeats(showId)
-            // console.log(seats, typeof seats, 'seats data from holdedSeats');
             return get200Response(seats)
         } catch (error) {
             return get500Response(error as Error)
@@ -44,7 +50,6 @@ export class TicketUseCase {
     async getTicketData (ticketId: ID): Promise<IApiTicketRes> {
         try {
             const ticketData = await this.ticketRepository.getTicketData(ticketId)
-            // log(ticketData, 'ticket data from api')
             if (ticketData) return get200Response(ticketData)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -54,13 +59,11 @@ export class TicketUseCase {
 
     async confirmTicket (tempTicketId: ID): Promise<IApiTicketRes> {
         try {
-            // log(tempTicketId, 'temp ticket id from confirm ticket')
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
-            // log(tempTicket, 'tempTicket from confirm ticket use case')
+
             if (tempTicket !== null) {
                 const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITicketReqs
                 const confirmedTicket = await this.ticketRepository.saveTicket(tempTicketData)
-                // console.log(confirmedTicket.seats, 'seats that returned to front end')
                 return get200Response(confirmedTicket)
             } else {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -90,6 +93,16 @@ export class TicketUseCase {
 
     async cancelTicket (ticketId: ID): Promise<IApiTicketRes> {
         try {
+            if (new Date() < QuarterRefundTime) 
+                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Cancellation only allowed 4 hr before show time')
+
+            // const ticket = await this.ticketRepository.findTicketById(ticketId)
+            // const ticketPrice = ticket?.singlePrice * 
+            
+            // if (ticket !== null) {
+            //     this.theaterRepository.takeFromWallet(ticket?.totalPrice)
+            // }
+
             const cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
             if (cancelledTicket) return get200Response(cancelledTicket)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)

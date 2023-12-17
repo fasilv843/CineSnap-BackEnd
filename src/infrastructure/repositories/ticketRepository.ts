@@ -32,6 +32,10 @@ export class TicketRepository implements ITicketRepo {
         }
     }
 
+    async findTicketById (ticketId: ID): Promise<ITicketRes | null> {
+        return await ticketModel.findById(ticketId)
+    }
+
     async getTicketData (ticketId: ID): Promise<ITicketRes | null> {
         return await ticketModel.findById(ticketId).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
