@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
 import { ID } from "../../interfaces/common";
-import Stripe from "stripe";
-import { log, timeEnd } from "console";
+// import Stripe from "stripe";
+import { log } from "console";
 
 export class TicketController {
     constructor (

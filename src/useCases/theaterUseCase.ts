@@ -50,7 +50,7 @@ export class TheaterUseCase {
 
     sendTimeoutOTP(id: ID, email: string, OTP: number) {
         console.log(OTP, 'otp from sendTimoutOTP');
-        this.mailer.sendMail(email, OTP)
+        this.mailer.sendOTP(email, OTP)
 
         setTimeout(async () => {
             await this.tempTheaterRepository.unsetTheaterOTP(id, email)

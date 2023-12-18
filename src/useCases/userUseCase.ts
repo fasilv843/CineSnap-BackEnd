@@ -92,7 +92,7 @@ export class UserUseCase {
     // To send an otp to user that will expire after a certain period
     sendTimeoutOTP(id: ID, email: string, OTP: number) {
         try {
-            this.mailer.sendMail(email, OTP)
+            this.mailer.sendOTP(email, OTP)
                     
             setTimeout(async() => {
                 await this.tempUserRepository.unsetOtp(id, email)
