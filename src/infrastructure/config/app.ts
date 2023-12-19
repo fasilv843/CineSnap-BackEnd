@@ -7,6 +7,7 @@ import adminRouter from '../routes/adminRoute'
 import theatreRouter from '../routes/theatreRoute'
 import userRouter from '../routes/userRoute'
 import tokenRouter from '../routes/tokenRoute'
+import path from 'path'
 
 export const createServer = () => {
     try {
@@ -15,6 +16,7 @@ export const createServer = () => {
         app.use(express.json())
         app.use(express.urlencoded({extended:true}))
         // app.use(express.static(path.join(__dirname,'../public')))
+        app.use('/images', express.static(path.join(__dirname, '../../../images')));
         app.use(cookieParser())
 
         app.use(cors({

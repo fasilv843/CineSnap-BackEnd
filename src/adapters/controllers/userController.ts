@@ -145,4 +145,17 @@ export class UserController {
         const apiRes = await this.userUseCase.updateUserData(userId, user)
         res.status(apiRes.status).json(apiRes)
     }
+
+    async updateUserProfileDp (req: Request, res: Response) {
+        const userId: ID = req.params.userId as unknown as ID
+        const fileName = req.file?.filename
+        const apiRes = await this.userUseCase.updateUserProfilePic(userId, fileName)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async removeUserProfileDp (req: Request, res: Response) { 
+        const userId: ID = req.params.userId as unknown as ID
+        const apiRes = await this.userUseCase.removeUserProfileDp(userId)
+        res.status(apiRes.status).json(apiRes)
+    }
 }

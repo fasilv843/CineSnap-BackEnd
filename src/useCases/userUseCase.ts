@@ -1,4 +1,5 @@
 // import { AuthRes } from "../Types/AuthRes";
+import { log } from "console";
 import { OTP_TIMER } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
@@ -10,7 +11,8 @@ import { IApiUserAuthRes, IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserRes,
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
-
+import path from "path";
+import fs from 'fs'
 
 
 export class UserUseCase {
@@ -178,6 +180,57 @@ export class UserUseCase {
         try {
             const updatedUser = await this.userRepository.updateUser(userId, user)
             return get200Response(updatedUser as IUserRes)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    // const imgFolder = path.join(__dirname,'../public/images/productImages')
+
+    // const files = fs.readdirSync(imgFolder);
+
+    // for (const file of files) {
+
+    //     if(file === imageURL){
+    //         const filePath = path.join(imgFolder, file);
+    //         fs.unlinkSync(filePath);
+    //         break;
+    //     }
+    // }
+
+    async updateUserProfilePic (userId: ID, fileName: string | undefined): Promise<IApiUserRes> {
+        try {
+            if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
+            log(userId, fileName, 'userId, filename from use case')
+            const user = await this.userRepository.findById(userId)
+            // Deleting user dp if it already exist
+            if (user && user.profilePic) {
+                const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
+                fs.unlinkSync(filePath);
+            }
+            const updatedUser = await this.userRepository.updateUserProfilePic(userId, fileName)
+            if (updatedUser) return get200Response(updatedUser)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async removeUserProfileDp (userId: ID): Promise<IApiUserRes> {
+        try {
+            const user = await this.userRepository.findById(userId)
+            if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
+            // Deleting user dp if it already exist
+            if (user.profilePic) {
+                const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
+                fs.unlinkSync(filePath);
+            }
+            const updatedUser = await this.userRepository.removeUserProfileDp(userId)
+            if (updatedUser) {
+                return get200Response(updatedUser) 
+            }
+            
+            return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
         } catch (error) {
             return get500Response(error as Error)
         }
