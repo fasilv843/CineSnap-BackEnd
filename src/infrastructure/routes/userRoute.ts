@@ -31,6 +31,8 @@ userRouter.get('/tempticket/get/:ticketId', (req, res) => ticketController.getTe
 // userRouter.post('/show/book/payment', (req, res) => ticketController.payAndConfirmTicket(req, res))
 userRouter.post('/show/book/confirm/ticket', (req, res) => ticketController.confirmTicket(req, res))
 userRouter.get('/show/ticket/get/:ticketId', (req, res) => ticketController.getTicketData(req, res))
+userRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
+
 
 userRouter.get('/tickets/:userId', (req, res) => ticketController.getTicketsOfUser(req, res))
 userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.cancelTicket(req, res))

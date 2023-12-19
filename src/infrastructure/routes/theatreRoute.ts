@@ -21,7 +21,7 @@ thrRouter.get('/screens/get/:screenId', theaterAuth, (req, res) => scnController
 thrRouter.put('/screens/edit/:screenId', theaterAuth, (req, res) => scnController.editScreen(req, res))
 thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnController.deleteScreen(req, res))
 
-thrRouter.get('/shows/:theaterId', theaterAuth, (req, res) => showController.findShowsOnTheater(req, res))
+thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))
 thrRouter.post('/show/add', theaterAuth, (req, res) => showController.addShow(req, res))
 // thrRouter.get('/show/get/:showId', theaterAuth, (req, res) => showController.getShowDetails(req, res))
 
