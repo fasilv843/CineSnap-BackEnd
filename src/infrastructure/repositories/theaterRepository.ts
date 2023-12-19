@@ -123,4 +123,28 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
+    async updateTheaterProfilePic(theaterId: ID, fileName: string): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            {
+                $set: {
+                    profilePic: fileName
+                }
+            },
+            { new: true }
+        )
+    }
+
+    async removeTheaterProfilePic(theaterId: ID): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            {
+                $unset: {
+                    profilePic: ''
+                }
+            },
+            { new: true }
+        )
+    }
+
 }

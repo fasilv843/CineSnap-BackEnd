@@ -83,6 +83,19 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    async updateTheaterProfilePic (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const fileName = req.file?.filename
+        const apiRes = await this.theaterUseCase.updateTheaterProfilePic(theaterId, fileName)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async removeTheaterProfilePic (req: Request, res: Response) { 
+        const theaterId = req.params.theaterId as unknown as ID
+        const apiRes = await this.theaterUseCase.removeTheaterProfilePic(theaterId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
     // To get all the data of a theater using theater id
     async getTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID

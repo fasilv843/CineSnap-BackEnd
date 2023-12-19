@@ -1,3 +1,4 @@
+import { log } from "console";
 import { OTP_TIMER } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
@@ -11,6 +12,8 @@ import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
 import { GenerateOtp } from "../providers/otpGenerator";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import path from "path";
+import fs from 'fs'
 
 
 export class TheaterUseCase {
@@ -228,6 +231,44 @@ export class TheaterUseCase {
                 else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             }
 
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async updateTheaterProfilePic (theaterId: ID, fileName: string | undefined): Promise<IApiTheaterRes> {
+        try {
+            if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
+            log(theaterId, fileName, 'theaterId, filename from use case')
+            const theater = await this.theaterRepository.findById(theaterId)
+            // Deleting theater dp if it already exist
+            if (theater && theater.profilePic) {
+                const filePath = path.join(__dirname, `../../images/${theater.profilePic}`)
+                fs.unlinkSync(filePath);
+            }
+            const updatedTheater = await this.theaterRepository.updateTheaterProfilePic(theaterId, fileName)
+            if (updatedTheater) return get200Response(updatedTheater)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async removeTheaterProfilePic (theaterId: ID): Promise<IApiTheaterRes> {
+        try {
+            const user = await this.theaterRepository.findById(theaterId)
+            if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
+            // Deleting user dp if it already exist
+            if (user.profilePic) {
+                const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
+                fs.unlinkSync(filePath);
+            }
+            const updatedTheater = await this.theaterRepository.removeTheaterProfilePic(theaterId)
+            if (updatedTheater) {
+                return get200Response(updatedTheater) 
+            }
+            
+            return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
         } catch (error) {
             return get500Response(error as Error)
         }

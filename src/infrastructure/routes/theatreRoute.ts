@@ -1,6 +1,7 @@
 import express from "express";
 import { theaterAuth } from "../middleware/theaterAuth";
 import { tController, scnController, showController, chatController } from "../../providers/controllers";
+import { upload } from "../config/multer";
 
 // thr = theater
 const thrRouter = express.Router()
@@ -11,6 +12,8 @@ thrRouter.post('/login', (req, res) => tController.theaterLogin(req, res))
 thrRouter.get('/resendOtp', (req, res) => tController.resendOTP(req, res))
 
 thrRouter.put('/update/:theaterId', theaterAuth, (req, res) => tController.updateTheaterData(req, res))
+thrRouter.patch('/update/profileimage/:theaterId', theaterAuth, upload.single('image'), (req,res) => tController.updateTheaterProfilePic(req,res))
+thrRouter.patch('/remove/profileimage/:theaterId', theaterAuth, (req,res) => tController.removeTheaterProfilePic(req,res))
 
 thrRouter.get('/screens/:theaterId', theaterAuth, (req, res) => scnController.findScreensInTheater(req, res))
 thrRouter.post('/screens/add/:theaterId', theaterAuth, (req, res) => scnController.saveScreen(req, res))
