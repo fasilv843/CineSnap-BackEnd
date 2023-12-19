@@ -53,7 +53,7 @@ const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt,
 const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
 const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty)
-const showUseCase = new ShowUseCase(showRepository)
+const showUseCase = new ShowUseCase(showRepository, movieRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository)
 

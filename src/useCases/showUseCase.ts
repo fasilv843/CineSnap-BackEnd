@@ -1,12 +1,15 @@
 import { STATUS_CODES } from "../constants/httpStausCodes";
+import { getEndingTime } from "../infrastructure/helperFunctions/getMovieEnding";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
+import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { ID } from "../interfaces/common";
 import { IApiShowRes, IApiShowsRes, IShowRequirements } from "../interfaces/schema/showSchema";
 
 export class ShowUseCase {
     constructor (
-        private readonly showRepository: ShowRepository
+        private readonly showRepository: ShowRepository,
+        private readonly movieRepository: MovieRepository,
     ) {}
 
     async findShowsOnTheater (theaterId: ID, dateStr: string | undefined): Promise<IApiShowsRes> {
@@ -31,8 +34,20 @@ export class ShowUseCase {
             if (!show.movieId || !show.screenId || !show.startTime) {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Bad Request, data missing')
             }
-            const savedShow = await this.showRepository.saveShow(show)
-            return get200Response(savedShow)
+
+            const movie = await this.movieRepository.findMovieById(show.movieId)
+            if (movie !== null) {
+                const endingTime = getEndingTime(show.startTime, movie.duration)
+                const collidedShows = await this.showRepository.getCollidingShowsOnTheScreen(show.screenId, show.startTime, endingTime)
+                if (collidedShows.length === 0) {
+                    const savedShow = await this.showRepository.saveShow(show)
+                    return get200Response(savedShow)
+                } else {
+                    return getErrorResponse(STATUS_CODES.CONFLICT, 'Show already exists at the same time.')
+                }
+            } else {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            }
         } catch (error) {
             return get500Response(error as Error)
         }

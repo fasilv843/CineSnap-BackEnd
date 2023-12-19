@@ -133,4 +133,30 @@ export class ShowRepository implements IShowRepo {
     async getShowDetails (showId: ID): Promise<IShow | null> {
         return await showModel.findById(showId).populate('movieId')
     }
+
+    async getCollidingShowsOnTheScreen (screenId: ID, startTime: Date, endTime: Date): Promise<IShowRes[]> {
+        return await showModel.find({
+            screenId,
+            $or: [
+                {
+                  $and: [
+                    { startTime: { $lte: startTime } }, // Existing show starts before or at the same time as the new show
+                    { endTime: { $gte: startTime } }   // Existing show ends after or at the same time as the new show starts
+                  ]
+                },
+                {
+                  $and: [
+                    { startTime: { $lte: endTime } },   // Existing show starts before or at the same time as the new show ends
+                    { endTime: { $gte: endTime } }      // Existing show ends after or at the same time as the new show ends
+                  ]
+                },
+                {
+                  $and: [
+                    { startTime: { $gte: startTime } }, // Existing show starts after or at the same time as the new show starts
+                    { endTime: { $lte: endTime } }     // Existing show ends before or at the same time as the new show ends
+                  ]
+                }
+              ]
+        })
+    }
 }
