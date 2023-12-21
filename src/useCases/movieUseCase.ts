@@ -1,3 +1,4 @@
+import { log } from "console";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { ID } from "../interfaces/common";
@@ -51,15 +52,17 @@ export class MovieUseCase {
         }
     }
 
-    async findAvailableMovies(): Promise<IApiCSMoviesRes>{
+    async findAvailableMovies(page: number, genreFilters: number[], langFilters: string[], availability: string | undefined): Promise<IApiCSMoviesRes>{
         try {
-            const movies = await this.movieRepository.findAvailableMovies()
+            if (availability !== undefined) availability = 'Available'
+            const movies = await this.movieRepository.findAvailableMoviesLazy(page, genreFilters, langFilters, availability)
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
                 data: movies
             }
         } catch (error) {
+            log(error)
             return {
                 status: STATUS_CODES.INTERNAL_SERVER_ERROR,
                 message: (error as Error).message,
@@ -97,7 +100,7 @@ export class MovieUseCase {
         return await this.movieRepository.findMovieByLanguage(lang)
     }
 
-    async findMovieById(id: string){
+    async findMovieById(id: ID){
         return await this.movieRepository.findMovieById(id)
     }
 

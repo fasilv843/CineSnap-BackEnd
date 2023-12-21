@@ -1,9 +1,14 @@
+import { log } from "console";
 import { movieModel } from "../../entities/models/movieModel";
 import { ID } from "../../interfaces/common";
 import { IMovieRepo } from "../../interfaces/repos/movieRepo";
 import { IMovie, ITMDBMovie } from "../../interfaces/schema/movieSchema";
 
-
+interface IMovieQuery {
+    language?: { $in: string[] };
+    genre_ids?: { $in: number[] };
+    isDeleted?: boolean;
+}
 
 
 export class MovieRepository implements IMovieRepo {
@@ -35,6 +40,25 @@ export class MovieRepository implements IMovieRepo {
         return await movieModel.find({ isDeleted: false })
     }
 
+    async findAvailableMoviesLazy(page: number, genreFilters: number[], langFilters: string[], availability: string = 'Available'): Promise<IMovie[]> {
+
+        log(genreFilters, 'genreFilters number array')
+        const query: IMovieQuery = {};
+
+        if (genreFilters.length > 0) query.genre_ids = { $in: genreFilters }
+        if (langFilters.length > 0) query.language = { $in: langFilters }
+
+        if (availability === 'Available') {
+            query.isDeleted = false;
+        } else if (availability === 'Deleted') {
+            query.isDeleted = true;
+        }
+
+        log(query, 'query for finding movies')
+
+        return await movieModel.find(query).skip((page - 1) * 10).limit(10)
+    }
+
     async findMovieByTmdbId(id: number): Promise<IMovie | null> {
         return await movieModel.findOne({ tmdbId: id })
     }
@@ -51,7 +75,12 @@ export class MovieRepository implements IMovieRepo {
         const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
         return await movieModel.find({ title: regex, isDeleted: false });
     }
-    
+
+    async findMovieByTitleAdmin(title: string): Promise<IMovie[]> {
+        const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
+        return await movieModel.find({ title: regex });
+    }
+
 
     async findMovieById(id: ID): Promise<IMovie | null> {
         return await movieModel.findById({ _id: id })
@@ -92,7 +121,7 @@ export class MovieRepository implements IMovieRepo {
         ).limit(5)
     }
 
-    async fetchTmdbMovieIds (): Promise<number[]> {
+    async fetchTmdbMovieIds(): Promise<number[]> {
         const tmdbIds = await movieModel.aggregate([
             {
                 $group: { _id: '$tmdbId' }
@@ -101,14 +130,14 @@ export class MovieRepository implements IMovieRepo {
         return tmdbIds.map(item => item._id)
     }
 
-    async getFilters () {
+    async getFilters() {
         const languages = await movieModel.distinct('language').exec()
         const result = await movieModel.aggregate([
             { $unwind: '$genre_ids' }, // Unwind the array to individual documents
             { $group: { _id: '$genre_ids' } }, // Group by genre_ids to get unique values
             { $project: { _id: 0, genreId: '$_id' } }, // Project to rename _id to genreId
         ]).exec();
-      
+
         const genres = result.map(entry => entry.genreId);
         return { languages, genres }
     }

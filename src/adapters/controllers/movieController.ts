@@ -30,11 +30,28 @@ export class MovieController {
     // To get all non deleted movies from the database
     async getAvailableMovies(req: Request, res: Response) {
         const title = req.query.title as string
+        const page = req.query.page as string | undefined
+
+        const genreFilters: number[] = [];
+        const langFilters: string[] = [];
+
+        Object.keys(req.query).forEach((key) => {
+            if (key.startsWith('g')) {
+              genreFilters.push(parseInt(req.query[key] as string))
+            } else if (key.startsWith('l')) {
+              langFilters.push(req.query[key] as string)
+            }
+        });
+
+        const availability = req.query.availability as string | undefined
+
+        let pageNum = 1
+        if(page) pageNum = parseInt(page)
         if (title) {
             const apiRes = await this.movieUseCase.searchMovie(title)
             return res.status(apiRes.status).json(apiRes)
         }
-        const apiRes = await this.movieUseCase.findAvailableMovies()
+        const apiRes = await this.movieUseCase.findAvailableMovies(pageNum, genreFilters, langFilters, availability)
         res.status(apiRes.status).json(apiRes)
     }
 
