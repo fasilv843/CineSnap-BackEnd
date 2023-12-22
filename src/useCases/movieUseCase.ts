@@ -3,6 +3,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { ID } from "../interfaces/common";
 import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../interfaces/schema/movieSchema";
+import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 
 
 export class MovieUseCase {
@@ -100,8 +101,15 @@ export class MovieUseCase {
         return await this.movieRepository.findMovieByLanguage(lang)
     }
 
-    async findMovieById(id: ID){
-        return await this.movieRepository.findMovieById(id)
+    async findMovieById(movieId: ID): Promise<IApiCSMovieRes> {
+        try {
+            const movie = await this.movieRepository.findMovieById(movieId)
+
+            if (movie !== null) return get200Response(movie)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
     }
 
     async findUpcomingMovies(){
@@ -117,11 +125,7 @@ export class MovieUseCase {
                 data: null
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -134,15 +138,11 @@ export class MovieUseCase {
                 data: movies
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: []
-            }
+            return get500Response(error as Error)
         }
     }
 
-    async getMovieIds (): Promise<{status: number, message: string, data: number[]}> {
+    async getMovieIds (): Promise<{status: number, message: string, data: number[] | null}> {
         try {
             const ids = await this.movieRepository.fetchTmdbMovieIds()
             return {
@@ -151,11 +151,7 @@ export class MovieUseCase {
                 data: ids
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: []
-            }
+            return get500Response(error as Error)
         }
     }
 

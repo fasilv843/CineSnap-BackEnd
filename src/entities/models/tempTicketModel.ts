@@ -31,6 +31,10 @@ const tempTicketSchema: Schema = new Schema<ITempTicketRes & Document>({
         type: Number,
         required: true
     },
+    feePerTicket: {
+        type: Number,
+        required: true
+    },
     totalPrice: {
         type: Number,
         required: true

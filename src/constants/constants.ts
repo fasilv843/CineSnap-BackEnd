@@ -18,3 +18,5 @@ export const userNameMinLength = 3
 export const userNameMaxLength = 20
 export const nameRegex = '^[a-zA-Z ]{3,20}$'
 export const passwordRegex = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'
+
+export const ChargePerTicket = 10 // Rupees

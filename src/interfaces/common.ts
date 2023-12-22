@@ -5,6 +5,7 @@ import { ITheaterRes } from "./schema/theaterSchema";
 import { IUserRes } from "./schema/userSchema";
 import { ITempTicketRes, ITicketRes, Seats } from "./schema/ticketSchema";
 import { ITempTheaterRes } from "./schema/tempTheaterSchema";
+import { IMovie } from "./schema/movieSchema";
 
 export type Location = [number, number];
 
@@ -33,7 +34,7 @@ export interface ICoords {
     coordinates: [number, number];
 }
 
-export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes
+export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] 
             | IShow | IChatRes | ITicketRes | ITicketRes[] 
             | ITempTicketRes | ITempTicketRes[] | Seats | null;

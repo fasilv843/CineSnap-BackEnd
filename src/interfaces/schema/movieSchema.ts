@@ -89,7 +89,7 @@ export interface IApiCSMovieRes {
 export interface IApiCSMoviesRes {
     status: number
     message: string
-    data: IMovie[] | []
+    data: IMovie[] | null
 }
 
 export interface IApiFilters {

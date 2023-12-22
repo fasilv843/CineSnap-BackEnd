@@ -82,8 +82,8 @@ export class MovieRepository implements IMovieRepo {
     }
 
 
-    async findMovieById(id: ID): Promise<IMovie | null> {
-        return await movieModel.findById({ _id: id })
+    async findMovieById(movieId: ID): Promise<IMovie | null> {
+        return await movieModel.findById({ _id: movieId })
     }
 
     async findUpcomingMovies(): Promise<IMovie[]> {

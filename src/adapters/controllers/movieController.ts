@@ -10,6 +10,12 @@ export class MovieController {
         private readonly movieUseCase: MovieUseCase
     ) { }
 
+    async getMovieDetails (req: Request, res: Response) { 
+        const movieId = req.params.movieId as unknown as ID
+        const apiRes = await this.movieUseCase.findMovieById(movieId)
+        res.status(apiRes.status).json(apiRes)
+    }
+
     // To get all the movies in database including deleted - For admin side
     async getMovies(req: Request, res: Response) {
         const title = req.query.title as string

@@ -8,6 +8,7 @@ export interface ITicket {
     movieId: ID
     theaterId: ID
     singlePrice: number
+    feePerTicket: number
     totalPrice: number
     seatCount: number
     seats: Map<string, Array<number>>
