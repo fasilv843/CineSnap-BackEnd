@@ -103,4 +103,11 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    async addToWallet (req: Request, res: Response) {
+        const { theaterId } = req.params as unknown as { userId: ID }
+        const amount: number = parseInt(req.body.amount)
+        const apiRes = await this.theaterUseCase.addToWallet(theaterId, amount)
+        res.status(apiRes.status).json(apiRes)
+    }
+
 }

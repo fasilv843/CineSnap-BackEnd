@@ -28,4 +28,7 @@ thrRouter.post('/show/add', theaterAuth, (req, res) => showController.addShow(re
 thrRouter.get('/chat/users/:theaterId', theaterAuth, (req, res) => chatController.getUsersChattedWith(req, res))
 thrRouter.get('/chat/history', theaterAuth, (req, res) => chatController.getChatHistory(req, res))
 
+thrRouter.patch('/wallet/add/:theaterId', theaterAuth, (req, res) => tController.addToWallet(req, res))
+
+
 export default thrRouter
