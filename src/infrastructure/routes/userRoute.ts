@@ -38,4 +38,6 @@ userRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnThea
 userRouter.get('/tickets/:userId', (req, res) => ticketController.getTicketsOfUser(req, res))
 userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.cancelTicket(req, res))
 
+userRouter.patch('/wallet/add/:userId', userAuth, (req, res) => uController.addToWallet(req, res))
+
 export default userRouter

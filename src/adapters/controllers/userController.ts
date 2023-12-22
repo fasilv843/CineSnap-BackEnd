@@ -158,4 +158,11 @@ export class UserController {
         const apiRes = await this.userUseCase.removeUserProfileDp(userId)
         res.status(apiRes.status).json(apiRes)
     }
+
+    async addToWallet (req: Request, res: Response) {
+        const { userId } = req.params as unknown as { userId: ID }
+        const amount: number = parseInt(req.body.amount)
+        const apiRes = await this.userUseCase.addToWallet(userId, amount)
+        res.status(apiRes.status).json(apiRes)
+    }
 }

@@ -1,5 +1,5 @@
 import userModel from "../../entities/models/userModel";
-import { ID } from "../../interfaces/common";
+import { ID, IWalletHistory } from "../../interfaces/common";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
 import { IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
 
@@ -97,4 +97,18 @@ export class UserRepository implements IUserRepo {
         )
     }
     
+    async addToWallet (userId: ID, amount: number): Promise<IUserRes | null> {
+        const walletHistory: Omit<IWalletHistory, 'date'> = {
+            amount,
+            message: 'Added To Wallet'
+        }
+        return await userModel.findByIdAndUpdate(
+            { _id: userId },
+            {
+                $inc: { wallet: amount },
+                $push: { walletHistory }
+            },
+            { new: true }
+        )
+    }
 }
