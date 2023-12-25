@@ -1,4 +1,6 @@
+import { log } from "console";
 import { STATUS_CODES } from "../constants/httpStausCodes";
+import { isPast, isToday } from "../infrastructure/helperFunctions/date";
 import { getEndingTime } from "../infrastructure/helperFunctions/getMovieEnding";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
@@ -12,20 +14,44 @@ export class ShowUseCase {
         private readonly movieRepository: MovieRepository,
     ) {}
 
-    async findShowsOnTheater (theaterId: ID, dateStr: string | undefined): Promise<IApiShowsRes> {
+    async findShowsOnTheater (theaterId: ID, dateStr: string | undefined, user: 'User' | 'Theater'): Promise<IApiShowsRes> {
         try {
-            if (dateStr === undefined || isNaN(new Date(dateStr).getTime())) {
+            log(dateStr === undefined, isNaN(new Date(dateStr as string).getTime()), (user === 'User' && isPast(new Date(dateStr as string))))
+            if (dateStr === undefined || isNaN(new Date(dateStr).getTime()) || (user === 'User' && isPast(new Date(dateStr)))) {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Date is not available or invalid')
             }else {
                 const date = new Date(dateStr)
+                let from = new Date(date);
+                from.setHours(0, 0, 0, 0);
+                if (user === 'User' && isToday(from)) {
+                    from = new Date()
+                }
+            
+                const to = new Date(date);
+                to.setHours(23, 59, 59, 999);
                 // console.log(typeof date, 'type from usecase')
-                const shows = await this.showRepository.findShowsOnDate(theaterId, date)
+                const shows = await this.showRepository.findShowsOnDate(theaterId, from, to)
                 return get200Response(shows)
             }
         } catch (error) {
             return get500Response(error as Error)
         }
     }
+
+    // async findShowsOnTheaterByUser (theaterId: ID, dateStr: string | undefined): Promise<IApiShowsRes> {
+    //     try {
+    //         if (dateStr === undefined || isNaN(new Date(dateStr).getTime())) {
+    //             return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Date is not available or invalid')
+    //         }else {
+    //             const date = new Date(dateStr)
+    //             // console.log(typeof date, 'type from usecase')
+    //             const shows = await this.showRepository.findShowsOnDateByUser(theaterId, date)
+    //             return get200Response(shows)
+    //         }
+    //     } catch (error) {
+    //         return get500Response(error as Error)
+    //     }
+    // }
 
     async addShow(show: IShowRequirements): Promise<IApiShowRes> {
         try {

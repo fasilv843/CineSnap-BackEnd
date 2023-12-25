@@ -13,7 +13,14 @@ export class ShowController {
     async findShowsOnTheater (req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const date = req.query.date as string | undefined
-        const apiRes = await this.showUseCase.findShowsOnTheater(theaterId, date)
+        const apiRes = await this.showUseCase.findShowsOnTheater(theaterId, date, 'Theater')
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async findShowsOnTheaterByUser (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const date = req.query.date as string | undefined
+        const apiRes = await this.showUseCase.findShowsOnTheater(theaterId, date, 'User')
         res.status(apiRes.status).json(apiRes)
     }
 

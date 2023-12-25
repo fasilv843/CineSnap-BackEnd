@@ -83,14 +83,14 @@ export class ShowRepository implements IShowRepo {
     //     }
     // }
 
-    async findShowsOnDate  (theaterId: ID, date: Date): Promise<IShowsOnAScreen[]> {
+    async findShowsOnDate  (theaterId: ID, from: Date, to: Date): Promise<IShowsOnAScreen[]> {
         // console.log(date, 'date from repo');
         
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
+        // const startOfDay = new Date(date);
+        // startOfDay.setHours(0, 0, 0, 0);
     
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
+        // const endOfDay = new Date(date);
+        // endOfDay.setHours(23, 59, 59, 999);
         // console.log('aggregate starting with ', theaterId);
 
         // Step 1: Find screens that match the theaterId
@@ -100,7 +100,7 @@ export class ShowRepository implements IShowRepo {
         const showsPromises = screens.map(async (screen) => {
             const screenShows = await showModel.find({
                 screenId: screen._id,
-                startTime: { $gte: startOfDay, $lte: endOfDay }
+                startTime: { $gte: from, $lte: to }
             }).populate('movieId')
 
             const movieShowsMap: Record<string, IShowRes> = screenShows.reduce((acc: Record<string, IShowRes>, screen) => {

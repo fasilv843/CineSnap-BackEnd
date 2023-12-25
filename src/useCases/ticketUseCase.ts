@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { calculateHoursDifference } from "../infrastructure/helperFunctions/timeDifference";
+import { calculateHoursDifference } from "../infrastructure/helperFunctions/date";
 // import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
