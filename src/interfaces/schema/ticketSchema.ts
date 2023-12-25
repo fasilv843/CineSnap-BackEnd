@@ -1,4 +1,4 @@
-import { IApiRes, ID } from "../common";
+import { ColType, IApiRes, ID, RowType } from "../common";
 
 export interface ITicket {
     _id: ID
@@ -23,6 +23,10 @@ export interface ISelectedSeat {
     col: number
 }
 
+export type SeatRes = {
+    [Key in RowType]?: ColType[];
+};
+
 export interface ITempTicket extends Omit<ITicket, 'isCancelled'> {
     expireAt: Date
 }
@@ -36,7 +40,9 @@ export interface ITempTicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | '
 
 export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' > {}
 
-export interface ITicketRes extends ITicket {}
+export interface ITicketRes extends Omit<ITicket, 'seats'> {
+    seats: SeatRes
+}
 export interface IApiTicketRes extends IApiRes<ITicketRes | null> {}
 export interface IApiTicketsRes extends IApiRes<ITicketRes[] | null> {}
 

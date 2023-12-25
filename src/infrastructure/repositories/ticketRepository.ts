@@ -26,7 +26,7 @@ export class TicketRepository implements ITicketRepo {
 
             await showData.save()
             
-            return await new ticketModel(tempTicket).save()
+            return await new ticketModel(tempTicket).save() as ITicketRes
         }else {
             throw Error('error during confirming ticket')
         }

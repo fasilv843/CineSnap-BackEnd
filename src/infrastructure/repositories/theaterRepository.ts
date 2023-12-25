@@ -1,6 +1,6 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ICoords, ID, IWalletHistory } from "../../interfaces/common";
+import { ICoords, ID } from "../../interfaces/common";
 import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 
@@ -147,16 +147,16 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async addToWallet (theaterId: ID, amount: number): Promise<ITheaterRes | null> {
-        const walletHistory: Omit<IWalletHistory, 'date'> = {
-            amount,
-            message: 'Added To Wallet'
-        }
+    async updateWallet (theaterId: ID, amount: number, message: string): Promise<ITheaterRes | null> {
+        // const walletHistory: Omit<IWalletHistory, 'date'> = {
+        //     amount,
+        //     message
+        // }
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
                 $inc: { wallet: amount },
-                $push: { walletHistory }
+                $push: { walletHistory: { amount , message} }
             },
             { new: true }
         )

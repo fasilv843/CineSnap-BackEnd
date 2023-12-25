@@ -277,7 +277,7 @@ export class TheaterUseCase {
     async addToWallet (theaterId: ID, amount: number): Promise<IApiTheaterRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
-            const user = await this.theaterRepository.addToWallet(theaterId, amount)
+            const user = await this.theaterRepository.updateWallet(theaterId, amount, 'Added To Wallet')
 
             if (user !== null) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)

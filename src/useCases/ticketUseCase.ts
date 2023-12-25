@@ -1,21 +1,25 @@
-import { QuarterRefundTime } from "../constants/constants";
+import mongoose from "mongoose";
+import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
+import { calculateHoursDifference } from "../infrastructure/helperFunctions/timeDifference";
 // import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
-// import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
+import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
-// import { UserRepository } from "../infrastructure/repositories/userRepository";
+import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ID } from "../interfaces/common";
-import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs } from "../interfaces/schema/ticketSchema";
+import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs, ITicketRes } from "../interfaces/schema/ticketSchema";
+import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 
 export class TicketUseCase {
     constructor (
         private readonly ticketRepository: TicketRepository,
         private readonly tempTicketRepository: TempTicketRepository,
         // private readonly showRepository: ShowRepository,
-        // private readonly theaterRepository: TheaterRepository,
-        // private readonly userRepository: UserRepository,
+        private readonly theaterRepository: TheaterRepository,
+        private readonly userRepository: UserRepository,
+        private readonly adminRepository: AdminRepository
     ) {}
 
     async bookTicketDataTemporarily (ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
@@ -64,6 +68,10 @@ export class TicketUseCase {
             if (tempTicket !== null) {
                 const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITicketReqs
                 const confirmedTicket = await this.ticketRepository.saveTicket(tempTicketData)
+                const theaterShare = tempTicket.singlePrice * tempTicket.seatCount
+                const adminShare = tempTicket.singlePrice * tempTicket.feePerTicket
+                await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Booked a Ticket')
+                await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
                 return get200Response(confirmedTicket)
             } else {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -93,35 +101,47 @@ export class TicketUseCase {
 
     async cancelTicket (ticketId: ID): Promise<IApiTicketRes> {
         try {
-            if (new Date() < QuarterRefundTime) 
-                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Cancellation only allowed 4 hr before show time')
+            const ticket = await this.ticketRepository.findTicketById(ticketId)
+            if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
 
-            // const ticket = await this.ticketRepository.findTicketById(ticketId)
-            // const ticketPrice = ticket?.singlePrice * 
+            const hourDiff = calculateHoursDifference(ticket.startTime)
+
+            // Calculationg refund amount based on hours difference
+            if (hourDiff <= NoRefundTime) return getErrorResponse(STATUS_CODES.FORBIDDEN, `Cancellation only allowed ${NoRefundTime} hr before show time`)
+            const totalPrice = ticket.singlePrice * ticket.seatCount // Excluding convenience fee and tax
+            let refundAmount: number;
+            if (hourDiff <= QuarterRefundTime) refundAmount = (totalPrice * 25)/100
+            else if (hourDiff <= HalfRefundTime) refundAmount = (totalPrice * 50)/100
+            else if (hourDiff <= ThreeQuarterRefundTime) refundAmount = (totalPrice * 75)/100
+            else refundAmount = totalPrice
+        
+
+            const session = await mongoose.connection.startSession();
+
+            try {
+                let cancelledTicket: ITicketRes | null = null
+                await session.withTransaction(async () => {
+                    // taking refund amount from theater and giving it to user
+                    await this.theaterRepository.updateWallet(ticket.theaterId, -refundAmount, 'For Giving Refund for Ticket Cancellation')
+                    await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
+                    // code to re assign cancelled ticket seat
+                    cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
+                });
+
+                if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
             
-            // if (ticket !== null) {
-            //     this.theaterRepository.takeFromWallet(ticket?.totalPrice)
-            // }
-
-            const cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
-            if (cancelledTicket) return get200Response(cancelledTicket)
-            else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+                await session.commitTransaction();
+                console.log('Ticket cancelled successfully!');
+                return get200Response(cancelledTicket)
+              } catch (error) {
+                  console.error('Error during cancelling ticket:', error);
+                  await session.abortTransaction();
+                  return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+              } finally {
+                await session.endSession()
+              }
         } catch (error) {
             return get500Response(error as Error)
         }
     }
-
-    // async bookTicket (params: any, callback: any) {
-    //     const SECRET_KEY = STRIPE_CONFIG.SECRET_KEY as string
-    //     const stripe = new Stripe(SECRET_KEY)
-    //     const session = await stripe.checkout.sessions.create({
-    //         payment_method_types: ['card'],
-    //         line_items: [{ price: params.priceId }],
-    //         mode: 'payment',
-    //         success_url: STRIPE_CONFIG.SUCCESS_URL,
-    //         cancel_url: STRIPE_CONFIG.CANCEL_URL
-    //     })
-
-    //     callback({ id: session.id })
-    // }
 }

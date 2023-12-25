@@ -11,4 +11,15 @@ export class AdminRepository implements IAdminRepo {
         return await adminModel.findById({_id: id})
     }
 
+    async updateWallet (amount: number, message: string): Promise<IAdmin | null> {
+        return await adminModel.findOneAndUpdate(
+            {},
+            {
+                $inc: { wallet: amount },
+                $push: { walletHistory: { amount , message} }
+            },
+            { new: true }
+        )
+    }
+
 }

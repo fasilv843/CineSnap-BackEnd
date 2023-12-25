@@ -55,7 +55,7 @@ const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty)
 const showUseCase = new ShowUseCase(showRepository, movieRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
-const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository)
+const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, thrRepository, userRepository, adminRepository)
 
 export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase)
 export const uController = new UserController(userUseCase, otpGenerator, encrypt )

@@ -239,7 +239,7 @@ export class UserUseCase {
     async addToWallet (userId: ID, amount: number): Promise<IApiUserRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
-            const user = await this.userRepository.addToWallet(userId, amount)
+            const user = await this.userRepository.updateWallet(userId, amount, 'Added To Wallet')
 
             if (user !== null) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
