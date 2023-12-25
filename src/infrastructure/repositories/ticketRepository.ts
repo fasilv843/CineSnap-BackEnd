@@ -42,17 +42,17 @@ export class TicketRepository implements ITicketRepo {
     }
 
     async getTicketsByUserId (userId: ID): Promise<ITicketRes[]> {
-        return ticketModel.find({ userId }).populate('movieId')
+        return ticketModel.find({ userId }).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
 
     async getTicketsByTheaterId (theaterId: ID): Promise<ITicketRes[]> {
-        return ticketModel.find({ theaterId }).populate('movieId')
+        return ticketModel.find({ theaterId }).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
 
     async getTicketsByShowId (showId: ID): Promise<ITicketRes[]> {
-        return ticketModel.find({ showId }).populate('movieId')
+        return ticketModel.find({ showId }).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
 

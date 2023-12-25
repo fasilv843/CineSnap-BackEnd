@@ -62,6 +62,9 @@ const ticketSchema: Schema = new Schema<ITicket & Document>({
         default: 'Stripe',  // Delete after Implementation
         required: true
     }
+},
+{
+    timestamps: true
 })
 
 export const ticketModel: Model<ITicket & Document> = mongoose.model<ITicket & Document>('Tickets', ticketSchema)
