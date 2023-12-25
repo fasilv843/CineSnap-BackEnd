@@ -101,24 +101,12 @@ export class MovieRepository implements IMovieRepo {
     }
 
     async findBannerMovies(): Promise<IMovie[]> {
-        const last10Days = new Date();
-        const upcoming15Days = new Date();
-
-        // Set last 10 days
-        last10Days.setDate(new Date().getDate() - 10);
-
-        // Set upcoming 15 days
-        upcoming15Days.setDate(new Date().getDate() + 15);
-
-        return await movieModel.find(
-            {
-                backdrop_path: { $ne: null },
-                release_date: {
-                    $gte: last10Days,
-                    $lte: upcoming15Days
-                }
-            }
-        ).limit(5)
+        return await movieModel.find({
+            backdrop_path: { $ne: null },
+            release_date: { $lte: new Date() }
+        })
+        .sort({ release_date: -1 })
+        .limit(5);
     }
 
     async fetchTmdbMovieIds(): Promise<number[]> {
