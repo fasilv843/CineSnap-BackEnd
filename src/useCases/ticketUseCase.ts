@@ -159,4 +159,17 @@ export class TicketUseCase {
             return get500Response(error as Error)
         }
     }
+
+    async getAllTickets (page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
+        try {
+            if (isNaN(page)) page = 1
+            if (isNaN(limit)) limit = 10
+            const tickets = await this.ticketRepository.getAllTickets(page, limit)
+            const ticketCount = await this.ticketRepository.getAllTicketsCount()
+            log(ticketCount, 'ticketCount', tickets)
+            return get200Response({ tickets, ticketCount })
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
 }

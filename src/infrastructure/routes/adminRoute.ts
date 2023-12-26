@@ -1,6 +1,6 @@
 import express from "express";
 import { adminAuth } from "../middleware/adminAuth";
-import { aController, mController } from "../../providers/controllers";
+import { aController, mController, ticketController } from "../../providers/controllers";
 const adminRouter = express.Router()
 
 adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))
@@ -13,5 +13,7 @@ adminRouter.get('/theaters', adminAuth, (req, res) => aController.getAllTheaters
 adminRouter.patch('/theaters/block/:theaterId', adminAuth,  (req, res) => aController.blockTheater(req,res))
 adminRouter.patch('/theaters/approval/:theaterId', adminAuth,  (req, res) => aController.theaterApproval(req,res))
 adminRouter.get('/csmovies/get', adminAuth,  (req, res) => mController.getCineSnapMovieIds(req,res))
+
+adminRouter.get('/tickets/all', adminAuth, (req, res) => ticketController.getAllTickets(req,res))
 
 export default adminRouter

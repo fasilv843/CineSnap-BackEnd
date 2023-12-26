@@ -61,6 +61,15 @@ export class TicketRepository implements ITicketRepo {
         .populate('showId').populate('screenId').populate('theaterId')
     }
 
+    async getAllTickets (page: number, limit: number): Promise<ITicketRes[]> {
+        return await ticketModel.find({}).skip((page -1) * limit).limit(limit).sort({ createdAt: -1 })
+        .populate('userId').populate('movieId').populate('theaterId') as ITicketRes[]
+    }
+
+    async getAllTicketsCount(): Promise<number> {
+        return await ticketModel.countDocuments({}).exec();
+    }
+
     async cancelTicket (ticketId: ID): Promise<ITicketRes | null> {
         return await ticketModel.findByIdAndUpdate({_id: ticketId}, { isCancelled: true })
     }

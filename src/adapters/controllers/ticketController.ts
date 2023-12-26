@@ -68,5 +68,12 @@ export class TicketController {
         const apiRes = await this.ticketUseCase.getTicketsOfTheater(theaterId, page, limit)
         res.status(apiRes.status).json(apiRes)
     }
+
+    async getAllTickets (req: Request, res: Response) {
+        const page = parseInt(req.query.page as string)
+        const limit = parseInt(req.query.limit as string)
+        const apiRes = await this.ticketUseCase.getAllTickets(page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
 }
 
