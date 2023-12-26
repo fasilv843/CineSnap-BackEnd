@@ -4,9 +4,9 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { IApiAuthRes, IApiTempAuthRes, ID } from "../interfaces/common";
+import { IApiAuthRes, IApiRes, IApiTempAuthRes, ID } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
-import { IApiTheaterAuthRes, IApiTheaterRes, IApiTheatersRes, ITheaterUpdate } from "../interfaces/schema/theaterSchema";
+import { IApiTheaterAuthRes, IApiTheaterRes, IApiTheatersRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -166,12 +166,15 @@ export class TheaterUseCase {
         }
     }
 
-    async getAllTheaters(): Promise<IApiTheatersRes> {
+    async getAllTheaters(page: number, limit: number, searchQuery: string | undefined): Promise<IApiRes<ITheatersAndCount | null>> {
         try {
-            const theaters = await this.theaterRepository.findAllTheaters()
-            return get200Response(theaters)
+            if (isNaN(page)) page = 1
+            if (isNaN(limit)) limit = 10
+            if (!searchQuery) searchQuery = ''
+            const theaters = await this.theaterRepository.findAllTheaters(page, limit, searchQuery)
+            const theaterCount = await this.theaterRepository.findTheaterCount(searchQuery)
+            return get200Response({ theaters, theaterCount })
         } catch (error) {
-            console.log(error);
             return get500Response(error as Error)
         }
     }

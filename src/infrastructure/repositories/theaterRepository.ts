@@ -72,8 +72,30 @@ export class TheaterRepository implements ITheaterRepo {
     //     throw new Error("Method not implemented.");
     // }
 
-    async findAllTheaters(): Promise<[] | ITheater[]> {
-        return await theaterModel.find()
+    async findAllTheaters(page: number, limit: number, searchQuery: string): Promise<ITheaterRes[]> {
+        const regex = new RegExp(searchQuery, 'i')
+        return await theaterModel.find({
+            $or: [
+                { name: { $regex: regex } },
+                { email: { $regex: regex } },
+                { mobile: { $regex: regex } }
+            ]
+        })
+        .skip((page -1) * limit)
+        .limit(limit)
+        .select('-password')
+        .exec()
+    }
+
+    async findTheaterCount (searchQuery: string): Promise<number> {
+        const regex = new RegExp(searchQuery, 'i')
+        return await theaterModel.find({
+            $or: [
+                { name: { $regex: regex } },
+                { email: { $regex: regex } },
+                { mobile: { $regex: regex } }
+            ]
+        }).count()
     }
 
     async blockTheater(theaterId: string) {

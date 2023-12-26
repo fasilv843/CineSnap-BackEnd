@@ -16,7 +16,7 @@ const theaterSchema: Schema = new Schema<ITheater & Document>({
         required: true
     },
     mobile: {
-        type: Number,
+        type: String,
         unique: true,
         sparse: true, // Allows multiple documents with null values
     },

@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
 import { IChatRes } from "./schema/chatSchems";
-import { ITheaterRes } from "./schema/theaterSchema";
+import { ITheaterRes, ITheatersAndCount } from "./schema/theaterSchema";
 import { IUserRes, IUsersAndCount } from "./schema/userSchema";
 import { ITempTicketRes, ITicketRes, Seats } from "./schema/ticketSchema";
 import { ITempTheaterRes } from "./schema/tempTheaterSchema";
@@ -37,7 +37,7 @@ export interface ICoords {
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] 
             | IShow | IChatRes | ITicketRes | ITicketRes[] 
-            | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | null;
+            | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null;
 
 // export type SuccessTypes = Exclude<AllResTypes>
 

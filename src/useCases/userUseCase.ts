@@ -165,16 +165,6 @@ export class UserUseCase {
         }
     }
 
-    async getUserCount (searchQuery: string | undefined): Promise<IApiRes<number>> {
-        try {
-            if (!searchQuery) searchQuery = ''
-            const userCount = await this.userRepository.findUserCount(searchQuery)
-            return get200Response(userCount)
-        } catch (error) {
-            return get500Response(error as Error)
-        }
-    }
-
     async blockUser(userId: string) {
         await this.userRepository.blockUnblockUser(userId)
     }

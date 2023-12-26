@@ -67,3 +67,8 @@ export interface IApiTheatersRes {
     message: string
     data: ITheaterRes[] | null
 }
+
+export interface ITheatersAndCount {
+    theaters: ITheaterRes[],
+    theaterCount: number
+}
