@@ -68,3 +68,8 @@ export interface IApiUsersRes {
     message: string
     data: IUserRes[] | null
 }
+
+export interface IUsersAndCount {
+    users: IUserRes[],
+    userCount: number
+}

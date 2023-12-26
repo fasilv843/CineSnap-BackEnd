@@ -11,13 +11,12 @@ import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { ID } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs, ITicketRes } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
-import { ShowRepository } from "../infrastructure/repositories/showRepository";
 
 export class TicketUseCase {
     constructor (
         private readonly ticketRepository: TicketRepository,
         private readonly tempTicketRepository: TempTicketRepository,
-        private readonly showRepository: ShowRepository,
+        // private readonly showRepository: ShowRepository,
         private readonly theaterRepository: TheaterRepository,
         private readonly userRepository: UserRepository,
         private readonly adminRepository: AdminRepository

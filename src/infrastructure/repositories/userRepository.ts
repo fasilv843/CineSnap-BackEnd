@@ -19,12 +19,30 @@ export class UserRepository implements IUserRepo {
         return await userModel.findOne({ email })
     }
 
-    async findAllUsers(): Promise< IUser[] | [] > {
-        try {
-            return await userModel.find({}).select('-password').exec()
-        } catch (error) {
-            throw Error("Error while finding users")
-        }
+    async findAllUsers(page: number, limit: number, searchQuery: string): Promise< IUserRes[]> {
+        const regex = new RegExp(searchQuery, 'i')
+        return await userModel.find({
+            $or: [
+                { name: { $regex: regex } },
+                { email: { $regex: regex } },
+                { mobile: { $regex: regex } }
+            ]
+        })
+        .skip((page -1) * limit)
+        .limit(limit)
+        .select('-password')
+        .exec()
+    }
+
+    async findUserCount (searchQuery: string = ''): Promise<number> {
+        const regex = new RegExp(searchQuery, 'i')
+        return await userModel.find({
+            $or: [
+                { name: { $regex: regex } },
+                { email: { $regex: regex } },
+                { mobile: { $regex: regex } }
+            ]
+        }).count() 
     }
 
     async updateGoogleAuth(id: ID, profilePic: string | undefined){

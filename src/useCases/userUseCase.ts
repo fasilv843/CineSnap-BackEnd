@@ -5,9 +5,9 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { ID } from "../interfaces/common";
+import { IApiRes, ID } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IApiUserAuthRes, IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../interfaces/schema/userSchema";
+import { IApiUserAuthRes, IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -152,12 +152,25 @@ export class UserUseCase {
 
     }
 
-    async getUsers(): Promise<IApiUsersRes>{
+    async getAllUsers(page: number, limit: number, searchQuery: string | undefined): Promise<IApiRes<IUsersAndCount | null>>{
         try {
-            const users = await this.userRepository.findAllUsers()
-            return get200Response(users)
+            if (isNaN(page)) page = 1
+            if (isNaN(limit)) limit = 10
+            if (!searchQuery) searchQuery = ''
+            const users = await this.userRepository.findAllUsers(page, limit, searchQuery)
+            const userCount = await this.userRepository.findUserCount(searchQuery)
+            return get200Response({ users, userCount })
         } catch (error) {
-            console.log(error);
+            return get500Response(error as Error)
+        }
+    }
+
+    async getUserCount (searchQuery: string | undefined): Promise<IApiRes<number>> {
+        try {
+            if (!searchQuery) searchQuery = ''
+            const userCount = await this.userRepository.findUserCount(searchQuery)
+            return get200Response(userCount)
+        } catch (error) {
             return get500Response(error as Error)
         }
     }
