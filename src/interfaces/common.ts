@@ -3,7 +3,7 @@ import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
 import { IChatRes } from "./schema/chatSchems";
 import { ITheaterRes, ITheatersAndCount } from "./schema/theaterSchema";
 import { IUserRes, IUsersAndCount } from "./schema/userSchema";
-import { ITempTicketRes, ITicketRes, Seats } from "./schema/ticketSchema";
+import { ITempTicketRes, ITicketRes, ITicketsAndCount, Seats } from "./schema/ticketSchema";
 import { ITempTheaterRes } from "./schema/tempTheaterSchema";
 import { IMovie } from "./schema/movieSchema";
 
@@ -36,7 +36,7 @@ export interface ICoords {
 
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] 
-            | IShow | IChatRes | ITicketRes | ITicketRes[] 
+            | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount
             | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null;
 
 // export type SuccessTypes = Exclude<AllResTypes>

@@ -6,7 +6,7 @@ import { TempTheaterRepository } from "../infrastructure/repositories/tempTheate
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { IApiAuthRes, IApiRes, IApiTempAuthRes, ID } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
-import { IApiTheaterAuthRes, IApiTheaterRes, IApiTheatersRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
+import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";

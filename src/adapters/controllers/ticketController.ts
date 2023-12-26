@@ -61,33 +61,12 @@ export class TicketController {
         res.status(apiRes.status).json(apiRes)
     }
 
-    // async payAndConfirmTicket (req: Request, res: Response) {
-    //     const token = req.body.token
-    //     console.log(token, 'token from pay and check')
-
-    //     // this.ticketUseCase.bookTicket({priceId: req.body.priceId}, (response) => {
-    //     //     return res.status(200).json(response)
-    //     // })
-    //     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
-    //     log(stripe, 'stripe')
-    //     stripe.customers.create({
-    //         email: token.email,
-    //         source: token.id
-    //     }).then((customer) => {
-    //         log(customer, 'customer from payAndConfirmTicket')
-    //         return stripe.charges.create({
-    //             amount: 10 * 100,
-    //             description: 'Booking Ticket',
-    //             currency: 'USD',
-    //             customer: customer.id
-    //         })
-    //     }).then((charge) => {
-    //         log(charge, 'charge from payAndConfirmTicket')
-    //         res.status(200).json({ message: 'Success' })
-    //     }).catch(err => {
-    //         log(err, 'err in payment')
-    //         res.status(500).json({ message: 'Payment failed' })
-    //     })
-    // }
+    async getTicketsOfTheater (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const page = parseInt(req.query.page as string)
+        const limit = parseInt(req.query.limit as string)
+        const apiRes = await this.ticketUseCase.getTicketsOfTheater(theaterId, page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
 }
 

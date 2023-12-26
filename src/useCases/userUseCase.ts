@@ -7,7 +7,7 @@ import { TempUserRepository } from "../infrastructure/repositories/tempUserRepos
 import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiRes, ID } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IApiUserAuthRes, IApiUserRes, IApiUsersRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
+import { IApiUserAuthRes, IApiUserRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
@@ -187,19 +187,6 @@ export class UserUseCase {
             return get500Response(error as Error)
         }
     }
-
-    // const imgFolder = path.join(__dirname,'../public/images/productImages')
-
-    // const files = fs.readdirSync(imgFolder);
-
-    // for (const file of files) {
-
-    //     if(file === imageURL){
-    //         const filePath = path.join(imgFolder, file);
-    //         fs.unlinkSync(filePath);
-    //         break;
-    //     }
-    // }
 
     async updateUserProfilePic (userId: ID, fileName: string | undefined): Promise<IApiUserRes> {
         try {

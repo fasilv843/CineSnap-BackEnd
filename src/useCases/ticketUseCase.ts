@@ -8,9 +8,10 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { ID } from "../interfaces/common";
-import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs, ITicketRes } from "../interfaces/schema/ticketSchema";
+import { IApiRes, ID } from "../interfaces/common";
+import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
+import { log } from "console";
 
 export class TicketUseCase {
     constructor (
@@ -141,6 +142,19 @@ export class TicketUseCase {
               } finally {
                 await session.endSession()
               }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getTicketsOfTheater (theaterId: ID, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
+        try {
+            if (isNaN(page)) page = 1
+            if (isNaN(limit)) limit = 10
+            const tickets = await this.ticketRepository.getTicketsByTheaterId(theaterId, page, limit)
+            const ticketCount = await this.ticketRepository.getTicketsByTheaterIdCount(theaterId)
+            log(ticketCount, 'ticketCount', tickets)
+            return get200Response({tickets, ticketCount })
         } catch (error) {
             return get500Response(error as Error)
         }

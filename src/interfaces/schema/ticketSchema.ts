@@ -48,3 +48,8 @@ export interface IApiTicketsRes extends IApiRes<ITicketRes[] | null> {}
 
 export type Seats = Map<string, number[]>[]
 export interface IApiSeatsRes extends IApiRes<Seats | null> {}
+
+export interface ITicketsAndCount {
+    tickets: ITicketRes[]
+    ticketCount: number
+}
