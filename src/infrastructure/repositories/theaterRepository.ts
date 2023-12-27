@@ -44,7 +44,7 @@ export class TheaterRepository implements ITheaterRepo {
                     },
                     distanceField: 'distance',
                     spherical: true,
-                    maxDistance: maxDistance * 1000, // Convert maxDistance to meters
+                    maxDistance: maxDistance * 1000 * 1000, // Convert maxDistance to meters, then * 1000
                 },
             },
             { $match: { approvalStatus: 'Approved' } },

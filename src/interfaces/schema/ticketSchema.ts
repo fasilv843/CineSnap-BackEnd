@@ -15,7 +15,8 @@ export interface ITicket {
     startTime: Date
     endTime: Date
     isCancelled: boolean
-    paymentMethod: 'Wallet' | 'Stripe'
+    cancelledBy?: 'User' | 'Theater' | 'Admin'
+    paymentMethod: 'Wallet' | 'Razorpay'
 }
 
 export interface ISelectedSeat {

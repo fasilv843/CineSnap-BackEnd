@@ -15,5 +15,6 @@ adminRouter.patch('/theaters/approval/:theaterId', adminAuth,  (req, res) => aCo
 adminRouter.get('/csmovies/get', adminAuth,  (req, res) => mController.getCineSnapMovieIds(req,res))
 
 adminRouter.get('/tickets/all', adminAuth, (req, res) => ticketController.getAllTickets(req,res))
+adminRouter.patch('/tickets/cancel/:ticketId', adminAuth, (req, res) => ticketController.cancelTicketByAdmin(req, res))
 
 export default adminRouter

@@ -70,7 +70,15 @@ export class TicketRepository implements ITicketRepo {
         return await ticketModel.countDocuments({}).exec();
     }
 
-    async cancelTicket (ticketId: ID): Promise<ITicketRes | null> {
-        return await ticketModel.findByIdAndUpdate({_id: ticketId}, { isCancelled: true })
+    async cancelTicket (ticketId: ID, cancelledBy: 'User' | 'Theater' | 'Admin' = 'User'): Promise<ITicketRes | null> {
+        return await ticketModel.findByIdAndUpdate(
+            { _id: ticketId },
+            {
+                $set:{
+                    isCancelled: true,
+                    cancelledBy
+                }
+            }
+        )
     }
 }

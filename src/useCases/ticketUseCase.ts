@@ -133,7 +133,6 @@ export class TicketUseCase {
                 if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
             
                 await session.commitTransaction();
-                console.log('Ticket cancelled successfully!');
                 return get200Response(cancelledTicket)
               } catch (error) {
                   console.error('Error during cancelling ticket:', error);
@@ -142,6 +141,88 @@ export class TicketUseCase {
               } finally {
                 await session.endSession()
               }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async cancelTicketByTheater (ticketId: ID): Promise<IApiTicketRes> {
+        try {
+            const ticket = await this.ticketRepository.findTicketById(ticketId)
+            if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
+
+            const refundAmount = ticket.totalPrice
+            const theaterData = await this.theaterRepository.findById(ticket.theaterId)
+
+            if(theaterData && theaterData.wallet >= refundAmount) {
+                const session = await mongoose.connection.startSession();
+    
+                try {
+                    let cancelledTicket: ITicketRes | null = null
+                    await session.withTransaction(async () => {
+                        // taking refund amount from theater and giving it to user
+                        await this.theaterRepository.updateWallet(ticket.theaterId, -refundAmount, 'For Giving Refund for Ticket Cancellation')
+                        await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
+                        // code to re assign cancelled ticket seat
+                        cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, 'Theater')
+                    });
+    
+                    if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
+                
+                    await session.commitTransaction();
+                    return get200Response(cancelledTicket)
+                  } catch (error) {
+                      console.error('Error during cancelling ticket:', error)
+                      await session.abortTransaction();
+                      return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+                  } finally {
+                    await session.endSession()
+                  }
+
+            } else {
+                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Dont have enough money in wallet')
+            }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async cancelTicketByAdmin (ticketId: ID): Promise<IApiTicketRes> {
+        try {
+            const ticket = await this.ticketRepository.findTicketById(ticketId)
+            if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
+
+            const refundAmount = ticket.totalPrice
+
+            const adminData = await this.adminRepository.findAdmin()
+
+            if(adminData && adminData.wallet >= refundAmount) {
+                const session = await mongoose.connection.startSession();
+    
+                try {
+                    let cancelledTicket: ITicketRes | null = null
+                    await session.withTransaction(async () => {
+                        // taking refund amount from theater and giving it to user
+                        await this.adminRepository.updateWallet(-refundAmount, 'For Giving Refund for Ticket Cancellation')
+                        await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
+                        // code to re assign cancelled ticket seat
+                        cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, 'Admin')
+                    });
+    
+                    if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
+                
+                    await session.commitTransaction();
+                    return get200Response(cancelledTicket)
+                  } catch (error) {
+                      console.error('Error during cancelling ticket:', error);
+                      await session.abortTransaction();
+                      return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+                  } finally {
+                    await session.endSession()
+                  }
+            } else {
+                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Dont have enough money in wallet')
+            }
         } catch (error) {
             return get500Response(error as Error)
         }

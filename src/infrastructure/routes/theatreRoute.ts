@@ -31,5 +31,6 @@ thrRouter.get('/chat/history', theaterAuth, (req, res) => chatController.getChat
 thrRouter.patch('/wallet/add/:theaterId', theaterAuth, (req, res) => tController.addToWallet(req, res))
 
 thrRouter.get('/tickets/:theaterId', theaterAuth, (req, res) => ticketController.getTicketsOfTheater(req, res))
+thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicketByTheater(req, res))
 
 export default thrRouter

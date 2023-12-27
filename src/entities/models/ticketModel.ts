@@ -56,10 +56,17 @@ const ticketSchema: Schema = new Schema<ITicket & Document>({
         default: false,
         required: true
     },
+    cancelledBy: {
+        type: String,
+        enum: ['User', 'Theater', 'Admin'],
+        required () {
+            return this.isCancelled
+        }        
+    },
     paymentMethod: {
         type: String,
-        enum: ['Wallet', 'Stripe'],
-        default: 'Stripe',  // Delete after Implementation
+        enum: ['Wallet', 'Razorpay'],
+        default: 'Razorpay',  // Delete after Implementation
         required: true
     }
 },

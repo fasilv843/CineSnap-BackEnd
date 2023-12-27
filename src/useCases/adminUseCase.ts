@@ -14,7 +14,7 @@ export class AdminUseCase {
     ){}
 
     async verifyLogin(email:string, password: string): Promise<IApiAdminAuthRes>{
-        const adminData = await this.adminRepository.findByEmail(email)
+        const adminData = await this.adminRepository.findAdmin()
         if(adminData !== null){
             const passwordMatch = await this.encrypt.comparePasswords(password, adminData.password)
             if(passwordMatch){
