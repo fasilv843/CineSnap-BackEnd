@@ -1,11 +1,9 @@
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { ChatRepository } from "../infrastructure/repositories/chatRepository";
-import { ID } from "../interfaces/common";
-import { IApiChatRes, IChatReqs, IChatRes } from "../interfaces/schema/chatSchems";
+import { IApiRes, ID } from "../interfaces/common";
+import { IApiChatRes, IChatReqs, IChatRes, IUsersListForChats } from "../interfaces/schema/chatSchems";
 import { IApiTheatersRes } from "../interfaces/schema/theaterSchema";
-import { IApiUsersRes } from "../interfaces/schema/userSchema";
-
 
 export class ChatUseCase {
     constructor (
@@ -50,7 +48,7 @@ export class ChatUseCase {
         }
     }
 
-    async getUsersChattedWith (theaterId: ID): Promise<IApiUsersRes> {
+    async getUsersChattedWith (theaterId: ID): Promise<IApiRes<IUsersListForChats[] | null>> {
         try {
             const users = await this.chatRepository.getUsersChattedWith(theaterId)
             return get200Response(users)

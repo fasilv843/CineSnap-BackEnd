@@ -42,6 +42,11 @@ export const chatSchema: Schema = new Schema<IChatHistory & Document>({
             default: Date.now,
             required: true
         },
+        isRead: {
+            type: Boolean,
+            default: false,
+            required: true
+        }
     }]
 },
 {
