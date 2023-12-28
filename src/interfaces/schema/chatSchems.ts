@@ -25,3 +25,10 @@ export interface IUsersListForChats {
     profilePic?: string
     unreadCount: number
 }
+
+export interface IChatReadReqs { 
+    userId: ID | undefined,
+    theaterId: ID | undefined,
+    adminId: ID | undefined,
+    msgId: ID
+}

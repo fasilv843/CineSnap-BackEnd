@@ -1,7 +1,7 @@
 
 import { chatModel } from "../../entities/models/chatModel";
 import { ID } from "../../interfaces/common";
-import { IChatReqs, IChatRes, IUsersListForChats } from "../../interfaces/schema/chatSchems";
+import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../interfaces/schema/chatSchems";
 import { ITheaterRes } from "../../interfaces/schema/theaterSchema";
 import { IUserRes } from "../../interfaces/schema/userSchema";
 
@@ -56,5 +56,17 @@ export class ChatRepository { // implements IChatRepo
         })
         // console.log(users, 'users from get users for chats');
         return users
+    }
+
+    async markLastMsgAsRead (msgData: IChatReadReqs): Promise<undefined> {
+        const { userId, theaterId, adminId, msgId } = msgData
+        await chatModel.findOneAndUpdate(
+            { userId, theaterId, adminId, 'messages._id': msgId },
+            {
+              $set: {
+                'messages.$.isRead': true,
+              },
+            }
+        );
     }
 }
