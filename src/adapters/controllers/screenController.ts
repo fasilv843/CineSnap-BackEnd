@@ -10,9 +10,9 @@ export class ScreenController {
 
   // To Save Screen data of theaters
   async saveScreen(req: Request, res: Response) {
-    const { name, defaultPrice, row, col } = req.body as IScreenRequirements;
+    const { name, row, col } = req.body as IScreenRequirements;
     const theaterId = req.params.theaterId as unknown as ID
-    const screen: IScreenRequirements = { theaterId, name, defaultPrice, row, col };
+    const screen: IScreenRequirements = { theaterId, name, row, col };
     const apiRes = await this.screenUseCase.saveScreenDetails(screen)
     res.status(apiRes.status).json(apiRes)
   }
@@ -28,15 +28,15 @@ export class ScreenController {
   async findScreensInTheater(req: Request, res: Response) {
     const theaterId = req.params.theaterId as unknown as ID
     const apiRes = await this.screenUseCase.findScreensInTheater(theaterId)
-    console.log(apiRes.data, 'screens that returned to client');
+    // console.log(apiRes.data, 'screens that returned to client');
     res.status(apiRes.status).json(apiRes)
   }
 
   // To edit screen data of a theater
   async editScreen(req: Request, res: Response) {
-    const { name, defaultPrice, row, col, theaterId } = req.body as IScreenRequirements;
+    const { name, row, col, theaterId } = req.body as IScreenRequirements;
     const screenId: ID = req.params.screenId as unknown as ID
-    const screen: IScreenRequirements = { theaterId, name, defaultPrice, row, col };
+    const screen: IScreenRequirements = { theaterId, name, row, col };
     const apiRes = await this.screenUseCase.editScreen(screenId, screen)
     res.status(apiRes.status).json(apiRes)
   }

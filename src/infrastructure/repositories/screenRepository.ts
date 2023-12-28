@@ -14,7 +14,6 @@ export class ScreenRepository implements IScreenRepo {
         const screenData: Omit<IScreen, '_id'> = {
             theaterId: screen.theaterId,
             name: screen.name,
-            defaultPrice: screen.defaultPrice,
             row,
             col,
             seatsCount: rowCount * col,
@@ -52,7 +51,7 @@ export class ScreenRepository implements IScreenRepo {
         return await screenModel.findById({_id: id})
     }
 
-    async findScreensInTheater(theaterId: ID): Promise<[] | IScreen[]> {
+    async findScreensInTheater(theaterId: ID): Promise<IScreen[]> {
         return await screenModel.find({theaterId})
     }
 
@@ -61,7 +60,6 @@ export class ScreenRepository implements IScreenRepo {
         const rowCount = row.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
         const screenData: Omit<IScreen, '_id'> = {
             theaterId: screen.theaterId, name: screen.name,
-            defaultPrice: screen.defaultPrice,
             row, col, seatsCount: rowCount * col,
             seats: new Map()
         }

@@ -11,10 +11,6 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
         type: String,
         required: [true, 'Provide a Name to Screen']
     },
-    defaultPrice: {
-        type: Number,
-        required: [true, 'Add a default price for movies in this screen']
-    },
     seatsCount: {
         type: Number,
         required: [true, 'Provide seat count']
