@@ -4,22 +4,15 @@ import { IScreenSeatSave, ISingleScreenSeatSave } from "../../interfaces/schema/
 
 function splitAlphabetsToThree (rows: string) {
     const index = ALPHABETS.indexOf(rows.toUpperCase());
+    const availRows = ALPHABETS.slice(0, index + 1)
     let diamondSeats = ''
     let goldSeats = ''
     let silverSeats = ''
 
-    if (index >= 9) {
-      diamondSeats += ALPHABETS.slice(0, 4);
-      goldSeats += ALPHABETS.slice(4, 8);
-      silverSeats += ALPHABETS.slice(8, index + 1);
-    } else {
-      const groupSize = Math.ceil(index / 3) + 1;
-  
-      diamondSeats += ALPHABETS.slice(0, groupSize);
-      goldSeats += ALPHABETS.slice(groupSize, groupSize * 2);
-      silverSeats += ALPHABETS.slice(groupSize * 2, index + 1);
-    }
-
+    diamondSeats += availRows.slice(0, 4);
+    goldSeats += availRows.slice(4, 8);
+    if (index >= 8) silverSeats += availRows.slice(8, index + 1);
+    
     return {
         diamondSeats,
         goldSeats,
