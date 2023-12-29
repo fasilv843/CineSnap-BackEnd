@@ -1,6 +1,7 @@
 import { log } from "console";
 import { ALPHABETS } from "../../constants/constants";
-import { IScreenSeatSave, ISingleScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { ColType } from "../../interfaces/common";
 
 function splitAlphabetsToThree (rows: string) {
     const index = ALPHABETS.indexOf(rows.toUpperCase());
@@ -20,7 +21,7 @@ function splitAlphabetsToThree (rows: string) {
     }
 }
 
-function assignSeats <T>(seatAlphabets: string, rowArr: T[]): Map<string, T[]> {
+function assignSeats <T>(seatAlphabets: string, rowArr: T): Map<string, T> {
     const seatMap = new Map()
     for (let i=0; i<seatAlphabets.length; i++) {
         seatMap.set(seatAlphabets[i], rowArr)
@@ -33,7 +34,7 @@ export function getDefaultScreenSeatSetup(rows: string, cols: number): IScreenSe
     const { diamondSeats, goldSeats, silverSeats } = seats
 
     // Populate an array with objects from { col: 1 } to { col: cols }
-    const rowArr:ISingleScreenSeatSave[] = Array.from({ length: cols }, (_, index) => ({ col: index + 1 }));
+    const rowArr: ColType[] = Array.from({ length: cols }, (_, index) => index + 1 ) as ColType[]
 
     log(rowArr, 'default rowArr for assingning to seats')
     const diamondSeatMap = assignSeats(diamondSeats, rowArr)

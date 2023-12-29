@@ -1,10 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { ISingleScreenSeat, IScreenSeatCategory, IScreenSeat } from "../../interfaces/schema/screenSeatSchema";
-import { singleScreenSeatSchema } from "./subSchema/singleScreenSeatModel";
+import { IScreenSeatCategory, IScreenSeat } from "../../interfaces/schema/screenSeatSchema";
 
-
-
-export function getScreenSeatCategorySchema(defaultName: string, singleScreenSeatSchema: Schema<ISingleScreenSeat & Document>): Schema<Document & IScreenSeatCategory> {
+export function getScreenSeatCategorySchema(defaultName: string): Schema<Document & IScreenSeatCategory> {
     return new Schema<IScreenSeatCategory & Document>({
         name: {
           type: String,
@@ -13,15 +10,15 @@ export function getScreenSeatCategorySchema(defaultName: string, singleScreenSea
         },
         seats: {
           type: Map,
-          of: [singleScreenSeatSchema],
+          of: [Number],
         },
     });
 }
 
 export const screenSeatSchema: Schema = new Schema<IScreenSeat & Document>({
-    diamond: getScreenSeatCategorySchema('Diamond', singleScreenSeatSchema),
-    gold: getScreenSeatCategorySchema('Gold', singleScreenSeatSchema),
-    silver: getScreenSeatCategorySchema('Silver', singleScreenSeatSchema),
+    diamond: getScreenSeatCategorySchema('Diamond'),
+    gold: getScreenSeatCategorySchema('Gold'),
+    silver: getScreenSeatCategorySchema('Silver'),
 })
 
 export const screenSeatModel: Model<IScreenSeat & Document> = mongoose.model<IScreenSeat & Document>('ScreenSeats', screenSeatSchema)
