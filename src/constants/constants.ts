@@ -11,6 +11,7 @@ export const HalfRefundTime = 24
 export const QuarterRefundTime = 8
 export const NoRefundTime = 4
 
+export const ALPHABETS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export const emailRegex = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
 export const passwordMinLength = 8

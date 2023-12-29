@@ -10,9 +10,9 @@ export class ScreenController {
 
   // To Save Screen data of theaters
   async saveScreen(req: Request, res: Response) {
-    const { name, row, col } = req.body as IScreenRequirements;
+    const { name, rows, cols } = req.body as IScreenRequirements;
     const theaterId = req.params.theaterId as unknown as ID
-    const screen: IScreenRequirements = { theaterId, name, row, col };
+    const screen: IScreenRequirements = { theaterId, name, rows, cols };
     const apiRes = await this.screenUseCase.saveScreenDetails(screen)
     res.status(apiRes.status).json(apiRes)
   }
@@ -34,9 +34,9 @@ export class ScreenController {
 
   // To edit screen data of a theater
   async editScreen(req: Request, res: Response) {
-    const { name, row, col, theaterId } = req.body as IScreenRequirements;
+    const { name, rows, cols, theaterId } = req.body as IScreenRequirements;
     const screenId: ID = req.params.screenId as unknown as ID
-    const screen: IScreenRequirements = { theaterId, name, row, col };
+    const screen: IScreenRequirements = { theaterId, name, rows, cols };
     const apiRes = await this.screenUseCase.editScreen(screenId, screen)
     res.status(apiRes.status).json(apiRes)
   }

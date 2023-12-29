@@ -15,17 +15,20 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
         type: Number,
         required: [true, 'Provide seat count']
     },
-    row: {
+    rows: {
         type: String,
         required: true
     },
-    col: {
+    cols: {
         type: Number,
         required: true
     },
-    seats: {
-        type: Map,
-        of: [Number]
+    seatId: { 
+        type: Schema.Types.ObjectId,
+        ref: 'ScreenSeats',
+        required: true,
+        unique: true,
+        readonly: true
     },
     // updatedSeats: {
     //     type: Map,

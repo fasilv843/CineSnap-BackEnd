@@ -6,45 +6,8 @@ import { ID } from "../../interfaces/common";
 import mongoose from "mongoose";
 
 export class ScreenRepository implements IScreenRepo {
-    async saveScreen(screen: IScreenRequirements): Promise<IScreen | null> {
-        // console.log(screen, 'screen data from repository');
-        const { row, col } = screen
-        // console.log(row, col);
-        const rowCount = row.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-        const screenData: Omit<IScreen, '_id'> = {
-            theaterId: screen.theaterId,
-            name: screen.name,
-            row,
-            col,
-            seatsCount: rowCount * col,
-            seats: new Map()
-        }
-
-        // Populate an array with numbers from 1 to col
-        const rowArr = Array.from({ length: col }, (_, index) => index + 1);
-
-        for(let char = 'A'; char <= row; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
-            screenData.seats.set(char, rowArr)
-        }
-        // console.log(screenData, 'screen data that saved on db');
-
-        const session = await mongoose.connection.startSession();
-
-        try {
-            let savedScreen: IScreen | null = null;
-            await session.withTransaction(async () => {
-                savedScreen = await new screenModel(screenData).save()
-                await theaterModel.updateOne({_id: screen.theaterId}, { $inc: { screenCount: 1 }})  
-            })
-            await session.commitTransaction()
-            return savedScreen
-        } catch (error) {
-            session.abortTransaction()
-            throw error
-        } finally {
-            session.endSession()
-        }
-        
+    async saveScreen(screenData: Omit<IScreen, '_id'>): Promise<IScreen> {
+        return await new screenModel(screenData).save()
     }
 
     async findScreenById(id: ID): Promise<IScreen | null> {
@@ -56,18 +19,18 @@ export class ScreenRepository implements IScreenRepo {
     }
 
     async editScreen (screenId: ID, screen: IScreenRequirements): Promise<IScreen | null> {
-        const { row, col } = screen
-        const rowCount = row.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+        const { rows, cols } = screen
+        const rowCount = rows.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
         const screenData: Omit<IScreen, '_id'> = {
             theaterId: screen.theaterId, name: screen.name,
-            row, col, seatsCount: rowCount * col,
+            rows, cols, seatsCount: rowCount * cols,
             seats: new Map()
         }
 
         // Populate an array with numbers from 1 to col
-        const rowArr = Array.from({ length: col }, (_, index) => index + 1);
+        const rowArr = Array.from({ length: cols }, (_, index) => index + 1);
 
-        for(let char = 'A'; char <= row; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
+        for(let char = 'A'; char <= rows; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
             screenData.seats.set(char, rowArr)
         }
         // console.log(screenData, 'screen data that saved on db');

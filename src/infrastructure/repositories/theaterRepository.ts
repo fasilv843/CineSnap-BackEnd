@@ -184,4 +184,12 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
+    async updateScreenCount (theaterId: ID, count: number): Promise<ITheaterRes | null> {
+        return await theaterModel.findByIdAndUpdate(
+            { _id: theaterId },
+            { $inc: { screenCount: count }},
+            { new: true }
+        )  
+    }
+
 }

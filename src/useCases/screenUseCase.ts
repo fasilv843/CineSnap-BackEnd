@@ -1,19 +1,56 @@
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { STATUS_CODES } from "../constants/httpStausCodes";
-import { IApiScreenRes, IApiScreensRes, IScreenRequirements } from "../interfaces/schema/screenSchema";
+import { IApiScreenRes, IApiScreensRes, IScreen, IScreenRequirements } from "../interfaces/schema/screenSchema";
 import { ID } from "../interfaces/common";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
+import { getDefaultScreenSeatSetup } from "../infrastructure/helperFunctions/getScreenSeat";
+import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
+import mongoose from "mongoose";
+import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
+import { log } from "console";
 
 export class ScreenUseCase {
     constructor(
-        private readonly screenRepository: ScreenRepository
+        private readonly screenRepository: ScreenRepository,
+        private readonly screenSeatRepository: ScreenSeatRepository,
+        private readonly theaterRepository: TheaterRepository
     ) {}
 
     async saveScreenDetails (screen: IScreenRequirements): Promise<IApiScreenRes> {
         try {
-            const savedScreen = await this.screenRepository.saveScreen(screen)
-            if (savedScreen) return get200Response(savedScreen)
-            else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            const { rows, cols, name, theaterId } = screen
+            const rowCount = rows.charCodeAt(0) - 'A'.charCodeAt(0) + 1
+            const defaultScreenSeats = getDefaultScreenSeatSetup(rows, cols)
+            
+            const session = await mongoose.connection.startSession();
+            
+            try {
+                let savedScreen: IScreen | null = null;
+                await session.withTransaction(async () => {
+                    // saving screen seat data
+                    const savedScreenSeat = await this.screenSeatRepository.saveScreenSeat(defaultScreenSeats)
+        
+                    // Saving Screen
+                    const screenData: Omit<IScreen, '_id'> = {
+                        theaterId, name, rows, cols,
+                        seatsCount: rowCount * cols,
+                        seatId: savedScreenSeat._id
+                    }
+                    savedScreen = await this.screenRepository.saveScreen(screenData)
+
+                    // updating seat count in theater data
+                    await this.theaterRepository.updateScreenCount(theaterId, 1)
+                })
+                await session.commitTransaction()
+                log(savedScreen, 'saved screen from saveScreen Use Case')
+                return get200Response(savedScreen)
+            } catch (error) {
+                session.abortTransaction()
+                return get500Response(error as Error)
+            } finally {
+                session.endSession()
+            }
+
         } catch (error) {
             return get500Response(error as Error)
         }
