@@ -33,11 +33,10 @@ export class ScreenController {
   }
 
   // To edit screen data of a theater
-  async editScreen(req: Request, res: Response) {
-    const { name, rows, cols, theaterId } = req.body as IScreenRequirements;
+  async updateScreenName(req: Request, res: Response) {
+    const screenName = req.body.screenName as string
     const screenId: ID = req.params.screenId as unknown as ID
-    const screen: IScreenRequirements = { theaterId, name, rows, cols };
-    const apiRes = await this.screenUseCase.editScreen(screenId, screen)
+    const apiRes = await this.screenUseCase.updateScreenName(screenId, screenName)
     res.status(apiRes.status).json(apiRes)
   }
 

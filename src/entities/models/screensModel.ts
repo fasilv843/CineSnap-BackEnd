@@ -5,15 +5,18 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
     theaterId: {
         type: Schema.Types.ObjectId,
         required: [true, 'theaterId is required, screens can\'t exist in space :/'],
-        ref: 'Theaters'
+        ref: 'Theaters',
+        readonly: true
     },
     name: {
         type: String,
-        required: [true, 'Provide a Name to Screen']
+        required: [true, 'Provide a Name to Screen'],
+        trim: true
     },
     seatsCount: {
         type: Number,
-        required: [true, 'Provide seat count']
+        required: [true, 'Provide seat count'],
+        min: [1, 'Seat Count cannot be zero']
     },
     rows: {
         type: String,
@@ -29,17 +32,7 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
         required: true,
         unique: true,
         readonly: true
-    },
-    // updatedSeats: {
-    //     type: Map,
-    //     of: [Number]
-    // },
-    // useSeatAfter: {
-    //     type: Date,
-    //     required(): boolean {
-    //         return this.updatedSeats !== null
-    //     }
-    // }
+    }
 })
 
 export const screenModel: Model<IScreen & Document> = mongoose.model<IScreen & Document>('Screens', ScreenSchema)

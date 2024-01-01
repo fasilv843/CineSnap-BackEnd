@@ -1,9 +1,7 @@
 import { IScreenRepo } from "../../interfaces/repos/screenRepo";
-import { IScreenRequirements, IScreen } from "../../interfaces/schema/screenSchema";
 import { screenModel } from "../../entities/models/screensModel";
-import { theaterModel } from "../../entities/models/theaterModel"; 
 import { ID } from "../../interfaces/common";
-import mongoose from "mongoose";
+import { IScreen } from "../../interfaces/schema/screenSchema";
 
 export class ScreenRepository implements IScreenRepo {
     async saveScreen(screenData: Omit<IScreen, '_id'>): Promise<IScreen> {
@@ -18,43 +16,18 @@ export class ScreenRepository implements IScreenRepo {
         return await screenModel.find({theaterId})
     }
 
-    async editScreen (screenId: ID, screen: IScreenRequirements): Promise<IScreen | null> {
-        const { rows, cols } = screen
-        const rowCount = rows.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-        const screenData: Omit<IScreen, '_id' | 'seats' | 'seatId'> = {
-            theaterId: screen.theaterId, name: screen.name,
-            rows, cols, seatsCount: rowCount * cols,
-        }
-
-        // console.log(screenData, 'screen data that saved on db');
-        return await screenModel.findOneAndReplace(
-            { _id: screenId, theaterId: screen.theaterId },
-            screenData,
+    async updateScreenName (screenId: ID, screenName: string): Promise<IScreen | null> {
+        return await screenModel.findByIdAndUpdate(
+            { _id: screenId },
+            {
+                $set: { name: screenName }
+            },
             { new: true }
         )
     }
 
-    async deleteScreen (screenId: ID) {
-
-        const session = await mongoose.connection.startSession(); // Use existing connection session
-
-        try {
-          await session.withTransaction(async () => {
-            const screen = await screenModel.findById(screenId);
-            if (!screen) throw Error('screen don\'t exist');
-      
-            await theaterModel.updateOne({ _id: screen.theaterId }, { $inc: { screenCount: -1 } });
-            await screenModel.deleteOne({ _id: screenId });
-          });
-      
-          await session.commitTransaction();
-        //   console.log('Screen deleted successfully!');
-        } catch (error) {
-            console.error('Error deleting screen:', error);
-            await session.abortTransaction();
-        } finally {
-          await session.endSession(); // Close session after transaction
-        }
+    async deleteScreen (screenId: ID): Promise<IScreen | null> {
+        return await screenModel.findByIdAndDelete(screenId)
     }
 
     async updateSeatCount (seatId: ID, seatsCount: number, rows: string): Promise<IScreen | null> {

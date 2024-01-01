@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { ITempUserRes } from "../../interfaces/schema/tempUserSchema";
+import { ITempUserRes } from "../../../interfaces/schema/tempUserSchema";
 
 
 const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({

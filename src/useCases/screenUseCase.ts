@@ -75,9 +75,9 @@ export class ScreenUseCase {
         }
     }
 
-    async editScreen (screenId: ID, screenReq: IScreenRequirements): Promise<IApiScreenRes> {
+    async updateScreenName (screenId: ID, screenName: string): Promise<IApiScreenRes> {
         try {
-            const screen = await this.screenRepository.editScreen(screenId, screenReq)
+            const screen = await this.screenRepository.updateScreenName(screenId, screenName)
             if (screen) return get200Response(screen)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -87,8 +87,14 @@ export class ScreenUseCase {
 
     async deleteScreen (screenId: ID): Promise<IApiScreenRes> {
         try {
-            await this.screenRepository.deleteScreen(screenId)
-            return get200Response(null)
+            const screen = await this.screenRepository.deleteScreen(screenId)
+            if (screen) {
+                await this.screenSeatRepository.deleteScreenSeat(screen.seatId)
+                await this.theaterRepository.updateScreenCount(screen.theaterId, -1)
+                return get200Response(null)
+            } else {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid Request')
+            }
         } catch (error) {
             return get500Response(error as Error)
         }

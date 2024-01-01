@@ -1,4 +1,4 @@
-import { tempTicketModel } from "../../entities/models/tempTicketModel";
+import { tempTicketModel } from "../../entities/models/temp/tempTicketModel";
 import { ID } from "../../interfaces/common";
 import { ITempTicketRepo } from "../../interfaces/repos/tempTicketRepo";
 import { ITempTicketRes, ITempTicketReqs, Seats, ITicketReqs } from "../../interfaces/schema/ticketSchema";

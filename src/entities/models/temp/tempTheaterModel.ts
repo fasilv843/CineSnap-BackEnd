@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 
-import { theaterAddressSchema } from "./subSchema/addressSchema";
-import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
+import { theaterAddressSchema } from "../subSchema/addressSchema";
+import { ITempTheaterRes } from "../../../interfaces/schema/tempTheaterSchema";
 
 
 const tempTheaterSchema: Schema = new Schema<ITempTheaterRes & Document>({

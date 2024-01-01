@@ -1,4 +1,4 @@
-import { tempUserModel } from "../../entities/models/tempUserModel";
+import { tempUserModel } from "../../entities/models/temp/tempUserModel";
 import { ID } from "../../interfaces/common";
 import { ITempUserRepo } from "../../interfaces/repos/tempUserRepo";
 import { ITempUserReq, ITempUserRes } from "../../interfaces/schema/tempUserSchema";

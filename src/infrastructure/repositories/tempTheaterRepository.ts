@@ -1,4 +1,4 @@
-import { tempTheaterModel } from "../../entities/models/tempTheaterModel";
+import { tempTheaterModel } from "../../entities/models/temp/tempTheaterModel";
 import { ID } from "../../interfaces/common";
 import { ITempTheaterRepo } from "../../interfaces/repos/tempTheaterRepo";
 import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
