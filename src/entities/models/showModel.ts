@@ -1,7 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IShow } from "../../interfaces/schema/showSchema";
-import { showSeatSchema } from "./subSchema/showSeatSchema";
-
 
 export const showSchema: Schema = new Schema<IShow & Document>({
     movieId: {
@@ -22,10 +20,10 @@ export const showSchema: Schema = new Schema<IShow & Document>({
         type: Date,
         required: true
     },
-    ticketPrice: {
-        type: Number,
-        required: true
-    },
+    // ticketPrice: {
+    //     type: Number,
+    //     required: true
+    // },
     totalSeatCount: {
         type: Number,
         required: true
@@ -34,9 +32,11 @@ export const showSchema: Schema = new Schema<IShow & Document>({
         type: Number,
         required: true
     },
-    seats: {
-        type: Map,
-        of: [showSeatSchema]
+    seatId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        unique: true,
+        // immutable: [true, 'Changing seatId is forbidden']
     }
 })
 

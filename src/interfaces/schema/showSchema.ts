@@ -1,7 +1,7 @@
 import { IApiRes, ID } from "../common"
 import { IMovie } from "./movieSchema"
 
-export interface IShowSeat {
+export interface IShowSingleSeat {
     col: number
     isBooked: boolean
 }
@@ -12,10 +12,10 @@ export interface IShow {
     screenId: ID
     startTime: Date
     endTime: Date
-    ticketPrice: number
+    // ticketPrice: number
     totalSeatCount: number
     availableSeatCount: number
-    seats: Map<string, Array<IShowSeat>>
+    seatId: ID
 }
 
 export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' | 'availableSeatCount' | 'seats'> {}
