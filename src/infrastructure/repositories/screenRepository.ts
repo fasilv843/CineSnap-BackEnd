@@ -21,18 +21,11 @@ export class ScreenRepository implements IScreenRepo {
     async editScreen (screenId: ID, screen: IScreenRequirements): Promise<IScreen | null> {
         const { rows, cols } = screen
         const rowCount = rows.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-        const screenData: Omit<IScreen, '_id'> = {
+        const screenData: Omit<IScreen, '_id' | 'seats' | 'seatId'> = {
             theaterId: screen.theaterId, name: screen.name,
             rows, cols, seatsCount: rowCount * cols,
-            seats: new Map()
         }
 
-        // Populate an array with numbers from 1 to col
-        const rowArr = Array.from({ length: cols }, (_, index) => index + 1);
-
-        for(let char = 'A'; char <= rows; char = String.fromCharCode(char.charCodeAt(0) + 1)) {
-            screenData.seats.set(char, rowArr)
-        }
         // console.log(screenData, 'screen data that saved on db');
         return await screenModel.findOneAndReplace(
             { _id: screenId, theaterId: screen.theaterId },
@@ -62,5 +55,15 @@ export class ScreenRepository implements IScreenRepo {
         } finally {
           await session.endSession(); // Close session after transaction
         }
+    }
+
+    async updateSeatCount (seatId: ID, seatsCount: number, rows: string): Promise<IScreen | null> {
+        return await screenModel.findOneAndUpdate (
+            { seatId },
+            {
+                $set: { seatsCount, rows }
+            },
+            { new: true }
+        )
     }
 }

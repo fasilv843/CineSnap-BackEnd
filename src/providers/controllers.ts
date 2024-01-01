@@ -60,7 +60,7 @@ const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRep
 const showUseCase = new ShowUseCase(showRepository, movieRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, thrRepository, userRepository, adminRepository)
-const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty)
+const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)
 
 export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase)
 export const uController = new UserController(userUseCase, otpGenerator, encrypt )

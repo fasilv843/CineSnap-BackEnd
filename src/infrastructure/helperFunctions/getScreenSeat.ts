@@ -1,6 +1,6 @@
 import { log } from "console";
 import { ALPHABETS } from "../../constants/constants";
-import { IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeatCategory, IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
 import { ColType } from "../../interfaces/common";
 
 function splitAlphabetsToThree (rows: string) {
@@ -47,5 +47,40 @@ export function getDefaultScreenSeatSetup(rows: string, cols: number): IScreenSe
         diamond: { seats: diamondSeatMap },
         gold: { seats: goldSeatMap },
         silver: { seats: silverSeatMap }
+    }
+}
+
+export function getCategorySeatCount (cat: IScreenSeatCategory): number {
+    let seatCout = 0
+    for (const row of Object.values(cat.seats)) {
+        seatCout += row.filter((x: number) => x !== 0).length
+    }
+    return seatCout
+}
+
+export function getSeatCount(screenSeat: IScreenSeatRes): number {
+    return (
+        getCategorySeatCount(screenSeat.diamond) +
+        getCategorySeatCount(screenSeat.gold) + 
+        getCategorySeatCount(screenSeat.silver)
+    )
+}
+
+export function getRowKeys (category: IScreenSeatCategory): string[] {
+    return Object.keys(category.seats)
+}
+
+
+export function getLastRow (screenSeat: IScreenSeatRes): string {
+    const diamondKeys = getRowKeys(screenSeat.diamond)
+    const goldKeys = getRowKeys(screenSeat.gold)
+    const silverKeys = getRowKeys(screenSeat.silver)
+
+    if (silverKeys.length !== 0) {
+      return silverKeys[silverKeys.length - 1]
+    } else if (goldKeys.length !== 0) {
+      return goldKeys[goldKeys.length - 1]
+    } else {
+      return diamondKeys[diamondKeys.length - 1]
     }
 }
