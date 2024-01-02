@@ -8,6 +8,7 @@ import { ITempTheaterRes } from "./schema/tempTheaterSchema";
 import { IMovie } from "./schema/movieSchema";
 import { IScreen } from "./schema/screenSchema";
 import { IAvailCatsOnScreen, IScreenSeat } from "./schema/screenSeatSchema";
+import { IShowSeatsRes } from "./schema/showSeatsSchema";
 
 export type Location = [number, number];
 
@@ -38,7 +39,7 @@ export interface ICoords {
 
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[] | IAvailCatsOnScreen
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat
-            | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount | IUsersListForChats[]
+            | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount | IUsersListForChats[] | IShowSeatsRes
             | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null;
 
 // export type SuccessTypes = Exclude<AllResTypes>

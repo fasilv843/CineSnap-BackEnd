@@ -4,6 +4,7 @@ import { MovieController } from "../adapters/controllers/movieController"
 import { ScreenController } from "../adapters/controllers/screenController"
 import { ScreenSeatController } from "../adapters/controllers/screenSeatController"
 import { ShowController } from "../adapters/controllers/showController"
+import { ShowSeatController } from "../adapters/controllers/showSeatsController"
 import { TheaterController } from "../adapters/controllers/theaterController"
 import { TicketController } from "../adapters/controllers/ticketController"
 import { UserController } from "../adapters/controllers/userController"
@@ -25,6 +26,7 @@ import { ChatUseCase } from "../useCases/chatUseCase"
 import { MovieUseCase } from "../useCases/movieUseCase"
 import { ScreenSeatUseCase } from "../useCases/screenSeatUseCase"
 import { ScreenUseCase } from "../useCases/screenUseCase"
+import { ShowSeatsUseCase } from "../useCases/showSeatUseCase"
 import { ShowUseCase } from "../useCases/showUseCase"
 import { TheaterUseCase } from "../useCases/theaterUseCase"
 import { TicketUseCase } from "../useCases/ticketUseCase"
@@ -63,6 +65,7 @@ const showUseCase = new ShowUseCase(showRepository, movieRepository, scnReposito
 export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, thrRepository, userRepository, adminRepository)
 const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)
+const showSeatUseCase = new ShowSeatsUseCase(showSeatRepository)
 
 export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase)
 export const uController = new UserController(userUseCase, otpGenerator, encrypt )
@@ -73,4 +76,5 @@ export const showController = new ShowController(showUseCase)
 export const chatController = new ChatController(chatUseCase)
 export const ticketController = new TicketController(ticketUseCase)
 export const screenSeatController = new ScreenSeatController(screenSeatUseCase)
+export const showSeatsController = new ShowSeatController(showSeatUseCase)
 

@@ -37,14 +37,4 @@ export class ScreenSeatUseCase {
             return get500Response(error as Error)
         }
     }
-
-    // async deleteScreenSeat (seatId: ID): Promise<IApiScreenSeatRes> {
-    //     try {
-    //         const seat = await this.screenSeatRepository.deleteScreenSeat(seatId)
-    //         if (seat) return get200Response(null)
-    //         else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'seatId is invalid')
-    //     } catch (error) {
-    //         return get500Response(error as Error)
-    //     }
-    // }
 }

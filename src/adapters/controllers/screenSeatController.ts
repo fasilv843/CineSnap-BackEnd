@@ -20,10 +20,4 @@ export class ScreenSeatController {
         const screenSeatRes = await this.screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData)
         res.status(screenSeatRes.status).json(screenSeatRes)
     }
-
-    // async deleteScreenSeat (req: Request, res: Response) {
-    //     const screenSeatId = req.params.seatId as unknown as ID
-    //     const screenSeatRes = await this.screenSeatUseCase.deleteScreenSeat(screenSeatId)
-    //     res.status(screenSeatRes.status).json(screenSeatRes)
-    // }
 }

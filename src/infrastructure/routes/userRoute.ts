@@ -1,6 +1,6 @@
 import express from "express";
 import { userAuth } from "../middleware/userAuth";
-import { uController, tController, mController, chatController, showController, ticketController } from "../../providers/controllers";
+import { uController, tController, mController, chatController, showController, ticketController, showSeatsController } from "../../providers/controllers";
 import { upload } from "../config/multer";
 
 const userRouter = express.Router()
@@ -29,11 +29,12 @@ userRouter.get('/theater/show/get/:showId', (req, res) => showController.getShow
 userRouter.get('/show/seats/holded/:showId', (req, res) => ticketController.getHoldedSeats(req, res))
 userRouter.post('/book/ticket', (req, res) => ticketController.bookTicket(req, res))
 userRouter.get('/tempticket/get/:ticketId', (req, res) => ticketController.getTempTicketData(req, res))
-// userRouter.post('/show/book/payment', (req, res) => ticketController.payAndConfirmTicket(req, res))
+
 userRouter.post('/show/book/confirm/ticket', (req, res) => ticketController.confirmTicket(req, res))
 userRouter.get('/show/ticket/get/:ticketId', (req, res) => ticketController.getTicketData(req, res))
 userRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheaterByUser(req, res))
 
+userRouter.get('/shows/seats/:showSeatId', (req, res) => showSeatsController.findShowSeatById(req, res))
 
 userRouter.get('/tickets/:userId', (req, res) => ticketController.getTicketsOfUser(req, res))
 userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.cancelTicket(req, res))
