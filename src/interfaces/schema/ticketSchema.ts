@@ -1,5 +1,13 @@
 import { ColType, IApiRes, ID, RowType } from "../common";
 
+export interface ITicketSeat {
+    seats: string[]
+    name: string
+    singlePrice: number
+    CSFeePerTicket: number
+    totalPrice: number
+}
+
 export interface ITicket {
     _id: ID
     showId: ID
@@ -7,11 +15,11 @@ export interface ITicket {
     screenId: ID
     movieId: ID
     theaterId: ID
-    singlePrice: number
-    feePerTicket: number
+    diamondSeats: ITicketSeat
+    goldSeats: ITicketSeat
+    silverSeats: ITicketSeat
     totalPrice: number
     seatCount: number
-    seats: Map<string, Array<number>>
     startTime: Date
     endTime: Date
     isCancelled: boolean
@@ -35,15 +43,12 @@ export interface ITempTicketRes extends ITempTicket {}
 export interface IApiTempTicketRes extends IApiRes<ITempTicketRes | null> {}
 export interface IApiTempTicketsRes extends IApiRes<ITempTicketRes[]> {}
 
-export interface ITempTicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | 'seats'> {
-    seats: ISelectedSeat[]
-}
+export interface ITempTicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | 'cancelledBy' | 'paymentMethod'> {}
+
 
 export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' > {}
 
-export interface ITicketRes extends Omit<ITicket, 'seats'> {
-    seats: SeatRes
-}
+export interface ITicketRes extends ITicket {}
 export interface IApiTicketRes extends IApiRes<ITicketRes | null> {}
 export interface IApiTicketsRes extends IApiRes<ITicketRes[] | null> {}
 

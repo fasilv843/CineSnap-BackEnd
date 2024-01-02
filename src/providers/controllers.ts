@@ -63,7 +63,7 @@ const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRepository)
 const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepositoty, screenSeatRepositoty, showSeatRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
-const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, thrRepository, userRepository, adminRepository)
+const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, showRepository, showSeatRepository, thrRepository, userRepository, adminRepository)
 const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)
 const showSeatUseCase = new ShowSeatsUseCase(showSeatRepository)
 

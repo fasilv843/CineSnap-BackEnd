@@ -3,21 +3,23 @@ import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { calculateHoursDifference } from "../infrastructure/helperFunctions/date";
-// import { ShowRepository } from "../infrastructure/repositories/showRepository";
+import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiRes, ID } from "../interfaces/common";
-import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITicketReqs, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
+import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
+import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
 
 export class TicketUseCase {
     constructor (
         private readonly ticketRepository: TicketRepository,
         private readonly tempTicketRepository: TempTicketRepository,
-        // private readonly showRepository: ShowRepository,
+        private readonly showRepository: ShowRepository,
+        private readonly showSeatRepository: ShowSeatsRepository,
         private readonly theaterRepository: TheaterRepository,
         private readonly userRepository: UserRepository,
         private readonly adminRepository: AdminRepository
@@ -26,6 +28,7 @@ export class TicketUseCase {
     async bookTicketDataTemporarily (ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
         try {
             if (new Date(ticketReqs.startTime) < new Date()) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Show Already Started')
+            log(ticketReqs, 'ticketReqs for tempTicket')
             const ticketData = await this.tempTicketRepository.saveTicketDataTemporarily(ticketReqs)
             if (ticketData !== null) return get200Response(ticketData)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -37,6 +40,7 @@ export class TicketUseCase {
     async getHoldedSeats (showId: ID): Promise<IApiSeatsRes> {
         try {
             const seats = await this.tempTicketRepository.getHoldedSeats(showId)
+            log(seats, 'holded seats')
             return get200Response(seats)
         } catch (error) {
             return get500Response(error as Error)
@@ -66,17 +70,35 @@ export class TicketUseCase {
     async confirmTicket (tempTicketId: ID): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
-
+            log(tempTicket, 'tempTicket from confirmTicket use case')
             if (tempTicket !== null) {
-                const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITicketReqs
-                const confirmedTicket = await this.ticketRepository.saveTicket(tempTicketData)
-                const theaterShare = tempTicket.singlePrice * tempTicket.seatCount
-                const adminShare = tempTicket.singlePrice * tempTicket.feePerTicket
-                await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Booked a Ticket')
-                await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
-                return get200Response(confirmedTicket)
+                const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITempTicketRes
+                const show = await this.showRepository.getShowDetails(tempTicket.showId)
+                if (show){
+                    await this.showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
+                    const confirmedTicket = await this.ticketRepository.saveTicket(tempTicketData)
+                    let theaterShare = 0
+                    let adminShare = 0
+                    if (confirmedTicket.diamondSeats) {
+                        theaterShare += confirmedTicket.diamondSeats.singlePrice * confirmedTicket.diamondSeats.seats.length
+                        adminShare += confirmedTicket.diamondSeats.CSFeePerTicket * confirmedTicket.diamondSeats.seats.length
+                    } 
+                    if (confirmedTicket.goldSeats) {
+                        theaterShare += confirmedTicket.goldSeats.singlePrice * confirmedTicket.goldSeats.seats.length
+                        adminShare += confirmedTicket.goldSeats.CSFeePerTicket * confirmedTicket.goldSeats.seats.length
+                    } 
+                    if (confirmedTicket.silverSeats) {
+                        theaterShare += confirmedTicket.silverSeats.singlePrice * confirmedTicket.silverSeats.seats.length
+                        adminShare += confirmedTicket.silverSeats.CSFeePerTicket * confirmedTicket.silverSeats.seats.length
+                    } 
+                    await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Booked a Ticket')
+                    await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
+                    return get200Response(confirmedTicket)
+                } else {
+                    return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid show id')
+                }
             } else {
-                return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid temp ticket id, or ticket time out')
             }
         } catch (error) {
             return get500Response(error as Error)
