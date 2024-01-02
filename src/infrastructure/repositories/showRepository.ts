@@ -1,49 +1,52 @@
-import { movieModel } from "../../entities/models/movieModel";
 import { screenModel } from "../../entities/models/screensModel";
 import { showModel } from "../../entities/models/showModel";
 import { ID } from "../../interfaces/common";
 import { IShowRepo } from "../../interfaces/repos/showRepo";
 import { IMovie } from "../../interfaces/schema/movieSchema";
 import { IScreen } from "../../interfaces/schema/screenSchema";
-import { IShow, IShowRequirements, IShowRes, IShowSeat, IShowsOnAScreen } from "../../interfaces/schema/showSchema";
+import { IShow, IShowRes, IShowToSave, IShowsOnAScreen } from "../../interfaces/schema/showSchema";
 
 
 
 
 export class ShowRepository implements IShowRepo {
-    async saveShow(show: IShowRequirements): Promise<IShow> {
-        const movie = await movieModel.findById(show.movieId) as IMovie
-        const screen = await screenModel.findById(show.screenId) as IScreen
-        if (screen !== null || movie !== null) {
-            const showSeat: Map<string, Array<IShowSeat>> = new Map()
+    // async saveShowOld(show: IShowRequirements): Promise<IShow> {
+    //     const movie = await movieModel.findById(show.movieId) as IMovie
+    //     const screen = await screenModel.findById(show.screenId) as IScreen
+    //     if (screen !== null || movie !== null) {
+    //         const showSeat: Map<string, Array<IShowSeat>> = new Map()
 
-            for (const row of screen.seats.keys()) {
-                const rowArr = screen.seats.get(row)?.map(col => ({ col, isBooked: false })) || [];
-                showSeat.set(row, rowArr)
-            }
+    //         for (const row of screen.seats.keys()) {
+    //             const rowArr = screen.seats.get(row)?.map(col => ({ col, isBooked: false })) || [];
+    //             showSeat.set(row, rowArr)
+    //         }
 
-            const startTime = new Date(show.startTime);
-            // console.log(startTime, 'show start time');
+    //         const startTime = new Date(show.startTime);
+    //         // console.log(startTime, 'show start time');
 
-            const endTime = new Date(startTime);
-            endTime.setHours(startTime.getHours() + movie.duration.hours);
-            endTime.setMinutes(startTime.getMinutes() + movie.duration.minutes);
+    //         const endTime = new Date(startTime);
+    //         endTime.setHours(startTime.getHours() + movie.duration.hours);
+    //         endTime.setMinutes(startTime.getMinutes() + movie.duration.minutes);
 
-            const ticketPrice: number = show.ticketPrice
-            const showTosave: Omit<IShow, '_id'> = {
-                movieId: show.movieId,
-                screenId: show.screenId,
-                startTime: show.startTime,
-                endTime,
-                ticketPrice,
-                seats: showSeat,
-                totalSeatCount: screen.seatsCount,
-                availableSeatCount: screen.seatsCount
-            }
-            return await new showModel(showTosave).save()
-        } else {
-            throw Error('screen or movie id is not available')
-        }
+    //         // const ticketPrice: number = show.ticketPrice
+    //         const showTosave: Omit<IShow, '_id'> = {
+    //             movieId: show.movieId,
+    //             screenId: show.screenId,
+    //             startTime: show.startTime,
+    //             endTime,
+    //             // ticketPrice,
+    //             seats: showSeat,
+    //             totalSeatCount: screen.seatsCount,
+    //             availableSeatCount: screen.seatsCount
+    //         }
+    //         return await new showModel(showTosave).save()
+    //     } else {
+    //         throw Error('screen or movie id is not available')
+    //     }
+    // }
+
+    async saveShow (showTosave: IShowToSave): Promise<IShow> {
+        return await new showModel(showTosave).save()
     }
 
     async findShowsOnDate  (theaterId: ID, from: Date, to: Date): Promise<IShowsOnAScreen[]> {

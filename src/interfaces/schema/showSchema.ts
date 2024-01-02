@@ -12,19 +12,24 @@ export interface IShow {
     screenId: ID
     startTime: Date
     endTime: Date
-    // ticketPrice: number
     totalSeatCount: number
     availableSeatCount: number
     seatId: ID
 }
 
-export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' | 'availableSeatCount' | 'seats'> {}
+export interface IShowToSave extends Omit<IShow, '_id'> {}
 
-export interface IShowUpdate extends Omit<IShowRequirements, 'seats'> {}
+export interface IShowRequirements extends Omit<IShow, '_id' | 'totalSeatCount' | 'availableSeatCount' | 'seatId'> {
+    diamondPrice: number
+    goldPrice?: number
+    silverPrice?: number
+}
+
+export interface IShowUpdate extends Omit<IShowRequirements, 'seatId'> {}
 
 export interface IShowRes {
     movieId: IMovie
-    shows: Array<Omit<IShow, 'seats'>>
+    shows: Array<Omit<IShow, 'seatId'>>
 }
 
 export interface IApiShowsRes {

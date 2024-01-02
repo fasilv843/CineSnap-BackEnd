@@ -84,3 +84,11 @@ export function getLastRow (screenSeat: IScreenSeatRes): string {
       return diamondKeys[diamondKeys.length - 1]
     }
 }
+
+export function getAvailSeatData(cat: IScreenSeatCategory): string | undefined {
+    if (Object.keys(cat.seats).length > 0) {
+        return cat.name
+    } else {
+        return undefined
+    }
+}

@@ -23,3 +23,7 @@ export const nameRegex = '^[a-zA-Z ]{3,20}$'
 export const passwordRegex = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'
 
 export const ChargePerTicket = 10 // Rupees
+
+export const DEF_DIAMOND_PRICE = 300
+export const DEF_GOLD_PRICE = 250
+export const DEF_SILVER_PRICE = 150

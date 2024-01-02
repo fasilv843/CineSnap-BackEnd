@@ -23,6 +23,7 @@ thrRouter.delete('/screens/delete/:screenId', theaterAuth, (req, res) => scnCont
 
 thrRouter.get('/screens/seat/:seatId', theaterAuth, (req, res) => screenSeatController.findScreenSeatById(req, res))
 thrRouter.put('/screens/seat/update/:seatId', theaterAuth, (req, res) => screenSeatController.updateScreenSeat(req, res))
+thrRouter.get('/screens/get/seats/:screenId', theaterAuth, (req, res) => scnController.getAvailSeatsOnScreen(req, res))
 // thrRouter.delete('/screens/seat/delete/:seatId', theaterAuth, (req, res) => screenSeatController.deleteScreenSeat(req, res))
 
 thrRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheater(req, res))

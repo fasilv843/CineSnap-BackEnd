@@ -13,6 +13,7 @@ import { MovieRepository } from "../infrastructure/repositories/movieRepository"
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository"
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository"
 import { ShowRepository } from "../infrastructure/repositories/showRepository"
+import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository"
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository"
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository"
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository"
@@ -48,6 +49,7 @@ const tempThrRepository = new TempTheaterRepository()
 const scnRepositoty = new ScreenRepository()
 const screenSeatRepositoty = new ScreenSeatRepository()
 const showRepository = new ShowRepository()
+const showSeatRepository = new ShowSeatsRepository()
 const chatRepository = new ChatRepository()
 const ticketRepository = new TicketRepository()
 const tempTicketRepository = new TempTicketRepository()
@@ -57,7 +59,7 @@ const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt,
 const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
 const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRepository)
-const showUseCase = new ShowUseCase(showRepository, movieRepository)
+const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepositoty, screenSeatRepositoty, showSeatRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, thrRepository, userRepository, adminRepository)
 const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)

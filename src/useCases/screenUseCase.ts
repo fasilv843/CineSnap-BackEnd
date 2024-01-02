@@ -1,13 +1,14 @@
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { IApiScreenRes, IApiScreensRes, IScreen, IScreenRequirements } from "../interfaces/schema/screenSchema";
-import { ID } from "../interfaces/common";
+import { IApiRes, ID } from "../interfaces/common";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { getDefaultScreenSeatSetup } from "../infrastructure/helperFunctions/getScreenSeat";
+import { getAvailSeatData, getDefaultScreenSeatSetup } from "../infrastructure/helperFunctions/getScreenSeat";
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
 import mongoose from "mongoose";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { log } from "console";
+import { IAvailCatsOnScreen } from "../interfaces/schema/screenSeatSchema";
 
 export class ScreenUseCase {
     constructor(
@@ -94,6 +95,29 @@ export class ScreenUseCase {
                 return get200Response(null)
             } else {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid Request')
+            }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getAvailSeatsOnScreen (screenId: ID): Promise<IApiRes<IAvailCatsOnScreen | null>> {
+        try {
+            const screen = await this.screenRepository.findScreenById(screenId)
+            if (screen) {
+                const screenSeat = await this.screenSeatRepository.findScreenSeatById(screen.seatId)
+                if (screenSeat) {
+                    const { diamond, gold, silver } = screenSeat
+                    return get200Response({
+                        diamond: getAvailSeatData(diamond),
+                        gold: getAvailSeatData(gold),
+                        silver: getAvailSeatData(silver),
+                    })
+                } else {
+                    return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Something went wrong while fetching seat data')
+                }
+            } else {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid Screen Id')
             }
         } catch (error) {
             return get500Response(error as Error)

@@ -46,4 +46,10 @@ export class ScreenController {
     const apiRes = await this.screenUseCase.deleteScreen(screenId)
     res.status(apiRes.status).json(apiRes)
   }
+
+  async getAvailSeatsOnScreen (req: Request, res: Response) {
+    const screenId: ID = req.params.screenId as unknown as ID
+    const apiRes = await this.screenUseCase.getAvailSeatsOnScreen(screenId)
+    res.status(apiRes.status).json(apiRes)
+  }
 }

@@ -24,3 +24,9 @@ export interface IScreenSeatSave {
     gold: IScreenSeatCategorySave
     silver: IScreenSeatCategorySave
 }
+
+export interface IAvailCatsOnScreen {
+    diamond: string | undefined
+    gold: string | undefined
+    silver: string | undefined
+}

@@ -20,10 +20,6 @@ export const showSchema: Schema = new Schema<IShow & Document>({
         type: Date,
         required: true
     },
-    // ticketPrice: {
-    //     type: Number,
-    //     required: true
-    // },
     totalSeatCount: {
         type: Number,
         required: true
