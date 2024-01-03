@@ -86,9 +86,12 @@ export function getLastRow (screenSeat: IScreenSeatRes): string {
 }
 
 export function getAvailSeatData(cat: IScreenSeatCategory): string | undefined {
-    if (Object.keys(cat.seats).length > 0) {
+    log(cat, 'cat from getAvailSeatData')
+    if (cat.seats.size > 0) {
+        log('returning name', cat.name)
         return cat.name
     } else {
+        log('returning undefined')
         return undefined
     }
 }

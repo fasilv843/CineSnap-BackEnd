@@ -7,12 +7,14 @@ const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
         type: String,
         required: true,
         minlength: 3,
-        maxlength: 20
+        maxlength: 20,
+        trim: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     otp: {
         type: Number,

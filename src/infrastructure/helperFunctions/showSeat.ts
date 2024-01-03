@@ -3,7 +3,8 @@ import { IScreenSeatCategory, IScreenSeatRes } from "../../interfaces/schema/scr
 import { IShowSingleSeat } from "../../interfaces/schema/showSchema";
 import { IShowSeatCategory, IShowSeats } from "../../interfaces/schema/showSeatsSchema";
 
-export function getShowSeatCategory (screenCat: IScreenSeatCategory, price: number): IShowSeatCategory {
+export function getShowSeatCategory (screenCat: IScreenSeatCategory, price: number): IShowSeatCategory | undefined {
+    if (screenCat.seats.size === 0) return undefined
     const showSeatMap: Map<string, IShowSingleSeat[]> = new Map()
     for (const [rowName, row] of screenCat.seats) {
         const showSeatRow: IShowSingleSeat[] = row.map(x => ({ col: x, isBooked: false }))
@@ -17,7 +18,7 @@ export function getShowSeatCategory (screenCat: IScreenSeatCategory, price: numb
     }
 }
 
-export function createEmptyShowSeat (screenSeat: IScreenSeatRes): Omit<IShowSeats, '_id'> {
+export function createEmptyShowSeat (screenSeat: IScreenSeatRes): Partial<Omit<IShowSeats, '_id'>> {
     return {
         diamond: getShowSeatCategory(screenSeat.diamond, DEF_DIAMOND_PRICE),
         gold: getShowSeatCategory(screenSeat.gold, DEF_GOLD_PRICE),

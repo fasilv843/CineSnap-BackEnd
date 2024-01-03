@@ -7,25 +7,6 @@ import { ITempTicketRes, ITicketReqs, ITicketRes } from "../../interfaces/schema
 
 export class TicketRepository implements ITicketRepo {
     async saveTicket (tempTicket: ITempTicketRes): Promise<ITicketRes> {
-        // console.log(tempTicket, 'ticket data from saveTickt');
-        // const bookedSeats = tempTicket.seats
-        // log(bookedSeats, 'bookedSeats from save ticket')
-        // const showData = await showModel.findById(tempTicket.showId)
-        // if (showData) {
-        //     // Convert Map to Object
-        //     const showSeatsObject = Object.fromEntries(showData.seats);
-
-        //     for (const [row, cols] of Object.entries(bookedSeats) as [string, number[]][]) {
-        //         const showRow = showSeatsObject[row]
-        //         for (const col of cols) {
-        //             for (const showCol of showRow) {
-        //                 if (showCol.col === col) showCol.isBooked = true
-        //             }
-        //         }
-        //     }
-
-        //     await showData.save()
-            
         return await new ticketModel(tempTicket).save()
     }
 
