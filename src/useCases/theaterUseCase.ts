@@ -4,7 +4,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { IApiAuthRes, IApiRes, IApiTempAuthRes, ID } from "../interfaces/common";
+import { IApiAuthRes, IApiRes, IApiTempAuthRes, ID, IWalletHistoryAndCount } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
@@ -290,4 +290,13 @@ export class TheaterUseCase {
         }
     }
 
+    async getWalletHistory (theaterId: ID, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
+        try {
+            const userWallet = await this.theaterRepository.getWalletHistory(theaterId, page, limit)
+            if (userWallet) return get200Response(userWallet)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
 }

@@ -5,7 +5,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID, IWalletHistory, IWalletHistoryAndCount } from "../interfaces/common";
+import { IApiRes, ID, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IApiUserAuthRes, IApiUserRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";

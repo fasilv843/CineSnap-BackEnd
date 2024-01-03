@@ -110,4 +110,11 @@ export class TheaterController {
         res.status(apiRes.status).json(apiRes)
     }
 
+    async getWalletHistory (req: Request, res: Response) {
+        const { theaterId } = req.params as unknown as { theaterId: ID }
+        const page = req.query.page as unknown as number
+        const limit = req.query.limit as unknown as number
+        const apiRes = await this.theaterUseCase.getWalletHistory(theaterId, page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
 }

@@ -1,6 +1,6 @@
 import { theaterModel } from "../../entities/models/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ICoords, ID } from "../../interfaces/common";
+import { ICoords, ID, IWalletHistoryAndCount } from "../../interfaces/common";
 import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 
@@ -192,4 +192,14 @@ export class TheaterRepository implements ITheaterRepo {
         )  
     }
 
+    async getWalletHistory (theaterId: ID, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
+        const theaterData = await theaterModel.findById({ _id: theaterId })
+
+        return theaterData !== null 
+            ? { 
+                walletHistory: theaterData.walletHistory.slice((page - 1) * limit, page * limit), 
+                count: theaterData.walletHistory.length 
+            } 
+            : null
+    }
 }

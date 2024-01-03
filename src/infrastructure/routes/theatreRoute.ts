@@ -35,6 +35,7 @@ thrRouter.get('/chat/history', theaterAuth, (req, res) => chatController.getChat
 thrRouter.patch('/chat/mark/read', theaterAuth, (req, res) => chatController.markLastMsgAsRead(req, res))
 
 thrRouter.patch('/wallet/add/:theaterId', theaterAuth, (req, res) => tController.addToWallet(req, res))
+thrRouter.get('/wallet-history/:theaterId', theaterAuth, (req, res) => tController.getWalletHistory(req, res))
 
 thrRouter.get('/tickets/:theaterId', theaterAuth, (req, res) => ticketController.getTicketsOfTheater(req, res))
 thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicketByTheater(req, res))
