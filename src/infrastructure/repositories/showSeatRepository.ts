@@ -35,20 +35,31 @@ export class ShowSeatsRepository { // implements IChatRepo
             })
         }
 
-        
-        // if (goldSeats) {
-        //     goldSeats.seats.forEach(s => {
-        //         const col = parseInt(s.slice(1))
-        //         showSeats.gold.seats[s[0]] = showSeats.gold.seats[s[0]]?.map(showSeat => (showSeat.col === col) ? {...showSeat, isBooked: true }: showSeat)
-        //     })
-        // }
+        if (goldSeats) {
+            goldSeats.seats.forEach(s => {
+                const col = parseInt(s.slice(1))
+                log(col, 'col'), log(s[0], 'row')
+                const rowArr = showSeats.gold.seats.get(s[0])
+                if (rowArr) {
+                    const updatedRowArr = rowArr.map(s => s.col === col ? { col: col, isBooked: true } : s)
+                    showSeats.gold.seats.set(s[0], updatedRowArr)
+                }
+                log(rowArr, 'rowArr')
+            })
+        }
 
-        // if (silverSeats) {
-        //     silverSeats.seats.forEach(s => {
-        //         const col = parseInt(s.slice(1))
-        //         showSeats.silver.seats[s[0]] = showSeats.silver.seats[s[0]]?.map(showSeat => (showSeat.col === col) ? {...showSeat, isBooked: true }: showSeat)
-        //     })
-        // }
+        if (silverSeats) {
+            silverSeats.seats.forEach(s => {
+                const col = parseInt(s.slice(1))
+                log(col, 'col'), log(s[0], 'row')
+                const rowArr = showSeats.silver.seats.get(s[0])
+                if (rowArr) {
+                    const updatedRowArr = rowArr.map(s => s.col === col ? { col: col, isBooked: true } : s)
+                    showSeats.silver.seats.set(s[0], updatedRowArr)
+                }
+                log(rowArr, 'rowArr')
+            })
+        }
 
         return await showSeats.save()
     }

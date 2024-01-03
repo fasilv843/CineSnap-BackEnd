@@ -1,9 +1,7 @@
-import { log } from "console";
-import { showModel } from "../../entities/models/showModel";
 import { ticketModel } from "../../entities/models/ticketModel";
 import { ID } from "../../interfaces/common";
 import { ITicketRepo } from "../../interfaces/repos/ticketRepo";
-import { ITempTicketRes, ITicketReqs, ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { ITempTicketRes, ITicketRes } from "../../interfaces/schema/ticketSchema";
 
 export class TicketRepository implements ITicketRepo {
     async saveTicket (tempTicket: ITempTicketRes): Promise<ITicketRes> {

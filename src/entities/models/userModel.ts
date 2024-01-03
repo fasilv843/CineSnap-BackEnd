@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { IUser } from "../../interfaces/schema/userSchema"; 
-import { emailRegex } from "../../constants/constants";
 import { userAddressSchema } from "./subSchema/addressSchema";
-import { walletHistorySchema } from "./subSchema/walletHistorySchema";
+import { walletSchema } from "./base/walletSchema";
+import { emailSchema } from "./base/emailSchema";
+import { mobileSchema } from "./base/mobileSchema";
 
 
 const userSchema: Schema = new Schema<IUser & Document>({
@@ -11,17 +12,6 @@ const userSchema: Schema = new Schema<IUser & Document>({
         required: [true, 'Name is required'],
         minlength: [3, 'Name must contain atleast 3 characters'],
         maxlength: [20, 'Name contain atmost 20 characters']
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        match: new RegExp(emailRegex)
-    },
-    mobile: {
-        type: String,
-        unique: true,
-        sparse: true,
     },
     password: {
         type: String,
@@ -62,16 +52,14 @@ const userSchema: Schema = new Schema<IUser & Document>({
         },
     },
     address: userAddressSchema,
-    wallet: {
-        type: Number,
-        default: 0,
-        required: true
-    },
-    walletHistory: [walletHistorySchema],
 },
 {
     timestamps : true
 });
+
+userSchema.add(emailSchema)
+userSchema.add(mobileSchema)
+userSchema.add(walletSchema)
 
 const userModel: Model< IUser & Document > = mongoose.model< IUser & Document >('Users', userSchema);
 

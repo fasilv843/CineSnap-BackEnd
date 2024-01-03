@@ -1,45 +1,10 @@
 import mongoose, { Model, Schema } from "mongoose";
-
-import { theaterAddressSchema } from "../subSchema/addressSchema";
+// import { theaterAddressSchema } from "../subSchema/addressSchema";
 import { ITempTheaterRes } from "../../../interfaces/schema/tempTheaterSchema";
+import baseTheaterSchema from "../base/baseTheaterSchema";
 
 
 const tempTheaterSchema: Schema = new Schema<ITempTheaterRes & Document>({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    liscenceId: {
-        type: String,
-        required: [true, 'Provide your Liscence ID']
-    },
-    coords: {
-        type: {
-            type: String,
-            enum: ['Point'],
-            default: 'Point',
-            required: true
-        },
-        coordinates: {
-            type: [Number],
-            min: 2,
-            max: 2,
-            required: true,
-        },
-    },
-    address:{ 
-        type: theaterAddressSchema,
-        required: [true, 'Address is required']
-    },
     otp: {
         type: Number,
         // min: 1000,
@@ -51,6 +16,8 @@ const tempTheaterSchema: Schema = new Schema<ITempTheaterRes & Document>({
         expires: 60 * 15 // expires after 15 mins
     }
 })
+
+tempTheaterSchema.add(baseTheaterSchema)
 
 tempTheaterSchema.index({ expireAt: 1 }, { expireAfterSeconds: 60 * 15 });
 

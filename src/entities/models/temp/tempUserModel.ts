@@ -1,5 +1,6 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { ITempUserRes } from "../../../interfaces/schema/tempUserSchema";
+import { emailSchema } from "../base/emailSchema";
 
 
 const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
@@ -8,12 +9,6 @@ const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
         required: true,
         minlength: 3,
         maxlength: 20,
-        trim: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
         trim: true
     },
     otp: {
@@ -32,6 +27,7 @@ const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
     }
 })
 
+tempUserSchema.add(emailSchema)
 tempUserSchema.index({ expireAt: 1 }, { expireAfterSeconds: 60 * 15 });
 
 
