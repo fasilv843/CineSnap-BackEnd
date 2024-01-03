@@ -1,5 +1,5 @@
 import userModel from "../../entities/models/userModel";
-import { ID } from "../../interfaces/common";
+import { ID, IWalletHistoryAndCount } from "../../interfaces/common";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
 import { IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
 
@@ -116,10 +116,6 @@ export class UserRepository implements IUserRepo {
     }
     
     async updateWallet (userId: ID, amount: number, message: string): Promise<IUserRes | null> {
-        // const walletHistory: Omit<IWalletHistory, 'date'> = {
-        //     amount,
-        //     message
-        // }
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {
@@ -128,5 +124,16 @@ export class UserRepository implements IUserRepo {
             },
             { new: true }
         )
+    }
+
+    async getWalletHistory (userId: ID, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
+        const userData = await userModel.findById({ _id: userId })
+
+        return userData !== null 
+            ? { 
+                walletHistory: userData.walletHistory.slice((page - 1) * limit, page * limit), 
+                count: userData.walletHistory.length 
+            } 
+            : null
     }
 }

@@ -32,13 +32,18 @@ export interface IWalletHistory {
     date: Date
 }
 
+export interface IWalletHistoryAndCount {
+    walletHistory: IWalletHistory[],
+    count: number
+}
+
 export interface ICoords {
     type: 'Point'
     coordinates: [number, number];
 }
 
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[] | IAvailCatsOnScreen
-            | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat
+            | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat | IWalletHistoryAndCount
             | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount | IUsersListForChats[] | IShowSeatsRes
             | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null;
 

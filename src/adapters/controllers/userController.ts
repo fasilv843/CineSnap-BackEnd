@@ -165,4 +165,12 @@ export class UserController {
         const apiRes = await this.userUseCase.addToWallet(userId, amount)
         res.status(apiRes.status).json(apiRes)
     }
+
+    async getWalletHistory (req: Request, res: Response) {
+        const { userId } = req.params as unknown as { userId: ID }
+        const page = req.query.page as unknown as number
+        const limit = req.query.limit as unknown as number
+        const apiRes = await this.userUseCase.getWalletHistory(userId, page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
 }

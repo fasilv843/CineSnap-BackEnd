@@ -40,5 +40,6 @@ userRouter.get('/tickets/:userId', (req, res) => ticketController.getTicketsOfUs
 userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.cancelTicket(req, res))
 
 userRouter.patch('/wallet/add/:userId', userAuth, (req, res) => uController.addToWallet(req, res))
+userRouter.get('/wallet-history/:userId', userAuth, (req, res) => uController.getWalletHistory(req, res))
 
 export default userRouter

@@ -5,7 +5,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID } from "../interfaces/common";
+import { IApiRes, ID, IWalletHistory, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IApiUserAuthRes, IApiUserRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
@@ -234,6 +234,16 @@ export class UserUseCase {
             if (user !== null) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
 
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getWalletHistory (userId: ID, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
+        try {
+            const userWallet = await this.userRepository.getWalletHistory(userId, page, limit)
+            if (userWallet) return get200Response(userWallet)
+            else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userid')
         } catch (error) {
             return get500Response(error as Error)
         }
