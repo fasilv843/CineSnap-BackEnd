@@ -8,7 +8,7 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID, IWalletHistoryAndCount } from "../interfaces/common";
+import { IApiRes, ID } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";

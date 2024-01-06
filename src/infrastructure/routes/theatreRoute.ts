@@ -1,6 +1,6 @@
 import express from "express";
 import { theaterAuth } from "../middleware/theaterAuth";
-import { tController, scnController, showController, chatController, ticketController, screenSeatController } from "../../providers/controllers";
+import { tController, scnController, showController, chatController, ticketController, screenSeatController, couponController } from "../../providers/controllers";
 import { upload } from "../config/multer";
 
 // thr = theater
@@ -39,5 +39,7 @@ thrRouter.get('/wallet-history/:theaterId', theaterAuth, (req, res) => tControll
 
 thrRouter.get('/tickets/:theaterId', theaterAuth, (req, res) => ticketController.getTicketsOfTheater(req, res))
 thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicketByTheater(req, res))
+
+thrRouter.post('/coupon/save', theaterAuth, (req, res) => couponController.addCoupon(req, res))
 
 export default thrRouter

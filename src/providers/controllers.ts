@@ -1,5 +1,6 @@
 import { AdminController } from "../adapters/controllers/adminController"
 import { ChatController } from "../adapters/controllers/chatController"
+import { CouponController } from "../adapters/controllers/couponController"
 import { MovieController } from "../adapters/controllers/movieController"
 import { ScreenController } from "../adapters/controllers/screenController"
 import { ScreenSeatController } from "../adapters/controllers/screenSeatController"
@@ -10,6 +11,7 @@ import { TicketController } from "../adapters/controllers/ticketController"
 import { UserController } from "../adapters/controllers/userController"
 import { AdminRepository } from "../infrastructure/repositories/adminRepository"
 import { ChatRepository } from "../infrastructure/repositories/chatRepository"
+import { CouponRepository } from "../infrastructure/repositories/couponRepository"
 import { MovieRepository } from "../infrastructure/repositories/movieRepository"
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository"
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository"
@@ -23,6 +25,7 @@ import { TicketRepository } from "../infrastructure/repositories/ticketRepositor
 import { UserRepository } from "../infrastructure/repositories/userRepository"
 import { AdminUseCase } from "../useCases/adminUseCase"
 import { ChatUseCase } from "../useCases/chatUseCase"
+import { CouponUseCase } from "../useCases/couponUseCase"
 import { MovieUseCase } from "../useCases/movieUseCase"
 import { ScreenSeatUseCase } from "../useCases/screenSeatUseCase"
 import { ScreenUseCase } from "../useCases/screenUseCase"
@@ -55,6 +58,7 @@ const showSeatRepository = new ShowSeatsRepository()
 const chatRepository = new ChatRepository()
 const ticketRepository = new TicketRepository()
 const tempTicketRepository = new TempTicketRepository()
+const couponRepository = new CouponRepository()
 
 const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
 const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
@@ -66,6 +70,7 @@ export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, showRepository, showSeatRepository, thrRepository, userRepository, adminRepository)
 const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)
 const showSeatUseCase = new ShowSeatsUseCase(showSeatRepository)
+const couponUseCase = new CouponUseCase(couponRepository, thrRepository)
 
 export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase)
 export const uController = new UserController(userUseCase, otpGenerator, encrypt )
@@ -77,4 +82,5 @@ export const chatController = new ChatController(chatUseCase)
 export const ticketController = new TicketController(ticketUseCase)
 export const screenSeatController = new ScreenSeatController(screenSeatUseCase)
 export const showSeatsController = new ShowSeatController(showSeatUseCase)
+export const couponController = new CouponController(couponUseCase)
 

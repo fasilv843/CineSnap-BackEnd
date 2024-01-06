@@ -52,6 +52,27 @@ const userSchema: Schema = new Schema<IUser & Document>({
         },
     },
     address: userAddressSchema,
+    usedCoupons: {
+        type: [{
+            couponId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Coupons',
+                required: true
+            },
+            date: {
+                type: Date,
+                required: true,
+                default: Date.now
+            },
+            ticketId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Tickets',
+                required: true
+            }
+        }],
+        default: [],
+        required: true
+    } 
 },
 {
     timestamps : true

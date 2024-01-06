@@ -1,5 +1,11 @@
 import { IUserAddress, ICoords, IWalletHistory, ID } from "../common"
 
+export interface IUsedCoupons {
+    couponId: ID
+    date: Date,
+    ticketId: ID
+}
+
 // interface specifically for userSchema
 export interface IUser {
     _id: ID
@@ -14,7 +20,8 @@ export interface IUser {
     address?: IUserAddress,
     isGoogleAuth: boolean
     wallet: number
-    walletHistory: IWalletHistory[] | []
+    walletHistory: IWalletHistory[] | [],
+    usedCoupons: IUsedCoupons[]
 }
 
 // interface to respond to front end
