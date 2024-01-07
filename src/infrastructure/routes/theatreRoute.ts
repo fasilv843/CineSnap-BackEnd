@@ -41,5 +41,7 @@ thrRouter.get('/tickets/:theaterId', theaterAuth, (req, res) => ticketController
 thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicketByTheater(req, res))
 
 thrRouter.post('/coupon/save', theaterAuth, (req, res) => couponController.addCoupon(req, res))
+thrRouter.get('/coupons/theater-coupons/:theaterId', theaterAuth, (req, res) => couponController.getCouponsOnTheater(req, res))
+thrRouter.patch('/coupons/cancel/:couponId', theaterAuth, (req, res) => couponController.cancelCoupon(req, res))
 
 export default thrRouter
