@@ -12,6 +12,10 @@ export class TempTicketRepository implements ITempTicketRepo {
         return await tempTicketModel.findById(ticketId).populate('movieId').populate('showId').populate('screenId').populate('theaterId')
     }
 
+    async findTempTicketById (ticketId: ID): Promise<ITempTicketRes | null> {
+        return await tempTicketModel.findById(ticketId).select({ _id: 0, expireAt: 0 }) as ITempTicketRes
+    }
+
     async getTicketDataWithoutPopulate (ticketId: ID): Promise<ITempTicketRes | null> {
         return await tempTicketModel.findByIdAndDelete(ticketId).select({ _id: 0, expireAt: 0 }) as ITempTicketRes
     }

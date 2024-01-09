@@ -24,6 +24,12 @@ export class CouponController {
         const couponId = req.params.couponId as unknown as ID
         const couponRes = await this.couponUseCase.cancelCoupon(couponId)
         res.status(couponRes.status).json(couponRes)
+    }
 
+    async getApplicableCoupons (req: Request, res: Response) {
+        const userId = req.params.userId as unknown as ID
+        const ticketId = req.query.ticketId as unknown as ID
+        const couponRes = await this.couponUseCase.getApplicableCoupons(userId, ticketId)
+        res.status(couponRes.status).json(couponRes)
     }
 }

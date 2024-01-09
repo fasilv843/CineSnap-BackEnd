@@ -24,4 +24,20 @@ export class CouponRepository implements ICouponRepo {
             }
         )
     }
+
+    async getAvailableCoupons (): Promise<ICouponRes[]> {
+        const currentDate = new Date()
+        return await couponModel.find({
+            isCancelled: false,
+            couponCount: { $gte: 1 },
+            $or: [
+                { couponType: { $ne: 'Once' } }, // Exclude 'Once' type from date checks
+                {
+                    couponType: 'Once',
+                    endDate: { $gte: currentDate },
+                    startDate: { $lte: currentDate }
+                }
+            ]
+        })
+    }
 }

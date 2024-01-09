@@ -13,6 +13,8 @@ import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTi
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
 import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
+import { ICouponRes } from "../interfaces/schema/couponSchema";
+import { CouponRepository } from "../infrastructure/repositories/couponRepository";
 
 export class TicketUseCase {
     constructor (
@@ -22,7 +24,9 @@ export class TicketUseCase {
         private readonly showSeatRepository: ShowSeatsRepository,
         private readonly theaterRepository: TheaterRepository,
         private readonly userRepository: UserRepository,
-        private readonly adminRepository: AdminRepository
+        private readonly adminRepository: AdminRepository,
+        private readonly couponRepository: CouponRepository,
+
     ) {}
 
     async bookTicketDataTemporarily (ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
@@ -67,9 +71,11 @@ export class TicketUseCase {
         }
     }
 
-    async confirmTicket (tempTicketId: ID): Promise<IApiTicketRes> {
+    async confirmTicket (tempTicketId: ID, couponId?: ID): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
+            let couponData: ICouponRes | undefined = undefined
+            if (couponId) couponData = await this.couponRepository.findCouponById(couponId)
             log(tempTicket, 'tempTicket from confirmTicket use case')
             if (tempTicket !== null) {
                 const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITempTicketRes
@@ -91,6 +97,14 @@ export class TicketUseCase {
                         theaterShare += confirmedTicket.silverSeats.singlePrice * confirmedTicket.silverSeats.seats.length
                         adminShare += confirmedTicket.silverSeats.CSFeePerTicket * confirmedTicket.silverSeats.seats.length
                     } 
+
+                    if (couponData) {
+                        if (couponData.discountType === 'Fixed Amount') {
+                            theaterShare -= couponData.discount
+                        } else if (couponData.discountType === 'Percentage') {
+                            theaterShare -= (theaterShare / 100) * couponData.discount
+                        }
+                    }
                     await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Booked a Ticket')
                     await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
                     return get200Response(confirmedTicket)

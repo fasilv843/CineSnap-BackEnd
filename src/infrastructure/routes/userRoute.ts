@@ -1,6 +1,6 @@
 import express from "express";
 import { userAuth } from "../middleware/userAuth";
-import { uController, tController, mController, chatController, showController, ticketController, showSeatsController } from "../../providers/controllers";
+import { uController, tController, mController, chatController, showController, ticketController, showSeatsController, couponController } from "../../providers/controllers";
 import { upload } from "../config/multer";
 
 const userRouter = express.Router()
@@ -41,5 +41,7 @@ userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.canc
 
 userRouter.patch('/wallet/add/:userId', userAuth, (req, res) => uController.addToWallet(req, res))
 userRouter.get('/wallet-history/:userId', userAuth, (req, res) => uController.getWalletHistory(req, res))
+
+userRouter.get('/coupons/applicable-coupons/:userId', userAuth, (req, res) => couponController.getApplicableCoupons(req, res))
 
 export default userRouter

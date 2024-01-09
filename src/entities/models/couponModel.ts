@@ -69,6 +69,22 @@ export const couponSchema: Schema = new Schema<ICoupon & Document>({
     }
 })
 
+couponSchema.pre('save', function (next) {
+    // Check and set default value for minTicketCount
+    if (typeof this.minTicketCount !== 'number' || isNaN(this.minTicketCount)) {
+        this.minTicketCount = 0;
+    }
+
+    // Check and set default value for couponCount
+    if (typeof this.couponCount !== 'number' || isNaN(this.couponCount)) {
+        this.couponCount = Infinity;
+    }
+
+    // Continue with the save operation
+    next();
+});
+
+
 export const couponModel: Model<ICoupon & Document> = mongoose.model<ICoupon & Document>('Coupons', couponSchema)
 
 // TnC:{

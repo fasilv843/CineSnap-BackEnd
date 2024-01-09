@@ -5,11 +5,16 @@ import { CouponRepository } from "../infrastructure/repositories/couponRepositor
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { IApiRes, ID } from "../interfaces/common";
 import { ICouponReqs, ICouponRes } from "../interfaces/schema/couponSchema";
+import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
+import { UserRepository } from "../infrastructure/repositories/userRepository";
+import { filterUnusedCoupons } from "../infrastructure/helperFunctions/getUnusedCoupons";
 
 export class CouponUseCase {
     constructor (
         private readonly couponRepository: CouponRepository,
         private readonly theaterRepository: TheaterRepository,
+        private readonly tempTicketRepository: TempTicketRepository,
+        private readonly userRepository: UserRepository,
     ) {}
 
     async addCoupon (coupon: ICouponReqs): Promise<IApiRes<ICouponRes | null>> {
@@ -52,6 +57,29 @@ export class CouponUseCase {
             const updatedCoupon = await this.couponRepository.updateCancelStatus(couponId, coupon.isCancelled)
             if (updatedCoupon) return get200Response(updatedCoupon)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid coupon id')
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getApplicableCoupons (userId: ID, ticketId: ID): Promise<IApiRes<ICouponRes[] | null>> {
+        try {
+            const availCoupons = await this.couponRepository.getAvailableCoupons()
+            if (availCoupons.length) {
+                const ticket = await this.tempTicketRepository.findTempTicketById(ticketId)
+                if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid Ticket id')
+
+                const filteredCoupons = availCoupons.filter(coupon => coupon.minTicketCount <= ticket.seatCount)
+                if (filteredCoupons.length === 0) return get200Response(filteredCoupons) // returning empty array, after filtering
+
+                const user = await this.userRepository.findById(userId)
+                if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
+
+                const unusedCoupons = filterUnusedCoupons(filteredCoupons, user.usedCoupons)
+                return get200Response(unusedCoupons)
+            } else {
+                return get200Response(availCoupons) // returning empty array as response
+            }
         } catch (error) {
             return get500Response(error as Error)
         }

@@ -24,7 +24,8 @@ export interface ITicket {
     endTime: Date
     isCancelled: boolean
     cancelledBy?: 'User' | 'Theater' | 'Admin'
-    paymentMethod: 'Wallet' | 'Razorpay'
+    paymentMethod: 'Wallet' | 'Razorpay',
+    couponId: ID
 }
 
 export interface ISelectedSeat {
@@ -36,7 +37,7 @@ export type SeatRes = {
     [Key in RowType]?: ColType[];
 };
 
-export interface ITempTicket extends Omit<ITicket, 'isCancelled'> {
+export interface ITempTicket extends Omit<ITicket, 'isCancelled' | 'cancelledBy' | 'paymentMethod'> {
     expireAt: Date
 }
 export interface ITempTicketRes extends ITempTicket {}

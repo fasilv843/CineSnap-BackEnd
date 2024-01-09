@@ -20,6 +20,10 @@ const ticketSchema: Schema = new Schema<ITicket & Document>({
         enum: ['Wallet', 'Razorpay'],
         default: 'Razorpay',  // Delete after Implementation
         required: true
+    },
+    couponId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Coupons'
     }
 },
 {

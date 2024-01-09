@@ -37,8 +37,9 @@ export class TicketController {
 
     async confirmTicket (req: Request, res: Response) { 
         const tempTicketId = req.body.ticketId as unknown as ID
+        const couponId = req.body.couponId as unknown as ID
         log(tempTicketId, 'tempId from controller')
-        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId)
+        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId, couponId)
         res.status(apiRes.status).json(apiRes)
     }
 
