@@ -5,6 +5,7 @@ import { ICoords, ID, ITheaterAddress } from "../../interfaces/common";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { TheaterShowLimit, maxDistance } from "../../constants/constants";
 import { ITempTheaterReq } from "../../interfaces/schema/tempTheaterSchema";
+import { log } from "console";
 
 
 
@@ -115,6 +116,13 @@ export class TheaterController {
         const page = req.query.page as unknown as number
         const limit = req.query.limit as unknown as number
         const apiRes = await this.theaterUseCase.getWalletHistory(theaterId, page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async getRevenueData (req: Request, res: Response) {
+        const theaterId = req.params.theaterId as unknown as ID
+        const apiRes = await this.theaterUseCase.getRevenueData(theaterId)
+        log(apiRes.data, 'apiRes.data from controller, revenue')
         res.status(apiRes.status).json(apiRes)
     }
 }

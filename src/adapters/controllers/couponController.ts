@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CouponUseCase } from "../../useCases/couponUseCase";
+import { CouponUseCase } from "../../useCases/couponUseCase"; 
 import { ICouponReqs } from "../../interfaces/schema/couponSchema";
 import { ID } from "../../interfaces/common";
 

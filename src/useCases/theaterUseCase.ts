@@ -14,6 +14,9 @@ import { GenerateOtp } from "../providers/otpGenerator";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import fs from 'fs'
+import { IRevenueData } from "../interfaces/chart";
+import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
+import { calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 
 
 export class TheaterUseCase {
@@ -24,6 +27,7 @@ export class TheaterUseCase {
         private readonly jwtToken: JWTToken,
         private readonly mailer: MailSender,
         private readonly otpGenerator: GenerateOtp,
+        private readonly ticketRepository: TicketRepository
     ) { }
 
     async verifyAndSaveTemporarily(theaterData: ITempTheaterReq): Promise<IApiTempAuthRes<ITempTheaterRes>> {
@@ -295,6 +299,40 @@ export class TheaterUseCase {
             const userWallet = await this.theaterRepository.getWalletHistory(theaterId, page, limit)
             if (userWallet) return get200Response(userWallet)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getRevenueData (theaterId: ID, startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
+        try {
+            if (!startDate || !endDate) {
+                startDate = new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth() - 1, // Go back one month
+                  new Date().getDate() // Keep the same day of the month
+                );
+                endDate = new Date();
+            }
+            
+            const ticketsOfTheater = await this.ticketRepository.getTicketsOfTheaterByTime(theaterId, startDate, endDate)
+            log(ticketsOfTheater, 'tickets to handle in get revenue use case')
+            const addedAmt: Record<string, number> = {}
+            ticketsOfTheater.forEach(tkt => {
+                const date = tkt.createdAt
+                const dateKey = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay()); // Start of the 5-day interval
+                const startDate = new Date(dateKey);
+                const endDate = new Date(dateKey.getFullYear(), dateKey.getMonth(), dateKey.getDate() + 4);
+                const formattedDate = `${startDate.toLocaleDateString('en-US', { month: 'short' })} ${startDate.getDate()} - ${endDate.toLocaleDateString('en-US', { month: 'short' })} ${endDate.getDate()}`;
+                if (!addedAmt[formattedDate]) {
+                    addedAmt[formattedDate] = 0;
+                  }
+                  addedAmt[formattedDate] += calculateTheaterShare(tkt)
+            });
+
+            const labels = Object.keys(addedAmt)
+            const data = Object.values(addedAmt)
+            return get200Response({ labels, data })
         } catch (error) {
             return get500Response(error as Error)
         }

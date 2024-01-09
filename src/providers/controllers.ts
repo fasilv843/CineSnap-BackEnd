@@ -62,7 +62,7 @@ const couponRepository = new CouponRepository()
 
 const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
 const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator)
+const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator, ticketRepository)
 const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRepository)
 const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepositoty, screenSeatRepositoty, showSeatRepository)

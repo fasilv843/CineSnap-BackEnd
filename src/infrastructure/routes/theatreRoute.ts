@@ -11,6 +11,8 @@ thrRouter.post('/validateOTP', (req, res) =>  tController.validateTheaterOTP(req
 thrRouter.post('/login', (req, res) => tController.theaterLogin(req, res))
 thrRouter.get('/resendOtp', (req, res) => tController.resendOTP(req, res))
 
+thrRouter.get('/dashboard/revenue/:theaterId', theaterAuth, (req, res) => tController.getRevenueData(req, res))
+
 thrRouter.put('/update/:theaterId', theaterAuth, (req, res) => tController.updateTheaterData(req, res))
 thrRouter.patch('/update/profileimage/:theaterId', theaterAuth, upload.single('image'), (req,res) => tController.updateTheaterProfilePic(req,res))
 thrRouter.patch('/remove/profileimage/:theaterId', theaterAuth, (req,res) => tController.removeTheaterProfilePic(req,res))

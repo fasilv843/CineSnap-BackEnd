@@ -1,3 +1,4 @@
+import { log } from "console";
 import { ticketModel } from "../../entities/models/ticketModel";
 import { ID } from "../../interfaces/common";
 import { ITicketRepo } from "../../interfaces/repos/ticketRepo";
@@ -26,6 +27,20 @@ export class TicketRepository implements ITicketRepo {
         return await ticketModel.find({ theaterId }).skip((page -1) * limit)
         .limit(limit).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId').populate('userId')
+    }
+
+    async getTicketsOfTheaterByTime (theaterId: ID, startDate: Date, endDate: Date): Promise<ITicketRes[]> {
+        log(startDate, endDate, 'start and end from getTickets of Theater by time')
+        return await ticketModel.find(
+            { 
+                theaterId,
+                isCancelled: false,
+                $and: [
+                    { startTime: { $gte: startDate } }, // Date is greater than or equal to startDate
+                    { startTime: { $lte: endDate } } // Date is less than or equal to endDate
+                ]
+            }
+        )
     }
 
     async getTicketsByTheaterIdCount(theaterId: ID): Promise<number> {

@@ -25,7 +25,7 @@ export interface ITicket {
     isCancelled: boolean
     cancelledBy?: 'User' | 'Theater' | 'Admin'
     paymentMethod: 'Wallet' | 'Razorpay',
-    couponId: ID
+    couponId: ID,
 }
 
 export interface ISelectedSeat {
@@ -49,7 +49,10 @@ export interface ITempTicketReqs extends Omit<ITicket, '_id' | 'isCancelled' | '
 
 export interface ITicketReqs extends Omit<ITicket, '_id' | 'isCancelled' > {}
 
-export interface ITicketRes extends ITicket {}
+export interface ITicketRes extends ITicket {
+    createdAt: Date
+    updatedAt: Date
+}
 export interface IApiTicketRes extends IApiRes<ITicketRes | null> {}
 export interface IApiTicketsRes extends IApiRes<ITicketRes[] | null> {}
 

@@ -47,4 +47,7 @@ export const baseTicketSchema: Schema = new Schema<ITempTicketRes & Document>({
         type: Date,
         required: true
     }
+},
+{
+    timestamps: true
 });

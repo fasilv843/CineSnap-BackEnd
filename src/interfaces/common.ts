@@ -10,6 +10,7 @@ import { IScreen } from "./schema/screenSchema";
 import { IAvailCatsOnScreen, IScreenSeat } from "./schema/screenSeatSchema";
 import { IShowSeatsRes } from "./schema/showSeatsSchema";
 import { ICouponRes } from "./schema/couponSchema";
+import { IRevenueData } from "./chart";
 
 export type Location = [number, number];
 
@@ -46,7 +47,7 @@ export interface ICoords {
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[] | IAvailCatsOnScreen | ICouponRes[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat | IWalletHistoryAndCount
             | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount | IUsersListForChats[] | IShowSeatsRes | ICouponRes
-            | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null;
+            | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null | IRevenueData
 
 // export type SuccessTypes = Exclude<AllResTypes>
 
