@@ -5,12 +5,14 @@ import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { ID } from "../../interfaces/common";
+import { TicketUseCase } from "../../useCases/ticketUseCase";
 
 export class AdminController {
     constructor(
         private readonly adminUseCase: AdminUseCase,
         private readonly userUseCase: UserUseCase,
-        private readonly theaterUseCase: TheaterUseCase
+        private readonly theaterUseCase: TheaterUseCase,
+        private readonly ticketUseCase: TicketUseCase
     ) { }
 
     async adminLogin(req: Request, res: Response) {
@@ -61,6 +63,11 @@ export class AdminController {
         const theaterId = req.params.theaterId as unknown as ID
         const action = req.query.action as string | undefined
         const apiRes = await this.theaterUseCase.theaterApproval(theaterId, action)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async getRevenueData (req: Request, res: Response) {
+        const apiRes = await this.ticketUseCase.getAdminRevenue()
         res.status(apiRes.status).json(apiRes)
     }
 }

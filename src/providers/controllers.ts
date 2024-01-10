@@ -72,7 +72,7 @@ const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnReposit
 const showSeatUseCase = new ShowSeatsUseCase(showSeatRepository)
 const couponUseCase = new CouponUseCase(couponRepository, thrRepository, tempTicketRepository, userRepository)
 
-export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase)
+export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase, ticketUseCase)
 export const uController = new UserController(userUseCase, otpGenerator, encrypt )
 export const tController = new TheaterController(thrUseCase)
 export const mController = new MovieController(movieUseCase)

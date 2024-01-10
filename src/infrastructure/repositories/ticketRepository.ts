@@ -43,6 +43,19 @@ export class TicketRepository implements ITicketRepo {
         )
     }
 
+    async findTicketsByTime (startDate: Date, endDate: Date): Promise<ITicketRes[]> {
+        log(startDate, endDate, 'start and end from getTickets of Theater by time')
+        return await ticketModel.find(
+            {
+                isCancelled: false,
+                $and: [
+                    { startTime: { $gte: startDate } }, // Date is greater than or equal to startDate
+                    { startTime: { $lte: endDate } } // Date is less than or equal to endDate
+                ]
+            }
+        )
+    }
+
     async getTicketsByTheaterIdCount(theaterId: ID): Promise<number> {
         return await ticketModel.countDocuments({ theaterId }).exec();
     }

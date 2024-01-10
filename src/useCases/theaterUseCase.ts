@@ -17,6 +17,7 @@ import fs from 'fs'
 import { IRevenueData } from "../interfaces/chart";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
+import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
 
 
 export class TheaterUseCase {
@@ -306,7 +307,7 @@ export class TheaterUseCase {
 
     async getRevenueData (theaterId: ID, startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
         try {
-            if (!startDate || !endDate) {
+            if (startDate === undefined || endDate === undefined) {
                 startDate = new Date(
                   new Date().getFullYear(),
                   new Date().getMonth() - 1, // Go back one month
@@ -319,15 +320,11 @@ export class TheaterUseCase {
             log(ticketsOfTheater, 'tickets to handle in get revenue use case')
             const addedAmt: Record<string, number> = {}
             ticketsOfTheater.forEach(tkt => {
-                const date = tkt.createdAt
-                const dateKey = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay()); // Start of the 5-day interval
-                const startDate = new Date(dateKey);
-                const endDate = new Date(dateKey.getFullYear(), dateKey.getMonth(), dateKey.getDate() + 4);
-                const formattedDate = `${startDate.toLocaleDateString('en-US', { month: 'short' })} ${startDate.getDate()} - ${endDate.toLocaleDateString('en-US', { month: 'short' })} ${endDate.getDate()}`;
-                if (!addedAmt[formattedDate]) {
-                    addedAmt[formattedDate] = 0;
+                const dateKey = getDateKeyWithInterval(startDate as Date, endDate as Date, tkt.startTime)
+                if (!addedAmt[dateKey]) {
+                    addedAmt[dateKey] = 0;
                   }
-                  addedAmt[formattedDate] += calculateTheaterShare(tkt)
+                  addedAmt[dateKey] += calculateTheaterShare(tkt)
             });
 
             const labels = Object.keys(addedAmt)

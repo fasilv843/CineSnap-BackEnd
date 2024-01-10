@@ -4,6 +4,8 @@ import { aController, mController, ticketController } from "../../providers/cont
 const adminRouter = express.Router()
 
 adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))
+
+adminRouter.get('/dashboard/revenue', adminAuth, (req, res) => aController.getRevenueData(req, res))
 adminRouter.get('/movies', adminAuth, (req, res) => mController.getMovies(req,res))
 adminRouter.post('/movies/add', adminAuth, (req, res) => mController.addMovie(req,res))
 adminRouter.patch('/movies/delete/:movieId', adminAuth, (req, res) => mController.deleteMovie(req, res))

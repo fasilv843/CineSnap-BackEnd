@@ -15,6 +15,9 @@ import { log } from "console";
 import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
 import { ICouponRes } from "../interfaces/schema/couponSchema";
 import { CouponRepository } from "../infrastructure/repositories/couponRepository";
+import { IRevenueData } from "../interfaces/chart";
+import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
+import { calculateAdminShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 
 export class TicketUseCase {
     constructor (
@@ -285,6 +288,35 @@ export class TicketUseCase {
             const ticketCount = await this.ticketRepository.getAllTicketsCount()
             log(ticketCount, 'ticketCount', tickets)
             return get200Response({ tickets, ticketCount })
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
+    async getAdminRevenue (startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
+        try {
+            if (!startDate || !endDate) {
+                startDate = new Date(
+                  new Date().getFullYear(),
+                  new Date().getMonth() - 1, // Go back one month
+                  new Date().getDate() // Keep the same day of the month
+                );
+                endDate = new Date();
+            }
+
+            const tickets = await this.ticketRepository.findTicketsByTime(startDate, endDate)
+            const addedAmt: Record<string, number> = {}
+            tickets.forEach(tkt => {
+                const dateKey = getDateKeyWithInterval(startDate as Date, endDate as Date, tkt.startTime)
+                log(dateKey, 'dateKey from useCase')
+                if (!addedAmt[dateKey]) {
+                    addedAmt[dateKey] = 0;
+                  }
+                  addedAmt[dateKey] += calculateAdminShare(tkt)
+            });
+            const labels = Object.keys(addedAmt)
+            const data = Object.values(addedAmt)
+            return get200Response({ labels, data })
         } catch (error) {
             return get500Response(error as Error)
         }

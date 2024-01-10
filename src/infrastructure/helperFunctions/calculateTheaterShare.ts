@@ -13,3 +13,17 @@ export function calculateTheaterShare (ticket: ITempTicketRes | ITicketRes): num
     }
     return price
 }
+
+export function calculateAdminShare (ticket: ITempTicketRes | ITicketRes): number {
+    let price = 0
+    if (ticket.diamondSeats !== undefined) {
+      price += ticket.diamondSeats.seats.length * ticket.diamondSeats.CSFeePerTicket
+    }
+    if (ticket.goldSeats !== undefined) {
+      price += ticket.goldSeats.seats.length * ticket.goldSeats.CSFeePerTicket
+    }
+    if (ticket.silverSeats !== undefined) {
+      price += ticket.silverSeats.seats.length * ticket.silverSeats.CSFeePerTicket
+    }
+    return price
+}
