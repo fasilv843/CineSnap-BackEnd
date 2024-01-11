@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
-import { ID } from "../../interfaces/common";
+import { ID, PaymentMethod } from "../../interfaces/common";
 // import Stripe from "stripe";
 import { log } from "console";
 
@@ -38,8 +38,9 @@ export class TicketController {
     async confirmTicket (req: Request, res: Response) { 
         const tempTicketId = req.body.ticketId as unknown as ID
         const couponId = req.body.couponId as unknown as ID
+        const paymentMethod = req.body.paymentMethod as PaymentMethod
         log(tempTicketId, 'tempId from controller')
-        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId, couponId)
+        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId, paymentMethod, couponId)
         res.status(apiRes.status).json(apiRes)
     }
 

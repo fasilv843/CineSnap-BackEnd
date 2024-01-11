@@ -8,7 +8,7 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID } from "../interfaces/common";
+import { IApiRes, ID, PaymentMethod } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -74,10 +74,10 @@ export class TicketUseCase {
         }
     }
 
-    async confirmTicket (tempTicketId: ID, couponId?: ID): Promise<IApiTicketRes> {
+    async confirmTicket (tempTicketId: ID, paymentMethod: PaymentMethod, couponId?: ID): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
-            let couponData: ICouponRes | undefined = undefined
+            let couponData: ICouponRes | null = null
             if (couponId) couponData = await this.couponRepository.findCouponById(couponId)
             log(tempTicket, 'tempTicket from confirmTicket use case')
             if (tempTicket !== null) {
@@ -85,21 +85,12 @@ export class TicketUseCase {
                 const show = await this.showRepository.getShowDetails(tempTicket.showId)
                 if (show){
                     await this.showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
-                    const confirmedTicket = await this.ticketRepository.saveTicket(tempTicketData)
-                    let theaterShare = 0
-                    let adminShare = 0
-                    if (confirmedTicket.diamondSeats) {
-                        theaterShare += confirmedTicket.diamondSeats.singlePrice * confirmedTicket.diamondSeats.seats.length
-                        adminShare += confirmedTicket.diamondSeats.CSFeePerTicket * confirmedTicket.diamondSeats.seats.length
+                    const confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod})
+                    if (paymentMethod === 'Wallet') {
+                        await this.userRepository.updateWallet(confirmedTicket.userId, -confirmedTicket.totalPrice, 'Booked a show')
                     } 
-                    if (confirmedTicket.goldSeats) {
-                        theaterShare += confirmedTicket.goldSeats.singlePrice * confirmedTicket.goldSeats.seats.length
-                        adminShare += confirmedTicket.goldSeats.CSFeePerTicket * confirmedTicket.goldSeats.seats.length
-                    } 
-                    if (confirmedTicket.silverSeats) {
-                        theaterShare += confirmedTicket.silverSeats.singlePrice * confirmedTicket.silverSeats.seats.length
-                        adminShare += confirmedTicket.silverSeats.CSFeePerTicket * confirmedTicket.silverSeats.seats.length
-                    } 
+                    let theaterShare = calculateTheaterShare(confirmedTicket)
+                    const adminShare = calculateAdminShare(confirmedTicket)
 
                     if (couponData) {
                         if (couponData.discountType === 'Fixed Amount') {
@@ -108,7 +99,8 @@ export class TicketUseCase {
                             theaterShare -= (theaterShare / 100) * couponData.discount
                         }
                     }
-                    await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Booked a Ticket')
+                    log(paymentMethod, 'paymentMethod')
+                    await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Profit from Ticket')
                     await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
                     return get200Response(confirmedTicket)
                 } else {
@@ -149,7 +141,7 @@ export class TicketUseCase {
 
             // Calculationg refund amount based on hours difference
             if (hourDiff <= NoRefundTime) return getErrorResponse(STATUS_CODES.FORBIDDEN, `Cancellation only allowed ${NoRefundTime} hr before show time`)
-            const totalPrice = ticket.singlePrice * ticket.seatCount // Excluding convenience fee and tax
+            const totalPrice = calculateTheaterShare(ticket)
             let refundAmount: number;
             if (hourDiff <= QuarterRefundTime) refundAmount = (totalPrice * 25)/100
             else if (hourDiff <= HalfRefundTime) refundAmount = (totalPrice * 50)/100

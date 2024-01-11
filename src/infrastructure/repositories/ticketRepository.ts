@@ -2,11 +2,11 @@ import { log } from "console";
 import { ticketModel } from "../../entities/models/ticketModel";
 import { ID } from "../../interfaces/common";
 import { ITicketRepo } from "../../interfaces/repos/ticketRepo";
-import { ITempTicketRes, ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { ISaveRequestReqs, ITicketRes } from "../../interfaces/schema/ticketSchema";
 
 export class TicketRepository implements ITicketRepo {
-    async saveTicket (tempTicket: ITempTicketRes): Promise<ITicketRes> {
-        return await new ticketModel(tempTicket).save()
+    async saveTicket (tempTicket: ISaveRequestReqs): Promise<ITicketRes> {
+        return await new ticketModel(tempTicket).save() as unknown as ITicketRes
     }
 
     async findTicketById (ticketId: ID): Promise<ITicketRes | null> {

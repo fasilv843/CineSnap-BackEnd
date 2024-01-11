@@ -15,6 +15,7 @@ import { IRevenueData } from "./chart";
 export type Location = [number, number];
 
 export type ID = Schema.Types.ObjectId
+export type PaymentMethod = 'Razorpay' | 'Wallet'
 
 export interface IUserAddress {
     country: string

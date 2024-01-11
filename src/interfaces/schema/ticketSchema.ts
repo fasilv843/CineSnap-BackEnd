@@ -1,4 +1,4 @@
-import { ColType, IApiRes, ID, RowType } from "../common";
+import { ColType, IApiRes, ID, PaymentMethod, RowType } from "../common";
 
 export interface ITicketSeat {
     seats: string[]
@@ -39,6 +39,9 @@ export type SeatRes = {
 
 export interface ITempTicket extends Omit<ITicket, 'isCancelled' | 'cancelledBy' | 'paymentMethod'> {
     expireAt: Date
+}
+export interface ISaveRequestReqs extends ITempTicket {
+    paymentMethod: PaymentMethod
 }
 export interface ITempTicketRes extends ITempTicket {}
 export interface IApiTempTicketRes extends IApiRes<ITempTicketRes | null> {}
