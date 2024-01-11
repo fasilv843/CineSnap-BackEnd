@@ -1,6 +1,6 @@
 import { couponModel } from "../../entities/models/couponModel";
 import { ID } from "../../interfaces/common";
-import { ICouponRepo } from "../../interfaces/repos/couponRepo";
+import { ICouponRepo } from "../../interfaces/repos/couponRepo"; 
 import { ICouponReqs, ICouponRes } from "../../interfaces/schema/couponSchema";
 
 export class CouponRepository implements ICouponRepo {

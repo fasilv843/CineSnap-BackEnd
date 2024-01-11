@@ -8,7 +8,7 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID, PaymentMethod } from "../interfaces/common";
+import { CancelledBy, IApiRes, ID, PaymentMethod } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -74,7 +74,7 @@ export class TicketUseCase {
         }
     }
 
-    async confirmTicket (tempTicketId: ID, paymentMethod: PaymentMethod, couponId?: ID): Promise<IApiTicketRes> {
+    async confirmTicket (tempTicketId: ID, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: ID): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
             let couponData: ICouponRes | null = null
@@ -85,14 +85,29 @@ export class TicketUseCase {
                 const show = await this.showRepository.getShowDetails(tempTicket.showId)
                 if (show){
                     await this.showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
-                    const confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod})
+
+                    let confirmedTicket: ITicketRes
+                    if (couponData) {
+                        confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod, couponId: couponData._id })
+                    } else {
+                        confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod })
+                    }
+
+                    log(confirmedTicket, 'confirmedTicket')
                     if (paymentMethod === 'Wallet') {
                         await this.userRepository.updateWallet(confirmedTicket.userId, -confirmedTicket.totalPrice, 'Booked a show')
-                    } 
+                    }
+                    if (useWallet) {
+                        const user = await this.userRepository.findById(confirmedTicket.userId)
+                        if (user) {
+                            await this.userRepository.updateWallet(confirmedTicket.userId, -user.wallet, 'For booking Ticket')
+                        }
+                    }
                     let theaterShare = calculateTheaterShare(confirmedTicket)
                     const adminShare = calculateAdminShare(confirmedTicket)
 
                     if (couponData) {
+                        await this.userRepository.addToUsedCoupons(confirmedTicket.userId, couponData._id, confirmedTicket._id)
                         if (couponData.discountType === 'Fixed Amount') {
                             theaterShare -= couponData.discount
                         } else if (couponData.discountType === 'Percentage') {
@@ -131,6 +146,67 @@ export class TicketUseCase {
             return get500Response(error as Error)
         }
     }
+
+    // async cancelTicket (ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
+    //     try {
+    //         const ticket = await this.ticketRepository.findTicketById(ticketId)
+    //         if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
+
+    //         let refundByTheater: number;
+    //         let refundByAdmin: number = 0;
+    //         if (cancelledBy === 'User') {
+    //             const hourDiff = calculateHoursDifference(ticket.startTime)
+    
+    //             // Calculationg refund amount based on hours difference
+    //             if (hourDiff <= NoRefundTime) return getErrorResponse(STATUS_CODES.FORBIDDEN, `Cancellation only allowed ${NoRefundTime} hr before show time`)
+    //             const totalPrice = calculateTheaterShare(ticket)
+    //             let refundAmount: number;
+    //             if (hourDiff <= QuarterRefundTime) refundAmount = (totalPrice * 25)/100
+    //             else if (hourDiff <= HalfRefundTime) refundAmount = (totalPrice * 50)/100
+    //             else if (hourDiff <= ThreeQuarterRefundTime) refundAmount = (totalPrice * 75)/100
+    //             else refundAmount = totalPrice
+
+    //             refundByTheater = refundAmount
+    //         } else if (cancelledBy === 'Theater') {
+    //             refundByTheater = ticket.totalPrice
+    //         } else if (cancelledBy === 'Admin') {
+    //             refundByTheater = calculateTheaterShare(ticket)
+    //             refundByAdmin = calculateAdminShare(ticket)
+    //         } else {
+    //             throw Error('Ooops!, Cancellation from unknown user')
+    //         }
+
+    //         const session = await mongoose.connection.startSession();
+
+    //         try {
+    //             let cancelledTicket: ITicketRes | null = null
+    //             await session.withTransaction(async () => {
+    //                 // taking refund amount from theater and giving it to user
+    //                 await this.theaterRepository.updateWallet(ticket.theaterId, -refundByTheater, 'For Giving Refund for Ticket Cancellation')
+    //                 await this.userRepository.updateWallet(ticket.userId, refundByTheater, 'Ticket Cancellation Refund')
+    //                 if (cancelledBy === 'Admin') {
+    //                     await this.adminRepository.updateWallet(-refundByAdmin, 'Ticket Cancellation Refund')
+    //                     await this.userRepository.updateWallet(ticket.userId, refundByAdmin, 'Convenience Fee Refund')
+    //                 }
+    //                 // code to re assign cancelled ticket seat
+    //                 cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
+    //             });
+
+    //             if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
+            
+    //             await session.commitTransaction();
+    //             return get200Response(cancelledTicket)
+    //           } catch (error) {
+    //               console.error('Error during cancelling ticket:', error);
+    //               await session.abortTransaction();
+    //               return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+    //           } finally {
+    //             await session.endSession()
+    //           }
+    //     } catch (error) {
+    //         return get500Response(error as Error)
+    //     }
+    // }
 
     async cancelTicket (ticketId: ID): Promise<IApiTicketRes> {
         try {

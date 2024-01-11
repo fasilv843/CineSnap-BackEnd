@@ -1,9 +1,14 @@
 import { IUserAddress, ICoords, IWalletHistory, ID } from "../common"
+import { ICouponRes } from "./couponSchema"
 
 export interface IUsedCoupons {
     couponId: ID
     date: Date,
     ticketId: ID
+}
+
+export interface IPopulatedUsedCoupons extends Omit<IUsedCoupons, 'couponId'> {
+    couponId: ICouponRes
 }
 
 // interface specifically for userSchema
@@ -25,20 +30,7 @@ export interface IUser {
 }
 
 // interface to respond to front end
-export interface IUserRes {
-    _id: ID
-    name: string
-    email: string
-    password?: string
-    mobile?: number
-    dob: Date
-    isBlocked: boolean
-    profilePic?: string
-    wallet: number
-    coords?: ICoords
-    address?: IUserAddress,
-    walletHistory: IWalletHistory[] | []
-}
+export interface IUserRes extends IUser { }
 
 export interface IUserUpdate extends Omit<IUserRes, '_id' | 'email' | 'password' | 'isBlocked' | 'wallet' | 'walletHistory'> { }
 

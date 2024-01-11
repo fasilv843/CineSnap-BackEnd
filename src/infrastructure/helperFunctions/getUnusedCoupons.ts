@@ -1,8 +1,10 @@
+import { log } from "console";
 import { ICouponRes } from "../../interfaces/schema/couponSchema";
 import { IUsedCoupons } from "../../interfaces/schema/userSchema";
 import { getCurrentWeekPeriod, isDateInBetween, getCurrentMonthPeriod, getCurrentYearPeriod } from "./getPeriods";
 
 export function filterUnusedCoupons(coupons: ICouponRes[], usedCoupons: IUsedCoupons[]): ICouponRes[] {
+    log(usedCoupons, 'used Coupons from filterUnused Coupons')
     if (usedCoupons.length === 0) return coupons
     return coupons.filter(coupon => {
         const usedCoupon = usedCoupons.find(usedCopn => usedCopn.couponId === coupon._id)

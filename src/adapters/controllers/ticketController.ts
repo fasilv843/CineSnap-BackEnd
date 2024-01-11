@@ -39,8 +39,9 @@ export class TicketController {
         const tempTicketId = req.body.ticketId as unknown as ID
         const couponId = req.body.couponId as unknown as ID
         const paymentMethod = req.body.paymentMethod as PaymentMethod
+        const useWallet = Boolean(req.body.useWallet)
         log(tempTicketId, 'tempId from controller')
-        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId, paymentMethod, couponId)
+        const apiRes = await this.ticketUseCase.confirmTicket(tempTicketId, paymentMethod, useWallet, couponId)
         res.status(apiRes.status).json(apiRes)
     }
 

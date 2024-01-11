@@ -72,10 +72,10 @@ export class CouponUseCase {
                 const filteredCoupons = availCoupons.filter(coupon => coupon.minTicketCount <= ticket.seatCount)
                 if (filteredCoupons.length === 0) return get200Response(filteredCoupons) // returning empty array, after filtering
 
-                const user = await this.userRepository.findById(userId)
-                if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
+                const userCoupons = await this.userRepository.findUserCoupons(userId)
+                if (!userCoupons) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
 
-                const unusedCoupons = filterUnusedCoupons(filteredCoupons, user.usedCoupons)
+                const unusedCoupons = filterUnusedCoupons(filteredCoupons, userCoupons.usedCoupons)
                 return get200Response(unusedCoupons)
             } else {
                 return get200Response(availCoupons) // returning empty array as response

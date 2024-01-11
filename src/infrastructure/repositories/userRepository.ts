@@ -1,3 +1,4 @@
+import { log } from "console";
 import userModel from "../../entities/models/userModel";
 import { ID, IWalletHistoryAndCount } from "../../interfaces/common";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
@@ -13,6 +14,10 @@ export class UserRepository implements IUserRepo {
 
     async findById(id: ID): Promise< IUser | null > {
         return await userModel.findById({_id: id})
+    }
+
+    async findUserCoupons (userId: ID): Promise<IUserRes | null> {
+        return await userModel.findById({ _id: userId }, { _id: 0, usedCoupons: 1 })
     }
 
     async findByEmail(email: string): Promise< IUser | null > {
@@ -116,6 +121,7 @@ export class UserRepository implements IUserRepo {
     }
     
     async updateWallet (userId: ID, amount: number, message: string): Promise<IUserRes | null> {
+        log(userId, 'userID from update wallet of user')
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {
@@ -135,5 +141,17 @@ export class UserRepository implements IUserRepo {
                 count: userData.walletHistory.length 
             } 
             : null
+    }
+
+    async addToUsedCoupons (userId: ID, couponId: ID, ticketId: ID): Promise<IUserRes | null> {
+        return await userModel.findByIdAndUpdate(
+            { _id: userId },
+            {
+                $push: {
+                    usedCoupons: { couponId, ticketId }
+                }
+            }, 
+            { new: true }
+        )
     }
 }
