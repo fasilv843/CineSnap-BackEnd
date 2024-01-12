@@ -8,7 +8,7 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { CancelledBy, IApiRes, ID, PaymentMethod } from "../interfaces/common";
+import { CancelledBy, ColType, IApiRes, ID, PaymentMethod, RowType } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -20,9 +20,10 @@ import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashbo
 import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
+import { IShow, IShowRes, IShowSingleSeat } from "../interfaces/schema/showSchema";
 
 export class TicketUseCase {
-    constructor (
+    constructor(
         private readonly ticketRepository: TicketRepository,
         private readonly tempTicketRepository: TempTicketRepository,
         private readonly showRepository: ShowRepository,
@@ -32,9 +33,9 @@ export class TicketUseCase {
         private readonly adminRepository: AdminRepository,
         private readonly couponRepository: CouponRepository,
 
-    ) {}
+    ) { }
 
-    async bookTicketDataTemporarily (ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
+    async bookTicketDataTemporarily(ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
         try {
             if (new Date(ticketReqs.startTime) < new Date()) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Show Already Started')
             log(ticketReqs, 'ticketReqs for tempTicket')
@@ -46,7 +47,7 @@ export class TicketUseCase {
         }
     }
 
-    async getHoldedSeats (showId: ID): Promise<IApiSeatsRes> {
+    async getHoldedSeats(showId: ID): Promise<IApiSeatsRes> {
         try {
             const seats = await this.tempTicketRepository.getHoldedSeats(showId)
             log(seats, 'holded seats')
@@ -56,7 +57,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTempTicketData (ticketId: ID): Promise<IApiTempTicketRes> {
+    async getTempTicketData(ticketId: ID): Promise<IApiTempTicketRes> {
         try {
             const ticketData = await this.tempTicketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
@@ -66,7 +67,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketData (ticketId: ID): Promise<IApiTicketRes> {
+    async getTicketData(ticketId: ID): Promise<IApiTicketRes> {
         try {
             const ticketData = await this.ticketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
@@ -76,7 +77,7 @@ export class TicketUseCase {
         }
     }
 
-    async confirmTicket (tempTicketId: ID, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: ID): Promise<IApiTicketRes> {
+    async confirmTicket(tempTicketId: ID, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: ID): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
             let couponData: ICouponRes | null = null
@@ -85,14 +86,14 @@ export class TicketUseCase {
             if (tempTicket !== null) {
                 const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITempTicketRes
                 const show = await this.showRepository.getShowDetails(tempTicket.showId)
-                if (show){
+                if (show) {
                     await this.showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
 
                     let confirmedTicket: ITicketRes
                     if (couponData) {
-                        confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod, couponId: couponData._id })
+                        confirmedTicket = await this.ticketRepository.saveTicket({ ...tempTicketData, paymentMethod, couponId: couponData._id })
                     } else {
-                        confirmedTicket = await this.ticketRepository.saveTicket({...tempTicketData, paymentMethod })
+                        confirmedTicket = await this.ticketRepository.saveTicket({ ...tempTicketData, paymentMethod })
                     }
 
                     log(confirmedTicket, 'confirmedTicket')
@@ -131,7 +132,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfUser (userId: ID): Promise<IApiTicketsRes> {
+    async getTicketsOfUser(userId: ID): Promise<IApiTicketsRes> {
         try {
             const ticketsOfUser = await this.ticketRepository.getTicketsByUserId(userId)
             return get200Response(ticketsOfUser)
@@ -140,7 +141,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfShow (showId: ID): Promise<IApiTicketsRes> {
+    async getTicketsOfShow(showId: ID): Promise<IApiTicketsRes> {
         try {
             const ticketsOfShow = await this.ticketRepository.getTicketsByShowId(showId)
             return get200Response(ticketsOfShow)
@@ -149,7 +150,7 @@ export class TicketUseCase {
         }
     }
 
-    async cancelTicket (ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
+    async cancelTicket(ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
         try {
             const ticket = await this.ticketRepository.findTicketById(ticketId)
             if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
@@ -170,19 +171,21 @@ export class TicketUseCase {
                     }
                     // code to re assign cancelled ticket seat
                     cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, cancelledBy)
+                    if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
+
+                    const show = await this.showRepository.getShowDetails(cancelledTicket.showId) as IShow
+                    await this.showSeatRepository.markAsNotBooked(show.seatId, cancelledTicket.diamondSeats, cancelledTicket.goldSeats, cancelledTicket.silverSeats)
                 });
 
-                if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
-            
                 await session.commitTransaction();
                 return get200Response(cancelledTicket)
-              } catch (error) {
-                  console.error('Error during cancelling ticket:', error);
-                  await session.abortTransaction();
-                  return getErrorResponse(STATUS_CODES.BAD_REQUEST)
-              } finally {
+            } catch (error) {
+                console.error('Error during cancelling ticket:', error);
+                await session.abortTransaction();
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST)
+            } finally {
                 await session.endSession()
-              }
+            }
         } catch (error) {
             if (error instanceof RefundNotAllowedError || error instanceof CancelledByUnknownError) {
                 return getErrorResponse(error.statusCode, error.message)
@@ -191,20 +194,20 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfTheater (theaterId: ID, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
+    async getTicketsOfTheater(theaterId: ID, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
         try {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
             const tickets = await this.ticketRepository.getTicketsByTheaterId(theaterId, page, limit)
             const ticketCount = await this.ticketRepository.getTicketsByTheaterIdCount(theaterId)
             log(ticketCount, 'ticketCount', tickets)
-            return get200Response({tickets, ticketCount })
+            return get200Response({ tickets, ticketCount })
         } catch (error) {
             return get500Response(error as Error)
         }
     }
 
-    async getAllTickets (page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
+    async getAllTickets(page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
         try {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
@@ -217,13 +220,13 @@ export class TicketUseCase {
         }
     }
 
-    async getAdminRevenue (startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
+    async getAdminRevenue(startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
         try {
             if (!startDate || !endDate) {
                 startDate = new Date(
-                  new Date().getFullYear(),
-                  new Date().getMonth() - 1, // Go back one month
-                  new Date().getDate() // Keep the same day of the month
+                    new Date().getFullYear(),
+                    new Date().getMonth() - 1, // Go back one month
+                    new Date().getDate() // Keep the same day of the month
                 );
                 endDate = new Date();
             }
@@ -235,8 +238,8 @@ export class TicketUseCase {
                 log(dateKey, 'dateKey from useCase')
                 if (!addedAmt[dateKey]) {
                     addedAmt[dateKey] = 0;
-                  }
-                  addedAmt[dateKey] += calculateAdminShare(tkt)
+                }
+                addedAmt[dateKey] += calculateAdminShare(tkt)
             });
             const labels = Object.keys(addedAmt)
             const data = Object.values(addedAmt)

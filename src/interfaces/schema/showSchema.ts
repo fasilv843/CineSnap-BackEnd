@@ -1,8 +1,8 @@
-import { IApiRes, ID } from "../common"
+import { ColType, IApiRes, ID } from "../common"
 import { IMovie } from "./movieSchema"
 
 export interface IShowSingleSeat {
-    col: number
+    col: ColType
     isBooked: boolean
 }
 

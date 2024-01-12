@@ -1,15 +1,15 @@
-import { ID } from "../common"
+import { ID, RowType } from "../common"
 import { IShowSingleSeat } from "./showSchema"
 
 
 export interface IShowSeatCategory {
     name: string
     price: number
-    seats: Map<string, IShowSingleSeat[]>
+    seats: Map<RowType, IShowSingleSeat[]>
 }
 
-export interface IShowSeatCategoryRes extends Omit<IShowSeatCategory, 'seats'> {
-    seats: Partial<Record<string, IShowSingleSeat[]>>
+export interface IShowSeatCategoryRes extends IShowSeatCategory {
+    // seats: Partial<Record<string, IShowSingleSeat[]>>
 }
 
 export interface IShowSeats {
