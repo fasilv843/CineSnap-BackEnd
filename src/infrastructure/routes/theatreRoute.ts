@@ -40,7 +40,7 @@ thrRouter.patch('/wallet/add/:theaterId', theaterAuth, (req, res) => tController
 thrRouter.get('/wallet-history/:theaterId', theaterAuth, (req, res) => tController.getWalletHistory(req, res))
 
 thrRouter.get('/tickets/:theaterId', theaterAuth, (req, res) => ticketController.getTicketsOfTheater(req, res))
-thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicketByTheater(req, res))
+thrRouter.patch('/tickets/cancel/:ticketId', theaterAuth, (req, res) => ticketController.cancelTicket(req, res))
 
 thrRouter.post('/coupon/save', theaterAuth, (req, res) => couponController.addCoupon(req, res))
 thrRouter.get('/coupons/theater-coupons/:theaterId', theaterAuth, (req, res) => couponController.getCouponsOnTheater(req, res))

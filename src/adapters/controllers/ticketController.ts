@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
-import { ID, PaymentMethod } from "../../interfaces/common";
+import { CancelledBy, ID, PaymentMethod } from "../../interfaces/common";
 // import Stripe from "stripe";
 import { log } from "console";
 
@@ -59,24 +59,25 @@ export class TicketController {
 
     async cancelTicket (req: Request, res: Response) {
         const ticketId = req.params.ticketId as unknown as ID
-        const apiRes = await this.ticketUseCase.cancelTicket(ticketId)
+        const cancelledBy = req.body.cancelledBy as unknown as CancelledBy 
+        const apiRes = await this.ticketUseCase.cancelTicket(ticketId, cancelledBy)
         log(apiRes, 'response of cancelled ticket')
         res.status(apiRes.status).json(apiRes)
     }
 
-    async cancelTicketByTheater (req: Request, res: Response) {
-        const ticketId = req.params.ticketId as unknown as ID
-        const apiRes = await this.ticketUseCase.cancelTicketByTheater(ticketId)
-        log(apiRes, 'response of cancelled ticket')
-        res.status(apiRes.status).json(apiRes)
-    }
+    // async cancelTicketByTheater (req: Request, res: Response) {
+    //     const ticketId = req.params.ticketId as unknown as ID
+    //     const apiRes = await this.ticketUseCase.cancelTicketByTheater(ticketId)
+    //     log(apiRes, 'response of cancelled ticket')
+    //     res.status(apiRes.status).json(apiRes)
+    // }
 
-    async cancelTicketByAdmin (req: Request, res: Response) {
-        const ticketId = req.params.ticketId as unknown as ID
-        const apiRes = await this.ticketUseCase.cancelTicketByAdmin(ticketId)
-        log(apiRes, 'response of cancelled ticket')
-        res.status(apiRes.status).json(apiRes)
-    }
+    // async cancelTicketByAdmin (req: Request, res: Response) {
+    //     const ticketId = req.params.ticketId as unknown as ID
+    //     const apiRes = await this.ticketUseCase.cancelTicketByAdmin(ticketId)
+    //     log(apiRes, 'response of cancelled ticket')
+    //     res.status(apiRes.status).json(apiRes)
+    // }
 
     async getTicketsOfTheater (req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime } from "../constants/constants";
+// import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { calculateHoursDifference } from "../infrastructure/helperFunctions/date";
+// import { calculateHoursDifference } from "../infrastructure/helperFunctions/date";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
@@ -17,7 +17,9 @@ import { ICouponRes } from "../interfaces/schema/couponSchema";
 import { CouponRepository } from "../infrastructure/repositories/couponRepository";
 import { IRevenueData } from "../interfaces/chart";
 import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
-import { calculateAdminShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
+import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
+import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
+import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
 
 export class TicketUseCase {
     constructor (
@@ -147,94 +149,27 @@ export class TicketUseCase {
         }
     }
 
-    // async cancelTicket (ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
-    //     try {
-    //         const ticket = await this.ticketRepository.findTicketById(ticketId)
-    //         if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
-
-    //         let refundByTheater: number;
-    //         let refundByAdmin: number = 0;
-    //         if (cancelledBy === 'User') {
-    //             const hourDiff = calculateHoursDifference(ticket.startTime)
-    
-    //             // Calculationg refund amount based on hours difference
-    //             if (hourDiff <= NoRefundTime) return getErrorResponse(STATUS_CODES.FORBIDDEN, `Cancellation only allowed ${NoRefundTime} hr before show time`)
-    //             const totalPrice = calculateTheaterShare(ticket)
-    //             let refundAmount: number;
-    //             if (hourDiff <= QuarterRefundTime) refundAmount = (totalPrice * 25)/100
-    //             else if (hourDiff <= HalfRefundTime) refundAmount = (totalPrice * 50)/100
-    //             else if (hourDiff <= ThreeQuarterRefundTime) refundAmount = (totalPrice * 75)/100
-    //             else refundAmount = totalPrice
-
-    //             refundByTheater = refundAmount
-    //         } else if (cancelledBy === 'Theater') {
-    //             refundByTheater = ticket.totalPrice
-    //         } else if (cancelledBy === 'Admin') {
-    //             refundByTheater = calculateTheaterShare(ticket)
-    //             refundByAdmin = calculateAdminShare(ticket)
-    //         } else {
-    //             throw Error('Ooops!, Cancellation from unknown user')
-    //         }
-
-    //         const session = await mongoose.connection.startSession();
-
-    //         try {
-    //             let cancelledTicket: ITicketRes | null = null
-    //             await session.withTransaction(async () => {
-    //                 // taking refund amount from theater and giving it to user
-    //                 await this.theaterRepository.updateWallet(ticket.theaterId, -refundByTheater, 'For Giving Refund for Ticket Cancellation')
-    //                 await this.userRepository.updateWallet(ticket.userId, refundByTheater, 'Ticket Cancellation Refund')
-    //                 if (cancelledBy === 'Admin') {
-    //                     await this.adminRepository.updateWallet(-refundByAdmin, 'Ticket Cancellation Refund')
-    //                     await this.userRepository.updateWallet(ticket.userId, refundByAdmin, 'Convenience Fee Refund')
-    //                 }
-    //                 // code to re assign cancelled ticket seat
-    //                 cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
-    //             });
-
-    //             if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
-            
-    //             await session.commitTransaction();
-    //             return get200Response(cancelledTicket)
-    //           } catch (error) {
-    //               console.error('Error during cancelling ticket:', error);
-    //               await session.abortTransaction();
-    //               return getErrorResponse(STATUS_CODES.BAD_REQUEST)
-    //           } finally {
-    //             await session.endSession()
-    //           }
-    //     } catch (error) {
-    //         return get500Response(error as Error)
-    //     }
-    // }
-
-    async cancelTicket (ticketId: ID): Promise<IApiTicketRes> {
+    async cancelTicket (ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
         try {
             const ticket = await this.ticketRepository.findTicketById(ticketId)
             if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
 
-            const hourDiff = calculateHoursDifference(ticket.startTime)
-
-            // Calculationg refund amount based on hours difference
-            if (hourDiff <= NoRefundTime) return getErrorResponse(STATUS_CODES.FORBIDDEN, `Cancellation only allowed ${NoRefundTime} hr before show time`)
-            const totalPrice = calculateTheaterShare(ticket)
-            let refundAmount: number;
-            if (hourDiff <= QuarterRefundTime) refundAmount = (totalPrice * 25)/100
-            else if (hourDiff <= HalfRefundTime) refundAmount = (totalPrice * 50)/100
-            else if (hourDiff <= ThreeQuarterRefundTime) refundAmount = (totalPrice * 75)/100
-            else refundAmount = totalPrice
-        
-
+            const { refundByTheater, refundByAdmin } = calculateRefundShare(ticket, cancelledBy)
             const session = await mongoose.connection.startSession();
 
             try {
                 let cancelledTicket: ITicketRes | null = null
                 await session.withTransaction(async () => {
+
                     // taking refund amount from theater and giving it to user
-                    await this.theaterRepository.updateWallet(ticket.theaterId, -refundAmount, 'For Giving Refund for Ticket Cancellation')
-                    await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
+                    await this.theaterRepository.updateWallet(ticket.theaterId, -refundByTheater, 'For Giving Refund for Ticket Cancellation')
+                    await this.userRepository.updateWallet(ticket.userId, refundByTheater, 'Ticket Cancellation Refund')
+                    if (cancelledBy === 'Admin') {
+                        await this.adminRepository.updateWallet(-refundByAdmin, 'Ticket Cancellation Refund')
+                        await this.userRepository.updateWallet(ticket.userId, refundByAdmin, 'Convenience Fee Refund')
+                    }
                     // code to re assign cancelled ticket seat
-                    cancelledTicket = await this.ticketRepository.cancelTicket(ticketId)
+                    cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, cancelledBy)
                 });
 
                 if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
@@ -249,88 +184,9 @@ export class TicketUseCase {
                 await session.endSession()
               }
         } catch (error) {
-            return get500Response(error as Error)
-        }
-    }
-
-    async cancelTicketByTheater (ticketId: ID): Promise<IApiTicketRes> {
-        try {
-            const ticket = await this.ticketRepository.findTicketById(ticketId)
-            if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
-
-            const refundAmount = ticket.totalPrice
-            const theaterData = await this.theaterRepository.findById(ticket.theaterId)
-
-            if(theaterData && theaterData.wallet >= refundAmount) {
-                const session = await mongoose.connection.startSession();
-    
-                try {
-                    let cancelledTicket: ITicketRes | null = null
-                    await session.withTransaction(async () => {
-                        // taking refund amount from theater and giving it to user
-                        await this.theaterRepository.updateWallet(ticket.theaterId, -refundAmount, 'For Giving Refund for Ticket Cancellation')
-                        await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
-                        // code to re assign cancelled ticket seat
-                        cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, 'Theater')
-                    });
-    
-                    if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
-                
-                    await session.commitTransaction();
-                    return get200Response(cancelledTicket)
-                  } catch (error) {
-                      console.error('Error during cancelling ticket:', error)
-                      await session.abortTransaction();
-                      return getErrorResponse(STATUS_CODES.BAD_REQUEST)
-                  } finally {
-                    await session.endSession()
-                  }
-
-            } else {
-                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Dont have enough money in wallet')
+            if (error instanceof RefundNotAllowedError || error instanceof CancelledByUnknownError) {
+                return getErrorResponse(error.statusCode, error.message)
             }
-        } catch (error) {
-            return get500Response(error as Error)
-        }
-    }
-
-    async cancelTicketByAdmin (ticketId: ID): Promise<IApiTicketRes> {
-        try {
-            const ticket = await this.ticketRepository.findTicketById(ticketId)
-            if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
-
-            const refundAmount = ticket.totalPrice
-
-            const adminData = await this.adminRepository.findAdmin()
-
-            if(adminData && adminData.wallet >= refundAmount) {
-                const session = await mongoose.connection.startSession();
-    
-                try {
-                    let cancelledTicket: ITicketRes | null = null
-                    await session.withTransaction(async () => {
-                        // taking refund amount from theater and giving it to user
-                        await this.adminRepository.updateWallet(-refundAmount, 'For Giving Refund for Ticket Cancellation')
-                        await this.userRepository.updateWallet(ticket.userId, refundAmount, 'Ticket Cancellation Refund')
-                        // code to re assign cancelled ticket seat
-                        cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, 'Admin')
-                    });
-    
-                    if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
-                
-                    await session.commitTransaction();
-                    return get200Response(cancelledTicket)
-                  } catch (error) {
-                      console.error('Error during cancelling ticket:', error);
-                      await session.abortTransaction();
-                      return getErrorResponse(STATUS_CODES.BAD_REQUEST)
-                  } finally {
-                    await session.endSession()
-                  }
-            } else {
-                return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Dont have enough money in wallet')
-            }
-        } catch (error) {
             return get500Response(error as Error)
         }
     }
