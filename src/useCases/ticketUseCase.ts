@@ -1,14 +1,12 @@
 import mongoose from "mongoose";
-// import { HalfRefundTime, NoRefundTime, QuarterRefundTime, ThreeQuarterRefundTime } from "../constants/constants";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-// import { calculateHoursDifference } from "../infrastructure/helperFunctions/date";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { CancelledBy, ColType, IApiRes, ID, PaymentMethod, RowType } from "../interfaces/common";
+import { CancelledBy, IApiRes, ID, PaymentMethod } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -20,7 +18,7 @@ import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashbo
 import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
-import { IShow, IShowRes, IShowSingleSeat } from "../interfaces/schema/showSchema";
+import { IShow } from "../interfaces/schema/showSchema";
 
 export class TicketUseCase {
     constructor(
@@ -31,8 +29,7 @@ export class TicketUseCase {
         private readonly theaterRepository: TheaterRepository,
         private readonly userRepository: UserRepository,
         private readonly adminRepository: AdminRepository,
-        private readonly couponRepository: CouponRepository,
-
+        private readonly couponRepository: CouponRepository
     ) { }
 
     async bookTicketDataTemporarily(ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
