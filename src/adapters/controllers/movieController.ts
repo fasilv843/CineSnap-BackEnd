@@ -63,7 +63,7 @@ export class MovieController {
 
     // To add a movie to CineSnap from TMDB
     async addMovie(req: Request, res: Response) {
-        const movie: ITMDBMovie = req.body
+        const movie: ITMDBMovie = req.body.movie
         console.log(movie, 'movie from controller');
         const apiRes = await this.movieUseCase.saveMovie(movie)
         res.status(apiRes.status).json(apiRes)
