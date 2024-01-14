@@ -1,6 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IMovie } from "../../interfaces/schema/movieSchema";
-import { GENRES } from "../../constants/genreIds";
 import { Languages } from "../../constants/langAbbreviation";
 import { reviewSchema } from "./subSchema/reviewSchema";
 
@@ -60,7 +59,6 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     genre_ids: {
         type: [Number],
         default: [],
-        enum: Object.values(GENRES),
         index: true
     },
     review: [reviewSchema],

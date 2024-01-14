@@ -27,48 +27,33 @@ export class MovieUseCase {
                 data: movie
             }
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: null
-            }
+            return get500Response(error as Error)
         }
 
     }
 
-    async findAllMovies(): Promise<IApiCSMoviesRes>{
-        try {
-            const movies = await this.movieRepository.findAllMovies()
-            return {
-                status: STATUS_CODES.OK,
-                message: 'Success',
-                data: movies
-            }
-        } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: []
-            }
-        }
-    }
+    // async findAllMovies(): Promise<IApiCSMoviesRes>{
+    //     try {
+    //         const movies = await this.movieRepository.findAllMovies()
+    //         return {
+    //             status: STATUS_CODES.OK,
+    //             message: 'Success',
+    //             data: movies
+    //         }
+    //     } catch (error) {
+    //         return get500Response(error as Error)
+    //     }
+    // }
 
-    async findAvailableMovies(page: number, genreFilters: number[], langFilters: string[], availability: string | undefined): Promise<IApiCSMoviesRes>{
+    async findMoviesLazily(page: number, genreFilters: number[], langFilters: string[], availability: string | undefined): Promise<IApiCSMoviesRes>{
         try {
-            if (availability !== undefined) availability = 'Available'
-            const movies = await this.movieRepository.findAvailableMoviesLazy(page, genreFilters, langFilters, availability)
-            return {
-                status: STATUS_CODES.OK,
-                message: 'Success',
-                data: movies
-            }
+            console.log(availability, 'availability from usecase')
+            if (availability === undefined) availability = 'Available'
+            const movies = await this.movieRepository.findMoviesLazily(page, genreFilters, langFilters, availability)
+            return get200Response(movies)
         } catch (error) {
             log(error)
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: []
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -76,20 +61,12 @@ export class MovieUseCase {
     //     return await this.movieRepository.findMovieByTmdbId(id)
     // }
 
-    async searchMovie(title: string): Promise<IApiCSMoviesRes>{
+    async searchMovie(title: string, isAdmin: boolean): Promise<IApiCSMoviesRes>{
         try {
-            const movies = await this.movieRepository.findMovieByTitle(title)
-            return {
-                status: STATUS_CODES.OK,
-                message: 'Success',
-                data: movies
-            }
+            const movies = await this.movieRepository.findMovieByTitle(title, isAdmin)
+            return get200Response(movies)
         } catch (error) {
-            return {
-                status: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                message: (error as Error).message,
-                data: []
-            }
+            return get500Response(error as Error)
         }
     }
 
@@ -116,9 +93,9 @@ export class MovieUseCase {
         return await this.movieRepository.findUpcomingMovies()
     }
 
-    async deleteMovie(id: ID): Promise<IApiCSMovieRes>{
+    async deleteMovie(movieId: ID): Promise<IApiCSMovieRes>{
         try {
-            await this.movieRepository.deleteMovie(id)
+            await this.movieRepository.deleteMovie(movieId)
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',

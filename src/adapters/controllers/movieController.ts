@@ -16,17 +16,6 @@ export class MovieController {
         res.status(apiRes.status).json(apiRes)
     }
 
-    // To get all the movies in database including deleted - For admin side
-    async getMovies(req: Request, res: Response) {
-        const title = req.query.title as string
-        if (title) {
-            const apiRes = await this.movieUseCase.searchMovie(title)
-            return res.status(apiRes.status).json(apiRes)
-        }
-        const apiRes = await this.movieUseCase.findAllMovies()
-        res.status(apiRes.status).json(apiRes)
-    }
-
     // To get movies to show on user Home, focusing on latest released movies
     async getBannerMovies(req: Request, res: Response) {
         const apiRes = await this.movieUseCase.getBannerMovies()
@@ -34,9 +23,10 @@ export class MovieController {
     }
 
     // To get all non deleted movies from the database
-    async getAvailableMovies(req: Request, res: Response) {
+    async getMovies(req: Request, res: Response) {
         const title = req.query.title as string
         const page = req.query.page as string | undefined
+        const isAdmin = Boolean(req.query.isAdmin)
 
         const genreFilters: number[] = [];
         const langFilters: string[] = [];
@@ -54,10 +44,10 @@ export class MovieController {
         let pageNum = 1
         if(page) pageNum = parseInt(page)
         if (title) {
-            const apiRes = await this.movieUseCase.searchMovie(title)
+            const apiRes = await this.movieUseCase.searchMovie(title, isAdmin)
             return res.status(apiRes.status).json(apiRes)
         }
-        const apiRes = await this.movieUseCase.findAvailableMovies(pageNum, genreFilters, langFilters, availability)
+        const apiRes = await this.movieUseCase.findMoviesLazily(pageNum, genreFilters, langFilters, availability)
         res.status(apiRes.status).json(apiRes)
     }
 

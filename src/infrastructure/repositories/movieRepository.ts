@@ -32,15 +32,15 @@ export class MovieRepository implements IMovieRepo {
         )
     }
 
-    async findAllMovies(): Promise<IMovie[]> {
-        return await movieModel.find({})
-    }
+    // async findAllMovies(): Promise<IMovie[]> {
+    //     return await movieModel.find({})
+    // }
 
-    async findAvailableMovies(): Promise<IMovie[]> {
-        return await movieModel.find({ isDeleted: false })
-    }
+    // async findAvailableMovies(): Promise<IMovie[]> {
+    //     return await movieModel.find({ isDeleted: false })
+    // }
 
-    async findAvailableMoviesLazy(page: number, genreFilters: number[], langFilters: string[], availability: string = 'Available'): Promise<IMovie[]> {
+    async findMoviesLazily(page: number, genreFilters: number[], langFilters: string[], availability: string = 'Available'): Promise<IMovie[]> {
 
         log(genreFilters, 'genreFilters number array')
         const query: IMovieQuery = {};
@@ -71,15 +71,16 @@ export class MovieRepository implements IMovieRepo {
         return await movieModel.find({ genre_ids: { $in: [genreId] } }).hint({ genre_ids: 1 });
     }
 
-    async findMovieByTitle(title: string): Promise<IMovie[]> {
-        const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
-        return await movieModel.find({ title: regex, isDeleted: false });
+    async findMovieByTitle(title: string, isAdmin: boolean): Promise<IMovie[]> {
+        const query = { title: new RegExp(title, 'i') } as { title: RegExp, isDeleted?: boolean }
+        if (!isAdmin) query.isDeleted = false
+        return await movieModel.find(query);
     }
 
-    async findMovieByTitleAdmin(title: string): Promise<IMovie[]> {
-        const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
-        return await movieModel.find({ title: regex });
-    }
+    // async findMovieByTitleAdmin(title: string): Promise<IMovie[]> {
+    //     const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
+    //     return await movieModel.find({ title: regex });
+    // }
 
 
     async findMovieById(movieId: ID): Promise<IMovie | null> {
@@ -92,6 +93,7 @@ export class MovieRepository implements IMovieRepo {
 
     async deleteMovie(id: ID): Promise<void | null> {
         const movie = await movieModel.findById({ _id: id })
+        log('movie to delete', movie)
         if (movie !== null) {
             movie.isDeleted = !movie.isDeleted
             await movie.save()
