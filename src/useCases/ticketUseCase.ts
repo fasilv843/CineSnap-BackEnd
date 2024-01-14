@@ -19,6 +19,8 @@ import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
 import { IShow } from "../interfaces/schema/showSchema";
+import { MailSender } from "../providers/nodemailer";
+import { IUserRes } from "../interfaces/schema/userSchema";
 
 export class TicketUseCase {
     constructor(
@@ -29,7 +31,8 @@ export class TicketUseCase {
         private readonly theaterRepository: TheaterRepository,
         private readonly userRepository: UserRepository,
         private readonly adminRepository: AdminRepository,
-        private readonly couponRepository: CouponRepository
+        private readonly couponRepository: CouponRepository,
+        private readonly mailSender: MailSender
     ) { }
 
     async bookTicketDataTemporarily(ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
@@ -97,11 +100,13 @@ export class TicketUseCase {
                     if (paymentMethod === 'Wallet') {
                         await this.userRepository.updateWallet(confirmedTicket.userId, -confirmedTicket.totalPrice, 'Booked a show')
                     }
-                    if (useWallet) {
-                        const user = await this.userRepository.findById(confirmedTicket.userId)
-                        if (user) {
+                    const user = await this.userRepository.findById(confirmedTicket.userId)
+                    if (user) {
+                        if (useWallet) {
                             await this.userRepository.updateWallet(confirmedTicket.userId, -user.wallet, 'For booking Ticket')
                         }
+                    } else {
+                        return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'userid invalid')
                     }
                     let theaterShare = calculateTheaterShare(confirmedTicket)
                     const adminShare = calculateAdminShare(confirmedTicket)
@@ -117,6 +122,9 @@ export class TicketUseCase {
                     log(paymentMethod, 'paymentMethod')
                     await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Profit from Ticket')
                     await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
+
+                    const populatedTicket = await this.ticketRepository.getTicketData(confirmedTicket._id) as ITicketRes
+                    await this.mailSender.sendBookingSuccessMail(user.email, populatedTicket)
                     return get200Response(confirmedTicket)
                 } else {
                     return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid show id')

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Booked Successfully</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+
+  <div id="invoice-container" style="display: flex; flex-direction: column; justify-content: space-around; height: fit-content; border: 1px solid black; padding: 16px; margin-top: 16px; margin-bottom: 16px; background-color: white; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25); border-radius: 16px; overflow: hidden;">
+
+    <div class="invoice-content" style="display: flex; flex-direction: column; border: 1px solid black; padding: 16px;">
+
+      <div class="invoice-image" style="margin-bottom: 16px;">
+        <img src="https://image.tmdb.org/t/p/original/<%= ticket.movieId.poster_path %>" alt="<%= ticket.movieId.title %> Poster" style="height: 80px; object-fit: cover; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);">
+      </div>
+
+      <div class="invoice-details" style="margin-right: 16px;">
+        <h6 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 8px;"><%= ticket.movieId.title %></h6>
+        <span style="color: #a0aec0;"><%= ticket.movieId.language %></span>
+        <h6 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 8px;"><%= ticket.theaterId.name %></h6>
+        <span style="color: #a0aec0;">
+          <%= ticket.theaterId.address.city %>,
+          <%= ticket.theaterId.address.district %>,
+          <%= ticket.theaterId.address.state %>,
+          <%= ticket.theaterId.address.country %>,
+          <%= ticket.theaterId.address.zip %>
+        </span>
+
+        <div class="invoice-timing-seats" style="display: flex; align-items: center; margin-bottom: 16px;">
+
+          <div class="invoice-timing" style="margin-right: 16px;">
+            <h6 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 8px;"><%= ticket.startTime %></h6>
+            <span><%= ticket.screenId.name %></span>
+          </div>
+
+          <div class="invoice-ticket-count" style="background-color: #f8f9fa; padding: 8px; border-radius: 8px;">
+            <p style="color: #212529; font-weight: 600; margin-bottom: 0;"><%= ticket.seatCount %></p>
+            <p style="color: #a0aec0;">Tickets</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

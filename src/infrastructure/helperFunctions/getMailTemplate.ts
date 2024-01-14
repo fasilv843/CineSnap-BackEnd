@@ -1,3 +1,7 @@
+import path from "path";
+import ejs from 'ejs'
+import { ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { log } from "console";
 
 export function getOTPTemplate (otp: number): string {
     return `
@@ -22,4 +26,12 @@ export function getOTPTemplate (otp: number): string {
     </body>
     </html>
     `
+}
+
+export async function getMovieSuccessMailTemplate (ticket: ITicketRes): Promise<string> {
+    const templateData = { ticket };
+    const templatePath = path.join(__dirname, '../mailTemplates/bookingSuccess.ejs');
+    log(templatePath, 'template path')
+    const renderedTemplate = ejs.renderFile(templatePath, templateData);
+    return await renderedTemplate;
 }
