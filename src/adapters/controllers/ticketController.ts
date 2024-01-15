@@ -65,20 +65,6 @@ export class TicketController {
         res.status(apiRes.status).json(apiRes)
     }
 
-    // async cancelTicketByTheater (req: Request, res: Response) {
-    //     const ticketId = req.params.ticketId as unknown as ID
-    //     const apiRes = await this.ticketUseCase.cancelTicketByTheater(ticketId)
-    //     log(apiRes, 'response of cancelled ticket')
-    //     res.status(apiRes.status).json(apiRes)
-    // }
-
-    // async cancelTicketByAdmin (req: Request, res: Response) {
-    //     const ticketId = req.params.ticketId as unknown as ID
-    //     const apiRes = await this.ticketUseCase.cancelTicketByAdmin(ticketId)
-    //     log(apiRes, 'response of cancelled ticket')
-    //     res.status(apiRes.status).json(apiRes)
-    // }
-
     async getTicketsOfTheater (req: Request, res: Response) {
         const theaterId = req.params.theaterId as unknown as ID
         const page = parseInt(req.query.page as string)
@@ -91,6 +77,12 @@ export class TicketController {
         const page = parseInt(req.query.page as string)
         const limit = parseInt(req.query.limit as string)
         const apiRes = await this.ticketUseCase.getAllTickets(page, limit)
+        res.status(apiRes.status).json(apiRes)
+    }
+
+    async sendInvoiceMail (req: Request, res: Response) {
+        const ticketId = req.body.ticketId as unknown as ID
+        const apiRes = await this.ticketUseCase.sendInvoiceMail(ticketId)
         res.status(apiRes.status).json(apiRes)
     }
 }

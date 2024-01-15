@@ -38,6 +38,7 @@ userRouter.get('/shows/seats/:showSeatId', (req, res) => showSeatsController.fin
 
 userRouter.get('/tickets/:userId', userAuth, (req, res) => ticketController.getTicketsOfUser(req, res))
 userRouter.patch('/ticket/cancel/:ticketId', userAuth, (req, res) => ticketController.cancelTicket(req, res))
+userRouter.post('/tickets/invoice/mail', userAuth, (req, res) => ticketController.sendInvoiceMail(req, res))
 
 userRouter.patch('/wallet/add/:userId', userAuth, (req, res) => uController.addToWallet(req, res))
 userRouter.get('/wallet-history/:userId', userAuth, (req, res) => uController.getWalletHistory(req, res))

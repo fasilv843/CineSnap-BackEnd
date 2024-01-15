@@ -199,6 +199,27 @@ export class TicketUseCase {
         }
     }
 
+    async sendInvoiceMail (ticketId: ID): Promise<IApiTicketRes> {
+        try {
+            log(ticketId, 'ticket id')
+            const ticket = await this.ticketRepository.getTicketData(ticketId)
+            if (ticket) {
+                const user = await this.userRepository.findById(ticket.userId)
+                if (user) {
+                    log('sending invoice to user ', user.email)
+                    await this.mailSender.invoiceDownloadMail(user.email, ticket)
+                    return get200Response(null)
+                } else {
+                    return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid user id in ticket')
+                }
+            } else {
+                return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid ticket id')
+            }
+        } catch (error) {
+            return get500Response(error as Error)
+        }
+    }
+
     async getTicketsOfTheater(theaterId: ID, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
         try {
             if (isNaN(page)) page = 1
