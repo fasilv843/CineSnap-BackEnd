@@ -25,19 +25,19 @@ userRouter.get('/chat/theaters/:userId', userAuth, (req, res) => chatController.
 
 userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
 
-userRouter.get('/theater/show/get/:showId', (req, res) => showController.getShowDetails(req, res))
-userRouter.get('/show/seats/holded/:showId', (req, res) => ticketController.getHoldedSeats(req, res))
-userRouter.post('/book/ticket', (req, res) => ticketController.bookTicket(req, res))
-userRouter.get('/tempticket/get/:ticketId', (req, res) => ticketController.getTempTicketData(req, res))
+userRouter.get('/theater/show/get/:showId', userAuth, (req, res) => showController.getShowDetails(req, res))
+userRouter.get('/show/seats/holded/:showId', userAuth, (req, res) => ticketController.getHoldedSeats(req, res))
+userRouter.post('/book/ticket', userAuth, (req, res) => ticketController.bookTicket(req, res))
+userRouter.get('/tempticket/get/:ticketId', userAuth, (req, res) => ticketController.getTempTicketData(req, res))
 
-userRouter.post('/show/book/confirm/ticket', (req, res) => ticketController.confirmTicket(req, res))
-userRouter.get('/show/ticket/get/:ticketId', (req, res) => ticketController.getTicketData(req, res))
+userRouter.post('/show/book/confirm/ticket', userAuth, (req, res) => ticketController.confirmTicket(req, res))
+userRouter.get('/show/ticket/get/:ticketId', userAuth, (req, res) => ticketController.getTicketData(req, res))
 userRouter.get('/shows/:theaterId', (req, res) => showController.findShowsOnTheaterByUser(req, res))
 
 userRouter.get('/shows/seats/:showSeatId', (req, res) => showSeatsController.findShowSeatById(req, res))
 
-userRouter.get('/tickets/:userId', (req, res) => ticketController.getTicketsOfUser(req, res))
-userRouter.patch('/ticket/cancel/:ticketId', (req, res) => ticketController.cancelTicket(req, res))
+userRouter.get('/tickets/:userId', userAuth, (req, res) => ticketController.getTicketsOfUser(req, res))
+userRouter.patch('/ticket/cancel/:ticketId', userAuth, (req, res) => ticketController.cancelTicket(req, res))
 
 userRouter.patch('/wallet/add/:userId', userAuth, (req, res) => uController.addToWallet(req, res))
 userRouter.get('/wallet-history/:userId', userAuth, (req, res) => uController.getWalletHistory(req, res))
