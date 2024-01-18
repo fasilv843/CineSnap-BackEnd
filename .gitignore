@@ -2,3 +2,4 @@
 node_modules
 dist
 aaa
+docker-compose.yml
