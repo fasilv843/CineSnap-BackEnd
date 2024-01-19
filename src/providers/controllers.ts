@@ -41,7 +41,6 @@ import { GenerateOtp } from "./otpGenerator"
 
 const encrypt = new Encrypt()
 const jwtToken = new JWTToken()
-const mailer = new MailSender()
 const mailSender = new MailSender()
 const otpGenerator = new GenerateOtp()
 
@@ -61,8 +60,8 @@ const tempTicketRepository = new TempTicketRepository()
 const couponRepository = new CouponRepository()
 
 const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken,  mailSender)
-const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailer, otpGenerator, ticketRepository)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken, mailSender)
+const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailSender, otpGenerator, ticketRepository)
 const movieUseCase = new MovieUseCase(movieRepository)
 const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRepository)
 const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepositoty, screenSeatRepositoty, showSeatRepository)

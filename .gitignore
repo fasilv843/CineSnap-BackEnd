@@ -3,3 +3,4 @@ node_modules
 dist
 aaa
 docker-compose.yml
+/src/providers/controllers
