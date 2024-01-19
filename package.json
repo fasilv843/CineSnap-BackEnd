@@ -21,7 +21,6 @@
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
-    "concurrently": "^8.2.2",
     "eslint": "^8.53.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
@@ -41,8 +40,6 @@
     "nodemailer": "^6.9.7",
     "puppeteer": "^21.7.0",
     "socket.io": "^4.7.2",
-    "stripe": "^14.9.0",
-    "sweetalert2": "^11.9.0",
     "uuid": "^9.0.1"
   }
 }
