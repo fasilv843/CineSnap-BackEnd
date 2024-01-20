@@ -21,7 +21,9 @@ userRouter.get('/theater/:theaterId', (req,res) => tController.getTheaterData(re
 userRouter.get('/movies', (req, res) => mController.getMovies(req, res))
 userRouter.get('/movies/get/:movieId', (req, res) => mController.getMovieDetails(req, res))
 userRouter.get('/filters', (req, res) => mController.getFilters(req, res))
+
 userRouter.get('/chat/theaters/:userId', userAuth, (req, res) => chatController.getTheatersChattedWith(req, res))
+userRouter.get('/chat/history', userAuth, (req, res) => chatController.getChatHistory(req, res))
 
 userRouter.get('/banner', (req, res) => mController.getBannerMovies(req, res))
 
