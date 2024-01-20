@@ -27,7 +27,7 @@ const app = (0, app_1.createServer)();
         // Create a Socket.IO server on the same server
         const io = new socket_io_1.Server(server, {
             cors: {
-                origin: ["http://localhost:4200"],
+                origin: [process.env.CORS_URI],
                 methods: ["GET", "POST"],
             },
         });
