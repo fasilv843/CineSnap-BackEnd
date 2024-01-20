@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=prod nodemon src/index.ts",
+    "start-dist": "cross-env NODE_ENV=prod nodemon dist/index.js",
     "dev": "cross-env NODE_ENV=dev nodemon src/index.ts",
     "build": "tsc && cpx \"src/**/*.ejs\" \"dist\""
   },
