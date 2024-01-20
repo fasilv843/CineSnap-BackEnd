@@ -23,6 +23,7 @@ userRouter.get('/movies', (req, res) => controllers_1.mController.getMovies(req,
 userRouter.get('/movies/get/:movieId', (req, res) => controllers_1.mController.getMovieDetails(req, res));
 userRouter.get('/filters', (req, res) => controllers_1.mController.getFilters(req, res));
 userRouter.get('/chat/theaters/:userId', userAuth_1.userAuth, (req, res) => controllers_1.chatController.getTheatersChattedWith(req, res));
+userRouter.get('/chat/history', userAuth_1.userAuth, (req, res) => controllers_1.chatController.getChatHistory(req, res));
 userRouter.get('/banner', (req, res) => controllers_1.mController.getBannerMovies(req, res));
 userRouter.get('/theater/show/get/:showId', userAuth_1.userAuth, (req, res) => controllers_1.showController.getShowDetails(req, res));
 userRouter.get('/show/seats/holded/:showId', userAuth_1.userAuth, (req, res) => controllers_1.ticketController.getHoldedSeats(req, res));
