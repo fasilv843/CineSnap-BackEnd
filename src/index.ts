@@ -19,7 +19,7 @@ mongoConnect()
             // Create a Socket.IO server on the same server
             const io = new Server(server, {
                 cors: {
-                  origin: ["http://localhost:4200"],
+                  origin: ["https://cinesnap.netlify.app"],
                   methods: ["GET", "POST"],
                 },
             });
