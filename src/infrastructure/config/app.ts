@@ -1,17 +1,20 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from 'dotenv'
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import cors from 'cors'
 import adminRouter from '../routes/adminRoute'
 import theatreRouter from '../routes/theatreRoute'
 import userRouter from '../routes/userRoute'
 import tokenRouter from '../routes/tokenRoute'
 import path from 'path'
+import { log } from 'console';
 
 export const createServer = () => {
     try {
         const app = express()
+
+        log(process.env.CORS_URI, 'cors url from .env.NODE_ENV')
 
         app.use(express.json())
         app.use(express.urlencoded({extended:true}))

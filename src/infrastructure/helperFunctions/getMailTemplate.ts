@@ -5,6 +5,7 @@ import { log } from "console";
 import puppeteer from "puppeteer";
 import { promises as fs } from 'fs'
 import { v4 as uuidv4 } from 'uuid';
+import { installPuppeteer } from "./installPuppeteer";
 
 export function getOTPTemplate (otp: number): string {
     return `
@@ -45,6 +46,8 @@ export async function generateInvoiceAndGetPath (ticket: ITicketRes): Promise<st
         const templatePath = path.join(__dirname, '../templates/pdf/invoice.ejs'); // Replace with the actual path
         const templateContent = await fs.readFile(templatePath, 'utf-8');
         const renderedHtml = ejs.render(templateContent, { ticket });
+
+        await installPuppeteer() // Check first on localhost 
 
         const uuid = uuidv4()
         log(uuid, 'generated uuid using uuidv4()')

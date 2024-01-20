@@ -19,6 +19,7 @@ const console_1 = require("console");
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const fs_1 = require("fs");
 const uuid_1 = require("uuid");
+const installPuppeteer_1 = require("./installPuppeteer");
 function getOTPTemplate(otp) {
     return `
     <!DOCTYPE html>
@@ -61,6 +62,7 @@ function generateInvoiceAndGetPath(ticket) {
             const templatePath = path_1.default.join(__dirname, '../templates/pdf/invoice.ejs'); // Replace with the actual path
             const templateContent = yield fs_1.promises.readFile(templatePath, 'utf-8');
             const renderedHtml = ejs_1.default.render(templateContent, { ticket });
+            yield (0, installPuppeteer_1.installPuppeteer)(); // Check first on localhost 
             const uuid = (0, uuid_1.v4)();
             (0, console_1.log)(uuid, 'generated uuid using uuidv4()');
             // Create a temporary HTML file to load in Puppeteer
