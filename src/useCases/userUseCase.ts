@@ -166,7 +166,12 @@ export class UserUseCase {
     }
 
     async blockUser(userId: string) {
-        await this.userRepository.blockUnblockUser(userId)
+        try {
+            await this.userRepository.blockUnblockUser(userId)
+            return get200Response(null)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
     }
 
     async getUserData (userId: ID): Promise<IApiUserRes> {

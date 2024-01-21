@@ -38,25 +38,13 @@ export class AdminController {
     }
 
     async blockUser(req: Request, res: Response) {
-        try {
-            // console.log(req.params, 'req.params');
-            await this.userUseCase.blockUser(req.params.userId as string)
-            res.status(STATUS_CODES.OK).json()
-        } catch (error) {
-            const err = error as Error
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: err.message })
-        }
+        const apiRes = await this.userUseCase.blockUser(req.params.userId as string)
+        res.status(apiRes.status).json(apiRes)
     }
 
     async blockTheater(req: Request, res: Response) {
-        try {
-            // console.log(req.params, 'req.params');
-            await this.theaterUseCase.blockTheater(req.params.theaterId as string)
-            res.status(STATUS_CODES.OK).json()
-        } catch (error) {
-            const err = error as Error
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: err.message })
-        }
+        const apiRes = await this.theaterUseCase.blockTheater(req.params.theaterId as string)
+        res.status(apiRes.status).json(apiRes)
     }
 
     async theaterApproval(req: Request, res: Response) {

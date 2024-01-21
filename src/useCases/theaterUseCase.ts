@@ -56,6 +56,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To send an otp to mail,and delete after spcified time (OTP_TIMER)
     sendTimeoutOTP(id: ID, email: string, OTP: number) {
         console.log(OTP, 'otp from sendTimoutOTP');
         this.mailer.sendOTP(email, OTP)
@@ -171,6 +172,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To get all theaters
     async getAllTheaters(page: number, limit: number, searchQuery: string | undefined): Promise<IApiRes<ITheatersAndCount | null>> {
         try {
             if (isNaN(page)) page = 1
@@ -184,14 +186,22 @@ export class TheaterUseCase {
         }
     }
 
+    // To Block Theater
     async blockTheater(theaterId: string) {
-        return await this.theaterRepository.blockTheater(theaterId)
+        try {
+            await this.theaterRepository.blockTheater(theaterId)
+            return get200Response(null)
+        } catch (error) {
+            return get500Response(error as Error)
+        }
     }
 
+    // Returns Every theaters within a radius
     async getNearestTheaters(lon: number, lat: number, radius: number) {
         return await this.theaterRepository.getNearestTheaters(lon, lat, radius)
     }
 
+    // Returns theaters within radius maxDistance, and limit count
     async getNearestTheatersByLimit(lon: number, lat: number, limit: number, maxDistance: number) {
         return await this.theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
     }
@@ -244,6 +254,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To update theater profile pic
     async updateTheaterProfilePic (theaterId: ID, fileName: string | undefined): Promise<IApiTheaterRes> {
         try {
             if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
@@ -262,6 +273,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To delete Theater Profile
     async removeTheaterProfilePic (theaterId: ID): Promise<IApiTheaterRes> {
         try {
             const user = await this.theaterRepository.findById(theaterId)
@@ -282,6 +294,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To add money to wallet
     async addToWallet (theaterId: ID, amount: number): Promise<IApiTheaterRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
@@ -295,6 +308,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To get wallet history of a theater
     async getWalletHistory (theaterId: ID, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
         try {
             const userWallet = await this.theaterRepository.getWalletHistory(theaterId, page, limit)
@@ -305,6 +319,7 @@ export class TheaterUseCase {
         }
     }
 
+    // To get revenue data, to show graph
     async getRevenueData (theaterId: ID, startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
         try {
             if (startDate === undefined || endDate === undefined) {
