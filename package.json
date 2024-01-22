@@ -1,5 +1,5 @@
 {
-  "name": "back-end",
+  "name": "cinesnap-back",
   "version": "1.0.0",
   "description": "CineSnap Back End api  server",
   "main": "index.js",
