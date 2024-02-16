@@ -7,8 +7,8 @@ import { IShow, IShowRes, IShowToSave, IShowsOnAScreen } from "../../interfaces/
 
 export class ShowRepository implements IShowRepo {
 
-    async saveShow (showTosave: IShowToSave): Promise<IShow> {
-        return await new showModel(showTosave).save()
+    async saveShow (showToSave: IShowToSave): Promise<IShow> {
+        return await new showModel(showToSave).save() as unknown as IShow
     }
 
     async findShowsOnDate  (theaterId: string, from: Date, to: Date): Promise<IShowsOnAScreen[]> {

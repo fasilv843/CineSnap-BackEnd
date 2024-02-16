@@ -1,7 +1,12 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IScreen } from "../../interfaces/schema/screenSchema";
 
-export const ScreenSchema: Schema = new Schema<IScreen & Document>({
+interface IScreenSchema extends Omit<IScreen, 'theaterId' | 'seatId'>, Document {
+    theaterId: Schema.Types.ObjectId,
+    seatId: Schema.Types.ObjectId,
+}
+
+export const ScreenSchema: Schema = new Schema<IScreenSchema>({
     theaterId: {
         type: Schema.Types.ObjectId,
         required: [true, 'theaterId is required, screens can\'t exist in space :/'],
@@ -35,4 +40,4 @@ export const ScreenSchema: Schema = new Schema<IScreen & Document>({
     }
 })
 
-export const screenModel: Model<IScreen & Document> = mongoose.model<IScreen & Document>('Screens', ScreenSchema)
+export const screenModel: Model<IScreenSchema> = mongoose.model<IScreenSchema>('Screens', ScreenSchema)

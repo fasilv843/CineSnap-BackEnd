@@ -1,8 +1,16 @@
 import { Schema } from "mongoose";
-import { ITempTicketRes } from "../../../interfaces/schema/ticketSchema";
+import { ITempTicket } from "../../../interfaces/schema/ticketSchema";
 import { ticketSeatCategorySchema } from "../subSchema/ticketSeatSchema";
 
-export const baseTicketSchema: Schema = new Schema<ITempTicketRes & Document>({
+interface ITempTicketSchema extends Omit<ITempTicket, 'showId' | 'userId' | 'movieId' | 'theaterId' | 'screenId' | 'expireAt'>, Document {
+    showId: Schema.Types.ObjectId,
+    userId: Schema.Types.ObjectId,
+    movieId: Schema.Types.ObjectId,
+    theaterId: Schema.Types.ObjectId,
+    screenId: Schema.Types.ObjectId,
+}
+
+export const baseTicketSchema: Schema = new Schema<ITempTicketSchema>({
     showId: {
         type: Schema.Types.ObjectId,
         required: [true, 'showId is required'],

@@ -1,7 +1,11 @@
-import mongoose, { Schema, Model } from "mongoose"
+import mongoose, { Schema, Model, ObjectId } from "mongoose"
 import { ICoupon } from "../../interfaces/schema/couponSchema"
 
-export const couponSchema: Schema = new Schema<ICoupon & Document>({
+interface ICouponSchema extends Omit<ICoupon, 'theaterId'>, Document {
+    theaterId: ObjectId
+}
+
+export const couponSchema: Schema = new Schema<ICouponSchema>({
     code: {
         type: String,
         required: true,
@@ -85,7 +89,7 @@ couponSchema.pre('save', function (next) {
 });
 
 
-export const couponModel: Model<ICoupon & Document> = mongoose.model<ICoupon & Document>('Coupons', couponSchema)
+export const couponModel: Model<ICouponSchema> = mongoose.model<ICouponSchema>('Coupons', couponSchema)
 
 // TnC:{
 //     type: [String],

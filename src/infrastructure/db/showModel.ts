@@ -1,7 +1,13 @@
 import mongoose, { Model, Schema } from "mongoose";
 import { IShow } from "../../interfaces/schema/showSchema";
 
-export const showSchema: Schema = new Schema<IShow & Document>({
+interface IShowSchema extends Omit<IShow, 'movieId' | 'screenId' | 'seatId'>, Document {
+    movieId: Schema.Types.ObjectId,
+    screenId: Schema.Types.ObjectId,
+    seatId: Schema.Types.ObjectId,
+}
+
+export const showSchema: Schema = new Schema<IShowSchema>({
     movieId: {
         type: Schema.Types.ObjectId,
         ref: 'Movies',
@@ -36,4 +42,4 @@ export const showSchema: Schema = new Schema<IShow & Document>({
     }
 })
 
-export const showModel: Model<IShow & Document> = mongoose.model<IShow & Document>('Shows', showSchema)
+export const showModel: Model<IShowSchema> = mongoose.model<IShowSchema>('Shows', showSchema)

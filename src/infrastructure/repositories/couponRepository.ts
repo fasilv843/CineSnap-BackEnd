@@ -4,7 +4,7 @@ import { ICouponReqs, ICouponRes } from "../../interfaces/schema/couponSchema";
 
 export class CouponRepository implements ICouponRepo {
     async addCoupon (coupon: ICouponReqs): Promise<ICouponRes> {
-        return await new couponModel(coupon).save()
+        return await new couponModel(coupon).save() as unknown as ICouponRes
     }
 
     async findCouponsOnTheater (theaterId: string): Promise<ICouponRes[]> {

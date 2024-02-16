@@ -4,7 +4,7 @@ import { IScreen } from "../../interfaces/schema/screenSchema";
 
 export class ScreenRepository implements IScreenRepo {
     async saveScreen(screenData: Omit<IScreen, '_id'>): Promise<IScreen> {
-        return await new screenModel(screenData).save()
+        return await new screenModel(screenData).save() as unknown as IScreen
     }
 
     async findScreenById(id: string): Promise<IScreen | null> {

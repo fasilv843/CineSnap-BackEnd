@@ -1,7 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema } from "mongoose";
 import { IReview } from "../../../interfaces/schema/movieSchema";
 
-export const reviewSchema: Schema = new Schema<IReview & Document>({
+interface IReviewSchema extends Omit<IReview, 'userId'>, Document {
+    userId: Schema.Types.ObjectId
+}
+
+export const reviewSchema: Schema = new Schema<IReviewSchema>({
     rating: {
         type: Number,
         required: [true, 'Rating is required'],
@@ -12,7 +16,7 @@ export const reviewSchema: Schema = new Schema<IReview & Document>({
         type: String
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: [true, 'userId is required'],
         ref: 'Users'
     }
