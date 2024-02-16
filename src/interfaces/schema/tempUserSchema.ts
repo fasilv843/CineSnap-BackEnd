@@ -1,4 +1,3 @@
-import { ID } from "../common"
 
 export interface ITempUserReq {
     name: string
@@ -9,6 +8,6 @@ export interface ITempUserReq {
 
 // export interface ITempUserRes extends Omit<ITempUserReq, '_id'>{}
 export interface ITempUserRes extends ITempUserReq {
-    _id: ID
+    _id: string
     expireAt: Date
 }

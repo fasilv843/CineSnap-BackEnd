@@ -1,4 +1,4 @@
-import { ColType, IApiRes, ID } from "../common"
+import { ColType, IApiRes } from "../common"
 
 export interface IScreenSeatCategory {
     name: string,
@@ -6,7 +6,7 @@ export interface IScreenSeatCategory {
 }
 
 export interface IScreenSeat {
-    _id: ID
+    _id: string
     diamond: IScreenSeatCategory
     gold: IScreenSeatCategory
     silver: IScreenSeatCategory

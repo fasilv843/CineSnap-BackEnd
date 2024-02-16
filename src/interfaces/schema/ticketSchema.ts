@@ -1,4 +1,4 @@
-import { ColType, IApiRes, ID, PaymentMethod, RowType } from "../common";
+import { ColType, IApiRes, PaymentMethod, RowType } from "../common";
 
 export interface ITicketSeat {
     seats: string[]
@@ -9,12 +9,12 @@ export interface ITicketSeat {
 }
 
 export interface ITicket {
-    _id: ID
-    showId: ID
-    userId: ID
-    screenId: ID
-    movieId: ID
-    theaterId: ID
+    _id: string
+    showId: string
+    userId: string
+    screenId: string
+    movieId: string
+    theaterId: string
     diamondSeats: ITicketSeat
     goldSeats: ITicketSeat
     silverSeats: ITicketSeat
@@ -25,7 +25,7 @@ export interface ITicket {
     isCancelled: boolean
     cancelledBy?: 'User' | 'Theater' | 'Admin'
     paymentMethod: 'Wallet' | 'Razorpay',
-    couponId: ID,
+    couponId: string,
 }
 
 export interface ISelectedSeat {

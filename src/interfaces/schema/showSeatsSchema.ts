@@ -1,4 +1,4 @@
-import { ID, RowType } from "../common"
+import { RowType } from "../common"
 import { IShowSingleSeat } from "./showSchema"
 
 
@@ -13,7 +13,7 @@ export interface IShowSeatCategoryRes extends IShowSeatCategory {
 }
 
 export interface IShowSeats {
-    _id: ID
+    _id: string
     diamond: IShowSeatCategory
     gold: IShowSeatCategory
     silver: IShowSeatCategory

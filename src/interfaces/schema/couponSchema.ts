@@ -1,9 +1,8 @@
-import { ID } from "../../interfaces/common"
 
 export interface ICoupon {
-    _id: ID
+    _id: string
     code: string
-    theaterId: ID
+    theaterId: string
     description: string
     startDate: Date
     endDate: Date

@@ -1,4 +1,4 @@
-import { ColType, IApiRes, ID } from "../common"
+import { ColType, IApiRes } from "../common"
 import { IMovie } from "./movieSchema"
 
 export interface IShowSingleSeat {
@@ -7,14 +7,14 @@ export interface IShowSingleSeat {
 }
 
 export interface IShow {
-    _id: ID
-    movieId: ID
-    screenId: ID
+    _id: string
+    movieId: string
+    screenId: string
     startTime: Date
     endTime: Date
     totalSeatCount: number
     availableSeatCount: number
-    seatId: ID
+    seatId: string
 }
 
 export interface IShowToSave extends Omit<IShow, '_id'> {}
@@ -41,7 +41,7 @@ export interface IApiShowsRes {
 export interface IApiShowRes extends IApiRes<IShow | null> { }
 
 export interface IShowsOnAScreen {
-    screenId: ID,
+    screenId: string,
     screenName: string
     shows: IShowRes[]
 }

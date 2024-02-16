@@ -1,8 +1,7 @@
-import { IWalletHistory, ICoords, ITheaterAddress, ID } from "../common"
-
+import { ICoords, ITheaterAddress, IWalletHistory } from "../../entities/common"
 
 export interface ITheater {
-    _id: ID
+    _id: string
     name: string
     email: string
     mobile?: number
@@ -21,7 +20,7 @@ export interface ITheater {
 }
 
 export interface ITheaterRes {
-    _id: ID
+    _id: string
     name: string
     email: string
     mobile?: number

@@ -1,25 +1,8 @@
-import { ID } from "../common"
-
-// export interface IMovie {
-//     _id?: ID
-//     title: string
-//     original_title?: string
-//     poster_path: string
-//     backdrop_path?: string
-//     overview: string
-//     language: string
-//     tmdbId: number
-//     duration: IDuration
-//     release_date: Date
-//     genre_ids: number[]
-//     review?: IReview[]
-//     isDeleted?: boolean
-// }
 
 export interface IReview {
     rating: number
     review?: string
-    userId: ID
+    userId: string
 }
 
 export interface IDuration {
@@ -43,24 +26,6 @@ export interface IMovie {
     isDeleted: boolean
 }
 
-// export interface ICSMovieRes {
-//     _id: string
-//     title: string
-//     original_title?: string
-//     poster_path: string
-//     backdrop_path?: string
-//     overview?: string
-//     language: string
-//     duration: IDuration
-//     tmdbId: number
-//     release_date: Date
-//     genre_ids: number[]
-//     review?: IReview[]
-//     isDeleted: boolean
-// }
-
-// export type Movie = Omit<IMovie, '_id'>
-
 export interface ITMDBMovie {
     tmdbId: number
     title: string
@@ -73,12 +38,6 @@ export interface ITMDBMovie {
     release_date: Date
     genre_ids: number[]
 }
-
-// interface MovieReview {
-//     rating: number
-//     review: string
-//     userId: string
-// }
 
 export interface IApiCSMovieRes {
     status: number

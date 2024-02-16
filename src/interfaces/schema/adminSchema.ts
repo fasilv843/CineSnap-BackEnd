@@ -1,7 +1,7 @@
-import { ID, IWalletHistory } from "../common"
+import { IWalletHistory } from "../../entities/common"
 
 export interface IAdmin {
-    _id: ID
+    _id: string
     email: string
     password: string,
     wallet: number

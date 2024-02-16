@@ -1,4 +1,5 @@
-import { IApiRes, ICoords, ID, ITheaterAddress } from "../common"
+import { ICoords, ITheaterAddress } from "../../entities/common"
+import { IApiRes } from "../common"
 
 export interface ITempTheaterReq {
     name: string
@@ -12,7 +13,7 @@ export interface ITempTheaterReq {
 
 
 export interface ITempTheaterRes extends ITempTheaterReq {
-    _id: ID
+    _id: string
     expireAt: Date
 }
 

@@ -1,13 +1,13 @@
-import { IApiRes, ID } from "../common";
+import { IApiRes } from "../common";
 
 export interface IScreen {
-    _id: ID
-    theaterId: ID
+    _id: string
+    theaterId: string
     name: string
     rows: string
     cols: number
     seatsCount: number
-    seatId: ID
+    seatId: string
 }
 
 export interface IScreenRequirements extends Omit<IScreen, '_id' | 'seatsCount' | 'seatId'> {}
