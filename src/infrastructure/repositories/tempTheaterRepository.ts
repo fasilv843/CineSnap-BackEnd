@@ -1,5 +1,5 @@
 import { tempTheaterModel } from "../db/temp/tempTheaterModel";
-import { ITempTheaterRepo } from "../../interfaces/repos/tempTheaterRepo";
+import { ITempTheaterRepo } from "../../useCases/repos/tempTheaterRepo";
 import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 
 

@@ -1,5 +1,5 @@
 import { couponModel } from "../db/couponModel";
-import { ICouponRepo } from "../../interfaces/repos/couponRepo"; 
+import { ICouponRepo } from "../../useCases/repos/couponRepo"; 
 import { ICouponReqs, ICouponRes } from "../../interfaces/schema/couponSchema";
 
 export class CouponRepository implements ICouponRepo {

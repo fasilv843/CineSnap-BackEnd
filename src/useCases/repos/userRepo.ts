@@ -1,5 +1,5 @@
 import { IUser } from "../../entities/user"
-import {IUserRes } from "../schema/userSchema" 
+import {IUserRes } from "../../interfaces/schema/userSchema" 
 
 export interface IUserRepo {
     saveUser(user: IUser):Promise<IUser>

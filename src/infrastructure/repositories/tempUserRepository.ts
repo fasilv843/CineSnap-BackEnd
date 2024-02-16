@@ -1,5 +1,5 @@
 import { tempUserModel } from "../db/temp/tempUserModel";
-import { ITempUserRepo } from "../../interfaces/repos/tempUserRepo";
+import { ITempUserRepo } from "../../useCases/repos/tempUserRepo";
 import { ITempUserReq, ITempUserRes } from "../../interfaces/schema/tempUserSchema";
 
 

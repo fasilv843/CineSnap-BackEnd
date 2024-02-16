@@ -1,4 +1,4 @@
-import { IScreen, IScreenRequirements } from "../schema/screenSchema";
+import { IScreen, IScreenRequirements } from "../../interfaces/schema/screenSchema";
 
 export interface IScreenRepo {
     saveScreen(screen: IScreenRequirements): Promise<IScreen | null>

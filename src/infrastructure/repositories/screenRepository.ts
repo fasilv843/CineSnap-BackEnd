@@ -1,4 +1,4 @@
-import { IScreenRepo } from "../../interfaces/repos/screenRepo";
+import { IScreenRepo } from "../../useCases/repos/screenRepo";
 import { screenModel } from "../db/screensModel";
 import { IScreen } from "../../interfaces/schema/screenSchema";
 

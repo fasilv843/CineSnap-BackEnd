@@ -1,5 +1,5 @@
 import { screenSeatModel } from "../db/screenSeatModel";
-import { IScreenSeatRepo } from "../../interfaces/repos/screenSeatRepo";
+import { IScreenSeatRepo } from "../../useCases/repos/screenSeatRepo";
 import { IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
 
 export class ScreenSeatRepository implements IScreenSeatRepo {

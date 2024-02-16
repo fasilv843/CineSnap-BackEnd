@@ -1,4 +1,4 @@
-import { ITempTheaterReq, ITempTheaterRes } from "../schema/tempTheaterSchema"
+import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema"
 
 export interface ITempTheaterRepo {
     saveTheater(theater: ITempTheaterReq): Promise<ITempTheaterRes>

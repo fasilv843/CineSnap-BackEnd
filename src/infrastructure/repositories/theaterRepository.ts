@@ -1,5 +1,5 @@
 import { theaterModel } from "../db/theaterModel";
-import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
+import { ITheaterRepo } from "../../useCases/repos/theaterRepo";
 import { IWalletHistoryAndCount } from "../../interfaces/common";
 import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";

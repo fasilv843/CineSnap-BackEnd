@@ -1,6 +1,6 @@
 import { log } from "console";
 import { movieModel } from "../db/movieModel";
-import { IMovieRepo } from "../../interfaces/repos/movieRepo";
+import { IMovieRepo } from "../../useCases/repos/movieRepo";
 import { IMovie, ITMDBMovie } from "../../interfaces/schema/movieSchema";
 
 interface IMovieQuery {

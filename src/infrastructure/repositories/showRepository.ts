@@ -1,6 +1,6 @@
 import { screenModel } from "../db/screensModel";
 import { showModel } from "../db/showModel";
-import { IShowRepo } from "../../interfaces/repos/showRepo";
+import { IShowRepo } from "../../useCases/repos/showRepo";
 import { IMovie } from "../../interfaces/schema/movieSchema";
 import { IScreen } from "../../interfaces/schema/screenSchema";
 import { IShow, IShowRes, IShowToSave, IShowsOnAScreen } from "../../interfaces/schema/showSchema";

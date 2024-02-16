@@ -1,4 +1,4 @@
-import { ITempUserReq, ITempUserRes } from "../schema/tempUserSchema"
+import { ITempUserReq, ITempUserRes } from "../../interfaces/schema/tempUserSchema"
 
 export interface ITempUserRepo {
     saveUser(user: ITempUserReq): Promise<ITempUserRes>

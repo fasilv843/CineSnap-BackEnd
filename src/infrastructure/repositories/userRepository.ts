@@ -1,7 +1,7 @@
 import { log } from "console";
 import userModel from "../db/userModel";
 import { IWalletHistoryAndCount } from "../../interfaces/common";
-import { IUserRepo } from "../../interfaces/repos/userRepo";
+import { IUserRepo } from "../../useCases/repos/userRepo";
 import { IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
 import { IUser } from "../../entities/user";
 

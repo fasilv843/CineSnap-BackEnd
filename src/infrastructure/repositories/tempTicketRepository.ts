@@ -1,5 +1,5 @@
 import { tempTicketModel } from "../db/temp/tempTicketModel";
-import { ITempTicketRepo } from "../../interfaces/repos/tempTicketRepo";
+import { ITempTicketRepo } from "../../useCases/repos/tempTicketRepo";
 import { ITempTicketRes, ITempTicketReqs, Seats } from "../../interfaces/schema/ticketSchema";
 
 export class TempTicketRepository implements ITempTicketRepo {

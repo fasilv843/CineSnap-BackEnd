@@ -1,6 +1,6 @@
 import { log } from "console";
 import { ticketModel } from "../db/ticketModel";
-import { ITicketRepo } from "../../interfaces/repos/ticketRepo";
+import { ITicketRepo } from "../../useCases/repos/ticketRepo";
 import { ISaveRequestReqs, ITicketRes } from "../../interfaces/schema/ticketSchema";
 
 export class TicketRepository implements ITicketRepo {
