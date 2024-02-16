@@ -15,43 +15,17 @@ import { IWalletHistory } from "../entities/common";
 
 export type Location = [number, number];
 
-// export type ID = Schema.Types.ObjectId
 export type PaymentMethod = 'Razorpay' | 'Wallet'
-
-// export interface IUserAddress {
-//     country: string
-//     state: string
-//     district: string
-//     city: string
-//     zip: number
-// }
-
-// export interface ITheaterAddress extends IUserAddress {
-//     landmark?: string
-// }
-
-// export interface IWalletHistory {
-//     amount: number
-//     message: string
-//     date: Date
-// }
 
 export interface IWalletHistoryAndCount {
     walletHistory: IWalletHistory[],
     count: number
 }
 
-// export interface ICoords {
-//     type: 'Point'
-//     coordinates: [number, number];
-// }
-
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[] | IAvailCatsOnScreen | ICouponRes[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat | IWalletHistoryAndCount
             | IShow | IChatRes | ITicketRes | ITicketRes[] | ITicketsAndCount | IUsersListForChats[] | IShowSeatsRes | ICouponRes
             | ITempTicketRes | ITempTicketRes[] | Seats | IUsersAndCount | ITheatersAndCount | null | IRevenueData
-
-// export type SuccessTypes = Exclude<AllResTypes>
 
 export interface IApiRes<T extends AllResTypes> {
     status: number;
