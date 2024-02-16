@@ -1,8 +1,9 @@
-import { theaterModel } from "../../entities/models/theaterModel";
+import { theaterModel } from "../db/theaterModel";
 import { ITheaterRepo } from "../../interfaces/repos/theaterRepo";
-import { ICoords, ID, IWalletHistoryAndCount } from "../../interfaces/common";
+import { IWalletHistoryAndCount } from "../../interfaces/common";
 import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
+import { ICoords } from "../../entities/common";
 
 
 
@@ -64,7 +65,7 @@ export class TheaterRepository implements ITheaterRepo {
         return await theaterModel.findOne({ email })
     }
 
-    async findById(id: ID): Promise<ITheater | null> {
+    async findById(id: string): Promise<ITheater | null> {
         return await theaterModel.findById({ _id: id })
     }
 
@@ -112,7 +113,7 @@ export class TheaterRepository implements ITheaterRepo {
         }
     }
 
-    async updateTheater(theaterId: ID, theater: ITheaterUpdate): Promise<ITheaterRes | null> {
+    async updateTheater(theaterId: string, theater: ITheaterUpdate): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -125,7 +126,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async approveTheater(theaterId: ID): Promise<ITheaterRes | null> {
+    async approveTheater(theaterId: string): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -135,7 +136,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async rejectTheater(theaterId: ID): Promise<ITheaterRes | null> {
+    async rejectTheater(theaterId: string): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -145,7 +146,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async updateTheaterProfilePic(theaterId: ID, fileName: string): Promise<ITheaterRes | null> {
+    async updateTheaterProfilePic(theaterId: string, fileName: string): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -157,7 +158,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async removeTheaterProfilePic(theaterId: ID): Promise<ITheaterRes | null> {
+    async removeTheaterProfilePic(theaterId: string): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {
@@ -169,7 +170,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async updateWallet (theaterId: ID, amount: number, message: string): Promise<ITheaterRes | null> {
+    async updateWallet (theaterId: string, amount: number, message: string): Promise<ITheaterRes | null> {
         // const walletHistory: Omit<IWalletHistory, 'date'> = {
         //     amount,
         //     message
@@ -184,7 +185,7 @@ export class TheaterRepository implements ITheaterRepo {
         )
     }
 
-    async updateScreenCount (theaterId: ID, count: number): Promise<ITheaterRes | null> {
+    async updateScreenCount (theaterId: string, count: number): Promise<ITheaterRes | null> {
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             { $inc: { screenCount: count }},
@@ -192,7 +193,7 @@ export class TheaterRepository implements ITheaterRepo {
         )  
     }
 
-    async getWalletHistory (theaterId: ID, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
+    async getWalletHistory (theaterId: string, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
         const theaterData = await theaterModel.findById({ _id: theaterId })
 
         return theaterData !== null 

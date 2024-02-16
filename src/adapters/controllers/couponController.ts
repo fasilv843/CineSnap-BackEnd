@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { CouponUseCase } from "../../useCases/couponUseCase"; 
 import { ICouponReqs } from "../../interfaces/schema/couponSchema";
-import { ID } from "../../interfaces/common";
 
 export class CouponController {
     constructor (
@@ -15,20 +14,20 @@ export class CouponController {
     }
 
     async getCouponsOnTheater (req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const couponRes = await this.couponUseCase.getCouponsOnTheater(theaterId)
         res.status(couponRes.status).json(couponRes)
     }
 
     async cancelCoupon (req: Request, res: Response) {
-        const couponId = req.params.couponId as unknown as ID
+        const couponId = req.params.couponId
         const couponRes = await this.couponUseCase.cancelCoupon(couponId)
         res.status(couponRes.status).json(couponRes)
     }
 
     async getApplicableCoupons (req: Request, res: Response) {
-        const userId = req.params.userId as unknown as ID
-        const ticketId = req.query.ticketId as unknown as ID
+        const userId = req.params.userId
+        const ticketId = req.query.ticketId as string
         const couponRes = await this.couponUseCase.getApplicableCoupons(userId, ticketId)
         res.status(couponRes.status).json(couponRes)
     }

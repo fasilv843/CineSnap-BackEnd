@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 import { MovieUseCase } from "../../useCases/movieUseCase";
 import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
-import { ID } from "../../interfaces/common";
-
-
 
 export class MovieController {
     constructor(
@@ -11,7 +8,7 @@ export class MovieController {
     ) { }
 
     async getMovieDetails (req: Request, res: Response) { 
-        const movieId = req.params.movieId as unknown as ID
+        const movieId = req.params.movieId
         const apiRes = await this.movieUseCase.findMovieById(movieId)
         res.status(apiRes.status).json(apiRes)
     }
@@ -61,7 +58,7 @@ export class MovieController {
 
     // To delete/hide a movie from users and theaters
     async deleteMovie(req: Request, res: Response) {
-        const movieId: ID = req.params.movieId as unknown as ID
+        const movieId = req.params.movieId
         const deleteRes = await this.movieUseCase.deleteMovie(movieId)
         res.status(deleteRes.status).json()
     }

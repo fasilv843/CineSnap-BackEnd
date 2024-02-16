@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { ChatUseCase } from "../../useCases/chatUseCase";
 import { IChatReadReqs, IChatReqs } from "../../interfaces/schema/chatSchems";
-import { ID } from "../../interfaces/common";
 
 export class ChatController {
     constructor(
@@ -15,13 +14,13 @@ export class ChatController {
     }
 
     async getTheatersChattedWith (req: Request, res: Response) {
-        const userId = req.params.userId as unknown as ID
+        const userId = req.params.userId
         const apiRes = await this.chatUseCase.getTheatersChattedWith(userId)
         res.status(apiRes.status).json(apiRes)
     }
 
     async getUsersChattedWith (req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const apiRes = await this.chatUseCase.getUsersChattedWith(theaterId)
         res.status(apiRes.status).json(apiRes)
     }

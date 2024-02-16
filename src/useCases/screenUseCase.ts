@@ -1,7 +1,7 @@
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { IApiScreenRes, IApiScreensRes, IScreen, IScreenRequirements } from "../interfaces/schema/screenSchema";
-import { IApiRes, ID } from "../interfaces/common";
+import { IApiRes } from "../interfaces/common";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { getAvailSeatData, getDefaultScreenSeatSetup } from "../infrastructure/helperFunctions/getScreenSeat";
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
@@ -57,7 +57,7 @@ export class ScreenUseCase {
         }
     }
 
-    async findScreenById(screenId: ID): Promise<IApiScreenRes>  {
+    async findScreenById(screenId: string): Promise<IApiScreenRes>  {
         try {
             const screen = await this.screenRepository.findScreenById(screenId)
             if (screen) return get200Response(screen)
@@ -67,7 +67,7 @@ export class ScreenUseCase {
         }
     }
 
-    async findScreensInTheater(theaterId: ID): Promise<IApiScreensRes> {
+    async findScreensInTheater(theaterId: string): Promise<IApiScreensRes> {
         try {
             const screens = await this.screenRepository.findScreensInTheater(theaterId)
             return get200Response(screens)
@@ -76,7 +76,7 @@ export class ScreenUseCase {
         }
     }
 
-    async updateScreenName (screenId: ID, screenName: string): Promise<IApiScreenRes> {
+    async updateScreenName (screenId: string, screenName: string): Promise<IApiScreenRes> {
         try {
             const screen = await this.screenRepository.updateScreenName(screenId, screenName)
             if (screen) return get200Response(screen)
@@ -86,7 +86,7 @@ export class ScreenUseCase {
         }
     }
 
-    async deleteScreen (screenId: ID): Promise<IApiScreenRes> {
+    async deleteScreen (screenId: string): Promise<IApiScreenRes> {
         try {
             const screen = await this.screenRepository.deleteScreen(screenId)
             if (screen) {
@@ -101,7 +101,7 @@ export class ScreenUseCase {
         }
     }
 
-    async getAvailSeatsOnScreen (screenId: ID): Promise<IApiRes<IAvailCatsOnScreen | null>> {
+    async getAvailSeatsOnScreen (screenId: string): Promise<IApiRes<IAvailCatsOnScreen | null>> {
         try {
             const screen = await this.screenRepository.findScreenById(screenId)
             if (screen) {

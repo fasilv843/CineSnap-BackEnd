@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { IUser } from "../../interfaces/schema/userSchema"; 
+import { IUser } from "../../entities/user";
 import { userAddressSchema } from "./subSchema/addressSchema";
 import { walletSchema } from "./base/walletSchema";
 import { emailSchema } from "./base/emailSchema";
@@ -10,8 +10,8 @@ const userSchema: Schema = new Schema<IUser & Document>({
     name: {
         type: String,
         required: [true, 'Name is required'],
-        minlength: [3, 'Name must contain atleast 3 characters'],
-        maxlength: [20, 'Name contain atmost 20 characters']
+        minlength: [3, 'Name must contain at least 3 characters'],
+        maxlength: [20, 'Name contain at most 20 characters']
     },
     password: {
         type: String,

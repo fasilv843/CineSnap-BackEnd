@@ -4,7 +4,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { IApiAuthRes, IApiRes, IApiTempAuthRes, ID, IWalletHistoryAndCount } from "../interfaces/common";
+import { IApiAuthRes, IApiRes, IApiTempAuthRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
 import { Encrypt } from "../providers/bcryptPassword";
@@ -57,7 +57,7 @@ export class TheaterUseCase {
     }
 
     // To send an otp to mail,and delete after spcified time (OTP_TIMER)
-    sendTimeoutOTP(id: ID, email: string, OTP: number) {
+    sendTimeoutOTP(id: string, email: string, OTP: number) {
         console.log(OTP, 'otp from sendTimoutOTP');
         this.mailer.sendOTP(email, OTP)
 
@@ -207,7 +207,7 @@ export class TheaterUseCase {
     }
 
     // To update theater data, from theater profile
-    async updateTheater(theaterId: ID, theater: ITheaterUpdate): Promise<IApiTheaterRes> {
+    async updateTheater(theaterId: string, theater: ITheaterUpdate): Promise<IApiTheaterRes> {
         try {
             const theaterData = await this.theaterRepository.updateTheater(theaterId, theater)
             if (theaterData !== null) {
@@ -221,7 +221,7 @@ export class TheaterUseCase {
     }
 
     // To get theater data using theaterId
-    async getTheaterData(theaterId: ID): Promise<IApiTheaterRes> {
+    async getTheaterData(theaterId: string): Promise<IApiTheaterRes> {
         try {
             if (theaterId === undefined) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             const theater = await this.theaterRepository.findById(theaterId)
@@ -233,7 +233,7 @@ export class TheaterUseCase {
     }
 
     // To approve or reject theater for admin when they register
-    async theaterApproval(theaterId: ID, action: string | undefined): Promise<IApiTheaterRes> {
+    async theaterApproval(theaterId: string, action: string | undefined): Promise<IApiTheaterRes> {
         try {
             if (action !== 'approve' && action !== 'reject') {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -255,7 +255,7 @@ export class TheaterUseCase {
     }
 
     // To update theater profile pic
-    async updateTheaterProfilePic (theaterId: ID, fileName: string | undefined): Promise<IApiTheaterRes> {
+    async updateTheaterProfilePic (theaterId: string, fileName: string | undefined): Promise<IApiTheaterRes> {
         try {
             if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
             log(theaterId, fileName, 'theaterId, filename from use case')
@@ -274,7 +274,7 @@ export class TheaterUseCase {
     }
 
     // To delete Theater Profile
-    async removeTheaterProfilePic (theaterId: ID): Promise<IApiTheaterRes> {
+    async removeTheaterProfilePic (theaterId: string): Promise<IApiTheaterRes> {
         try {
             const user = await this.theaterRepository.findById(theaterId)
             if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
@@ -295,7 +295,7 @@ export class TheaterUseCase {
     }
 
     // To add money to wallet
-    async addToWallet (theaterId: ID, amount: number): Promise<IApiTheaterRes> {
+    async addToWallet (theaterId: string, amount: number): Promise<IApiTheaterRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
             const user = await this.theaterRepository.updateWallet(theaterId, amount, 'Added To Wallet')
@@ -309,7 +309,7 @@ export class TheaterUseCase {
     }
 
     // To get wallet history of a theater
-    async getWalletHistory (theaterId: ID, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
+    async getWalletHistory (theaterId: string, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
         try {
             const userWallet = await this.theaterRepository.getWalletHistory(theaterId, page, limit)
             if (userWallet) return get200Response(userWallet)
@@ -320,7 +320,7 @@ export class TheaterUseCase {
     }
 
     // To get revenue data, to show graph
-    async getRevenueData (theaterId: ID, startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
+    async getRevenueData (theaterId: string, startDate?: Date, endDate?: Date): Promise<IApiRes<IRevenueData | null>> {
         try {
             if (startDate === undefined || endDate === undefined) {
                 startDate = new Date(

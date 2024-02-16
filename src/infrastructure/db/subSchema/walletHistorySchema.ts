@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { IWalletHistory } from "../../../interfaces/common";
+import { IWalletHistory } from "../../../entities/common";
 
 export const walletHistorySchema: Schema = new Schema<IWalletHistory & Document>({
     date: {

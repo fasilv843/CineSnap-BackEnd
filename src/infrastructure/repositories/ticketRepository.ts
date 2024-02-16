@@ -1,6 +1,5 @@
 import { log } from "console";
-import { ticketModel } from "../../entities/models/ticketModel";
-import { ID } from "../../interfaces/common";
+import { ticketModel } from "../db/ticketModel";
 import { ITicketRepo } from "../../interfaces/repos/ticketRepo";
 import { ISaveRequestReqs, ITicketRes } from "../../interfaces/schema/ticketSchema";
 
@@ -9,27 +8,27 @@ export class TicketRepository implements ITicketRepo {
         return await new ticketModel(tempTicket).save() as unknown as ITicketRes
     }
 
-    async findTicketById (ticketId: ID): Promise<ITicketRes | null> {
+    async findTicketById (ticketId: string): Promise<ITicketRes | null> {
         return await ticketModel.findById(ticketId)
     }
 
-    async getTicketData (ticketId: ID): Promise<ITicketRes | null> {
+    async getTicketData (ticketId: string): Promise<ITicketRes | null> {
         return await ticketModel.findById(ticketId).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
 
-    async getTicketsByUserId (userId: ID): Promise<ITicketRes[]> {
+    async getTicketsByUserId (userId: string): Promise<ITicketRes[]> {
         return await ticketModel.find({ userId }).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
 
-    async getTicketsByTheaterId (theaterId: ID, page: number, limit: number): Promise<ITicketRes[]> {
+    async getTicketsByTheaterId (theaterId: string, page: number, limit: number): Promise<ITicketRes[]> {
         return await ticketModel.find({ theaterId }).skip((page -1) * limit)
         .limit(limit).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId').populate('userId')
     }
 
-    async getTicketsOfTheaterByTime (theaterId: ID, startDate: Date, endDate: Date): Promise<ITicketRes[]> {
+    async getTicketsOfTheaterByTime (theaterId: string, startDate: Date, endDate: Date): Promise<ITicketRes[]> {
         log(startDate, endDate, 'start and end from getTickets of Theater by time')
         return await ticketModel.find(
             { 
@@ -56,11 +55,11 @@ export class TicketRepository implements ITicketRepo {
         )
     }
 
-    async getTicketsByTheaterIdCount(theaterId: ID): Promise<number> {
+    async getTicketsByTheaterIdCount(theaterId: string): Promise<number> {
         return await ticketModel.countDocuments({ theaterId }).exec();
     }
 
-    async getTicketsByShowId (showId: ID): Promise<ITicketRes[]> {
+    async getTicketsByShowId (showId: string): Promise<ITicketRes[]> {
         return await ticketModel.find({ showId }).sort({ createdAt: -1 }).populate('movieId')
         .populate('showId').populate('screenId').populate('theaterId')
     }
@@ -74,7 +73,7 @@ export class TicketRepository implements ITicketRepo {
         return await ticketModel.countDocuments({}).exec();
     }
 
-    async cancelTicket (ticketId: ID, cancelledBy: 'User' | 'Theater' | 'Admin'): Promise<ITicketRes | null> {
+    async cancelTicket (ticketId: string, cancelledBy: 'User' | 'Theater' | 'Admin'): Promise<ITicketRes | null> {
         return await ticketModel.findByIdAndUpdate(
             { _id: ticketId },
             {

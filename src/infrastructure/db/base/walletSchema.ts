@@ -1,6 +1,6 @@
 import { Schema } from "mongoose"
-import { IWalletHistory } from "../../../interfaces/common"
 import { walletHistorySchema } from "../subSchema/walletHistorySchema"
+import { IWalletHistory } from "../../../entities/common"
 
 interface IWalletSchema {
     wallet: number

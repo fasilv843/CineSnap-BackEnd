@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import { ID } from "../../interfaces/common"
 import { ShowSeatsUseCase } from "../../useCases/showSeatUseCase"
 
 export class ShowSeatController {
@@ -8,7 +7,7 @@ export class ShowSeatController {
     ) { }
 
     async findShowSeatById (req: Request, res: Response) {
-        const showSeatId = req.params.showSeatId as unknown as ID
+        const showSeatId = req.params.showSeatId
         const showSeatRes = await this.showSeatUseCase.findShowSeatById(showSeatId)
         res.status(showSeatRes.status).json(showSeatRes)
     }

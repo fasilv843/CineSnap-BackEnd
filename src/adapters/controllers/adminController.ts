@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import { AdminUseCase } from "../../useCases/adminUseCase";
 import { IAdmin } from "../../interfaces/schema/adminSchema";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { ID } from "../../interfaces/common";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
 
 export class AdminController {
@@ -48,7 +46,7 @@ export class AdminController {
     }
 
     async theaterApproval(req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const action = req.query.action as string | undefined
         const apiRes = await this.theaterUseCase.theaterApproval(theaterId, action)
         res.status(apiRes.status).json(apiRes)

@@ -3,7 +3,7 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { CouponRepository } from "../infrastructure/repositories/couponRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { IApiRes, ID } from "../interfaces/common";
+import { IApiRes } from "../interfaces/common";
 import { ICouponReqs, ICouponRes } from "../interfaces/schema/couponSchema";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
@@ -35,7 +35,7 @@ export class CouponUseCase {
         }
     }
 
-    async getCouponsOnTheater (theaterId: ID): Promise<IApiRes<ICouponRes[] | null>> {
+    async getCouponsOnTheater (theaterId: string): Promise<IApiRes<ICouponRes[] | null>> {
         try {
             const theater = await this.theaterRepository.findById(theaterId)
             if (theater === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
@@ -50,7 +50,7 @@ export class CouponUseCase {
         }
     }
 
-    async cancelCoupon (couponId: ID): Promise<IApiRes<ICouponRes | null>> {
+    async cancelCoupon (couponId: string): Promise<IApiRes<ICouponRes | null>> {
         try {
             const coupon = await this.couponRepository.findCouponById(couponId)
             if (coupon === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid coupon id')
@@ -62,7 +62,7 @@ export class CouponUseCase {
         }
     }
 
-    async getApplicableCoupons (userId: ID, ticketId: ID): Promise<IApiRes<ICouponRes[] | null>> {
+    async getApplicableCoupons (userId: string, ticketId: string): Promise<IApiRes<ICouponRes[] | null>> {
         try {
             const availCoupons = await this.couponRepository.getAvailableCoupons()
             if (availCoupons.length) {

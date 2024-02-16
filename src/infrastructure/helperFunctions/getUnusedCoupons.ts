@@ -1,7 +1,7 @@
 import { log } from "console";
 import { ICouponRes } from "../../interfaces/schema/couponSchema";
-import { IUsedCoupons } from "../../interfaces/schema/userSchema";
 import { getCurrentWeekPeriod, isDateInBetween, getCurrentMonthPeriod, getCurrentYearPeriod } from "./getPeriods";
+import { IUsedCoupons } from "../../entities/user";
 
 export function filterUnusedCoupons(coupons: ICouponRes[], usedCoupons: IUsedCoupons[]): ICouponRes[] {
     log(usedCoupons, 'used Coupons from filterUnused Coupons')

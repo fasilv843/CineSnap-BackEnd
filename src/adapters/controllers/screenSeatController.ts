@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { ScreenSeatUseCase } from "../../useCases/screenSeatUseCase";
-import { ID } from "../../interfaces/common";
 import { IScreenSeatRes } from "../../interfaces/schema/screenSeatSchema";
 
 export class ScreenSeatController {
@@ -9,13 +8,13 @@ export class ScreenSeatController {
     ) { }
 
     async findScreenSeatById (req: Request, res: Response) {
-        const screenSeatId = req.params.seatId as unknown as ID
+        const screenSeatId = req.params.seatId
         const screenSeatRes = await this.screenSeatUseCase.findScreenSeatById(screenSeatId)
         res.status(screenSeatRes.status).json(screenSeatRes)
     }
 
     async updateScreenSeat (req: Request, res: Response) {
-        const screenSeatId = req.params.seatId as unknown as ID
+        const screenSeatId = req.params.seatId
         const { screenSeatData } = req.body as { screenSeatData: IScreenSeatRes }
         const screenSeatRes = await this.screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData)
         res.status(screenSeatRes.status).json(screenSeatRes)

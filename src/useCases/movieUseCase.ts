@@ -1,7 +1,6 @@
 import { log } from "console";
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
-import { ID } from "../interfaces/common";
 import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../interfaces/schema/movieSchema";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 
@@ -32,19 +31,6 @@ export class MovieUseCase {
 
     }
 
-    // async findAllMovies(): Promise<IApiCSMoviesRes>{
-    //     try {
-    //         const movies = await this.movieRepository.findAllMovies()
-    //         return {
-    //             status: STATUS_CODES.OK,
-    //             message: 'Success',
-    //             data: movies
-    //         }
-    //     } catch (error) {
-    //         return get500Response(error as Error)
-    //     }
-    // }
-
     async findMoviesLazily(page: number, genreFilters: number[], langFilters: string[], availability: string | undefined): Promise<IApiCSMoviesRes>{
         try {
             console.log(availability, 'availability from usecase')
@@ -56,10 +42,6 @@ export class MovieUseCase {
             return get500Response(error as Error)
         }
     }
-
-    // async findMovieByTmdbId(id: number): Promise<IApiCSMovieRes>{
-    //     return await this.movieRepository.findMovieByTmdbId(id)
-    // }
 
     async searchMovie(title: string, isAdmin: boolean): Promise<IApiCSMoviesRes>{
         try {
@@ -78,7 +60,7 @@ export class MovieUseCase {
         return await this.movieRepository.findMovieByLanguage(lang)
     }
 
-    async findMovieById(movieId: ID): Promise<IApiCSMovieRes> {
+    async findMovieById(movieId: string): Promise<IApiCSMovieRes> {
         try {
             const movie = await this.movieRepository.findMovieById(movieId)
 
@@ -93,7 +75,7 @@ export class MovieUseCase {
         return await this.movieRepository.findUpcomingMovies()
     }
 
-    async deleteMovie(movieId: ID): Promise<IApiCSMovieRes>{
+    async deleteMovie(movieId: string): Promise<IApiCSMovieRes>{
         try {
             await this.movieRepository.deleteMovie(movieId)
             return {

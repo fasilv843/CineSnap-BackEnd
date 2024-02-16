@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+// import { Schema } from "mongoose";
 import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
 import { IChatRes, IUsersListForChats } from "./schema/chatSchems";
 import { ITheaterRes, ITheatersAndCount } from "./schema/theaterSchema";
@@ -11,39 +11,40 @@ import { IAvailCatsOnScreen, IScreenSeat } from "./schema/screenSeatSchema";
 import { IShowSeatsRes } from "./schema/showSeatsSchema";
 import { ICouponRes } from "./schema/couponSchema";
 import { IRevenueData } from "./chart";
+import { IWalletHistory } from "../entities/common";
 
 export type Location = [number, number];
 
-export type ID = Schema.Types.ObjectId
+// export type ID = Schema.Types.ObjectId
 export type PaymentMethod = 'Razorpay' | 'Wallet'
 
-export interface IUserAddress {
-    country: string
-    state: string
-    district: string
-    city: string
-    zip: number
-}
+// export interface IUserAddress {
+//     country: string
+//     state: string
+//     district: string
+//     city: string
+//     zip: number
+// }
 
-export interface ITheaterAddress extends IUserAddress {
-    landmark?: string
-}
+// export interface ITheaterAddress extends IUserAddress {
+//     landmark?: string
+// }
 
-export interface IWalletHistory {
-    amount: number
-    message: string
-    date: Date
-}
+// export interface IWalletHistory {
+//     amount: number
+//     message: string
+//     date: Date
+// }
 
 export interface IWalletHistoryAndCount {
     walletHistory: IWalletHistory[],
     count: number
 }
 
-export interface ICoords {
-    type: 'Point'
-    coordinates: [number, number];
-}
+// export interface ICoords {
+//     type: 'Point'
+//     coordinates: [number, number];
+// }
 
 export type AllResTypes = ITheaterRes | ITheaterRes[] | ITempTheaterRes | IMovie | IMovie[] | IAvailCatsOnScreen | ICouponRes[]
             | IUserRes | IUserRes[] | IShowRes | IShowsOnAScreen[] | IScreen | IScreen[] | IScreenSeat | IWalletHistoryAndCount

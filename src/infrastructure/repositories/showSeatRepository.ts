@@ -1,6 +1,6 @@
 import { log } from "console";
-import { showSeatsModel } from "../../entities/models/showSeatModel";
-import { ID, RowType } from "../../interfaces/common";
+import { showSeatsModel } from "../db/showSeatModel";
+import { RowType } from "../../interfaces/common";
 import { IShowSeatToSave, IShowSeatsRes } from "../../interfaces/schema/showSeatsSchema";
 import { ITicketSeat } from "../../interfaces/schema/ticketSchema";
 
@@ -12,12 +12,12 @@ export class ShowSeatsRepository { // implements IChatRepo
     }
 
     // To get the document using _id
-    async findShowSeatById (showSeatId: ID): Promise<IShowSeatsRes | null> {
+    async findShowSeatById (showSeatId: string): Promise<IShowSeatsRes | null> {
         return await showSeatsModel.findById(showSeatId)
     }
 
     // To Change isBooked to true, when someone books a show
-    async markAsBooked (seatId: ID, diamondSeats?: ITicketSeat, goldSeats?: ITicketSeat, silverSeats?: ITicketSeat): Promise<IShowSeatsRes | null> {
+    async markAsBooked (seatId: string, diamondSeats?: ITicketSeat, goldSeats?: ITicketSeat, silverSeats?: ITicketSeat): Promise<IShowSeatsRes | null> {
         const showSeats = await showSeatsModel.findById(seatId)
         if (showSeats === null) return null
 
@@ -72,7 +72,7 @@ export class ShowSeatsRepository { // implements IChatRepo
     }
 
     // To Change isBooked to false, when someone cancels a show
-    async markAsNotBooked  (seatId: ID, diamondSeats?: ITicketSeat, goldSeats?: ITicketSeat, silverSeats?: ITicketSeat): Promise<IShowSeatsRes | null> {
+    async markAsNotBooked  (seatId: string, diamondSeats?: ITicketSeat, goldSeats?: ITicketSeat, silverSeats?: ITicketSeat): Promise<IShowSeatsRes | null> {
         const showSeats = await showSeatsModel.findById(seatId)
         if (showSeats === null) return null
 

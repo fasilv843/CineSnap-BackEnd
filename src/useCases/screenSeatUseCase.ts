@@ -3,7 +3,6 @@ import { getLastRow, getSeatCount } from "../infrastructure/helperFunctions/getS
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
-import { ID } from "../interfaces/common";
 import { IApiScreenSeatRes, IScreenSeatRes } from "../interfaces/schema/screenSeatSchema";
 
 export class ScreenSeatUseCase {
@@ -12,7 +11,7 @@ export class ScreenSeatUseCase {
         private readonly screenRepository: ScreenRepository
     ) {}
 
-    async findScreenSeatById (screenSeatId: ID): Promise<IApiScreenSeatRes> {
+    async findScreenSeatById (screenSeatId: string): Promise<IApiScreenSeatRes> {
         try {
             const screenSeat = await this.screenSeatRepository.findScreenSeatById(screenSeatId)
             if (screenSeat) return get200Response(screenSeat)
@@ -22,7 +21,8 @@ export class ScreenSeatUseCase {
         }
     }
 
-    async updateScreenSeat (seatId: ID, seatData: IScreenSeatRes): Promise<IApiScreenSeatRes> {
+    //! seatId is not used ??
+    async updateScreenSeat (seatId: string, seatData: IScreenSeatRes): Promise<IApiScreenSeatRes> {
         try {
             const seat = await this.screenSeatRepository.updateScreenSeat(seatData)
             if (seat){

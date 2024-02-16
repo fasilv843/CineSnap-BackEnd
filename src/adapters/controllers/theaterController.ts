@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { ITheaterAuth, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { ICoords, ID, ITheaterAddress } from "../../interfaces/common";
 import { STATUS_CODES } from "../../constants/httpStausCodes";
 import { TheaterShowLimit, maxDistance } from "../../constants/constants";
 import { ITempTheaterReq } from "../../interfaces/schema/tempTheaterSchema";
-import { log } from "console";
+import { ICoords, ITheaterAddress } from "../../entities/common";
 
 
 
@@ -77,7 +76,7 @@ export class TheaterController {
 
     // to update a theater data, used in profile edit
     async updateTheaterData(req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const { address, coords, mobile, name } = req.body as ITheaterUpdate
         const theater: ITheaterUpdate = { name, mobile, address, coords }
         const apiRes = await this.theaterUseCase.updateTheater(theaterId, theater)
@@ -85,34 +84,34 @@ export class TheaterController {
     }
 
     async updateTheaterProfilePic (req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const fileName = req.file?.filename
         const apiRes = await this.theaterUseCase.updateTheaterProfilePic(theaterId, fileName)
         res.status(apiRes.status).json(apiRes)
     }
 
     async removeTheaterProfilePic (req: Request, res: Response) { 
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const apiRes = await this.theaterUseCase.removeTheaterProfilePic(theaterId)
         res.status(apiRes.status).json(apiRes)
     }
 
     // To get all the data of a theater using theater id
     async getTheaterData(req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const apiRes = await this.theaterUseCase.getTheaterData(theaterId)
         res.status(apiRes.status).json(apiRes)
     }
 
     async addToWallet (req: Request, res: Response) {
-        const { theaterId } = req.params as unknown as { theaterId: ID }
+        const { theaterId } = req.params
         const amount: number = parseInt(req.body.amount)
         const apiRes = await this.theaterUseCase.addToWallet(theaterId, amount)
         res.status(apiRes.status).json(apiRes)
     }
 
     async getWalletHistory (req: Request, res: Response) {
-        const { theaterId } = req.params as unknown as { theaterId: ID }
+        const { theaterId } = req.params
         const page = req.query.page as unknown as number
         const limit = req.query.limit as unknown as number
         const apiRes = await this.theaterUseCase.getWalletHistory(theaterId, page, limit)
@@ -120,9 +119,8 @@ export class TheaterController {
     }
 
     async getRevenueData (req: Request, res: Response) {
-        const theaterId = req.params.theaterId as unknown as ID
+        const theaterId = req.params.theaterId
         const apiRes = await this.theaterUseCase.getRevenueData(theaterId)
-        log(apiRes.data, 'apiRes.data from controller, revenue')
         res.status(apiRes.status).json(apiRes)
     }
 }

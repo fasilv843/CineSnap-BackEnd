@@ -1,4 +1,4 @@
-import { IApiRes, ID } from "../common";
+import { IApiRes } from "../common";
 
 
 export interface IChatMessage {
@@ -9,9 +9,9 @@ export interface IChatMessage {
 }
 
 export interface IChatHistory {
-    userId?: ID; // User _id
-    theaterId?: ID; // Theater _id
-    adminId?: ID; // Admin _id
+    userId?: string; // User _id
+    theaterId?: string; // Theater _id
+    adminId?: string; // Admin _id
     messages: Array<IChatMessage>;
 }
 
@@ -20,15 +20,15 @@ export interface IChatRes extends IChatHistory { }
 export interface IApiChatRes extends IApiRes<IChatRes | null> { }
 
 export interface IUsersListForChats {
-    _id: ID
+    _id: string
     name: string
     profilePic?: string
     unreadCount: number
 }
 
 export interface IChatReadReqs { 
-    userId: ID | undefined,
-    theaterId: ID | undefined,
-    adminId: ID | undefined,
-    msgId: ID
+    userId: string | undefined,
+    theaterId: string | undefined,
+    adminId: string | undefined,
+    msgId: string
 }

@@ -1,8 +1,9 @@
 import { log } from "console";
-import userModel from "../../entities/models/userModel";
-import { ID, IWalletHistoryAndCount } from "../../interfaces/common";
+import userModel from "../db/userModel";
+import { IWalletHistoryAndCount } from "../../interfaces/common";
 import { IUserRepo } from "../../interfaces/repos/userRepo";
-import { IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
+import { IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
+import { IUser } from "../../entities/user";
 
 
 export class UserRepository implements IUserRepo {
@@ -12,11 +13,11 @@ export class UserRepository implements IUserRepo {
         return await new userModel(user).save()
     }
 
-    async findById(id: ID): Promise< IUser | null > {
+    async findById(id: string): Promise< IUser | null > {
         return await userModel.findById({_id: id})
     }
 
-    async findUserCoupons (userId: ID): Promise<IUserRes | null> {
+    async findUserCoupons (userId: string): Promise<IUserRes | null> {
         return await userModel.findById({ _id: userId }, { _id: 0, usedCoupons: 1 })
     }
 
@@ -50,7 +51,7 @@ export class UserRepository implements IUserRepo {
         }).count() 
     }
 
-    async updateGoogleAuth(id: ID, profilePic: string | undefined){
+    async updateGoogleAuth(id: string, profilePic: string | undefined){
         try {
             const userData =  await userModel.findById({ _id: id })
             if(userData){
@@ -78,11 +79,11 @@ export class UserRepository implements IUserRepo {
         }
     }
 
-    async getUserData (userId: ID): Promise<IUserRes | null> {
+    async getUserData (userId: string): Promise<IUserRes | null> {
         return await userModel.findById(userId)
     }
 
-    async updateUser (userId: ID, user: IUserUpdate): Promise<IUserRes | null> {
+    async updateUser (userId: string, user: IUserUpdate): Promise<IUserRes | null> {
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {
@@ -96,7 +97,7 @@ export class UserRepository implements IUserRepo {
         )
     }
 
-    async updateUserProfilePic(userId: ID, fileName: string): Promise<IUserRes | null> {
+    async updateUserProfilePic(userId: string, fileName: string): Promise<IUserRes | null> {
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {
@@ -108,7 +109,7 @@ export class UserRepository implements IUserRepo {
         )
     }
 
-    async removeUserProfileDp(userId: ID): Promise<IUserRes | null> {
+    async removeUserProfileDp(userId: string): Promise<IUserRes | null> {
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {
@@ -120,7 +121,7 @@ export class UserRepository implements IUserRepo {
         )
     }
     
-    async updateWallet (userId: ID, amount: number, message: string): Promise<IUserRes | null> {
+    async updateWallet (userId: string, amount: number, message: string): Promise<IUserRes | null> {
         log(userId, 'userID from update wallet of user')
         return await userModel.findByIdAndUpdate(
             { _id: userId },
@@ -132,7 +133,7 @@ export class UserRepository implements IUserRepo {
         )
     }
 
-    async getWalletHistory (userId: ID, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
+    async getWalletHistory (userId: string, page: number = 1, limit: number = 10): Promise<IWalletHistoryAndCount | null> {
         const userData = await userModel.findById({ _id: userId })
 
         return userData !== null 
@@ -143,7 +144,7 @@ export class UserRepository implements IUserRepo {
             : null
     }
 
-    async addToUsedCoupons (userId: ID, couponId: ID, ticketId: ID): Promise<IUserRes | null> {
+    async addToUsedCoupons (userId: string, couponId: string, ticketId: string): Promise<IUserRes | null> {
         return await userModel.findByIdAndUpdate(
             { _id: userId },
             {

@@ -5,14 +5,15 @@ import { STATUS_CODES } from "../constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { IApiRes, ID, IWalletHistoryAndCount } from "../interfaces/common";
+import { IApiRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
-import { IApiUserAuthRes, IApiUserRes, IUser, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
+import { IApiUserAuthRes, IApiUserRes, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
 import { Encrypt } from "../providers/bcryptPassword";
 import { JWTToken } from "../providers/jwtToken";
 import { MailSender } from "../providers/nodemailer";
 import path from "path";
 import fs from 'fs'
+import { IUser } from "../entities/user";
 
 
 export class UserUseCase {
@@ -50,11 +51,11 @@ export class UserUseCase {
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
-    async updateOtp(id: ID, email: string, OTP: number) {
+    async updateOtp(id: string, email: string, OTP: number) {
         return await this.tempUserRepository.updateOTP(id, email, OTP)
     }
 
-    async findTempUserById(id: ID){
+    async findTempUserById(id: string){
         return await this.tempUserRepository.findById(id)
     }
 
@@ -92,7 +93,7 @@ export class UserUseCase {
     }
 
     // To send an otp to user that will expire after a certain period
-    sendTimeoutOTP(id: ID, email: string, OTP: number) {
+    sendTimeoutOTP(id: string, email: string, OTP: number) {
         try {
             this.mailer.sendOTP(email, OTP)
                     
@@ -174,7 +175,7 @@ export class UserUseCase {
         }
     }
 
-    async getUserData (userId: ID): Promise<IApiUserRes> {
+    async getUserData (userId: string): Promise<IApiUserRes> {
         try {
             const user = await this.userRepository.getUserData(userId)
             if(user) return get200Response(user)
@@ -184,7 +185,7 @@ export class UserUseCase {
         }
     }
 
-    async updateUserData (userId: ID, user: IUserUpdate): Promise<IApiUserRes> {
+    async updateUserData (userId: string, user: IUserUpdate): Promise<IApiUserRes> {
         try {
             const updatedUser = await this.userRepository.updateUser(userId, user)
             return get200Response(updatedUser as IUserRes)
@@ -193,7 +194,7 @@ export class UserUseCase {
         }
     }
 
-    async updateUserProfilePic (userId: ID, fileName: string | undefined): Promise<IApiUserRes> {
+    async updateUserProfilePic (userId: string, fileName: string | undefined): Promise<IApiUserRes> {
         try {
             if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
             log(userId, fileName, 'userId, filename from use case')
@@ -211,7 +212,7 @@ export class UserUseCase {
         }
     }
 
-    async removeUserProfileDp (userId: ID): Promise<IApiUserRes> {
+    async removeUserProfileDp (userId: string): Promise<IApiUserRes> {
         try {
             const user = await this.userRepository.findById(userId)
             if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
@@ -231,7 +232,7 @@ export class UserUseCase {
         }
     }
 
-    async addToWallet (userId: ID, amount: number): Promise<IApiUserRes> {
+    async addToWallet (userId: string, amount: number): Promise<IApiUserRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
             const user = await this.userRepository.updateWallet(userId, amount, 'Added To Wallet')
@@ -244,7 +245,7 @@ export class UserUseCase {
         }
     }
 
-    async getWalletHistory (userId: ID, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
+    async getWalletHistory (userId: string, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
         try {
             const userWallet = await this.userRepository.getWalletHistory(userId, page, limit)
             if (userWallet) return get200Response(userWallet)

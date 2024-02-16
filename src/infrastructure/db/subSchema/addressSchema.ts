@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
-import { ITheaterAddress, IUserAddress } from "../../../interfaces/common";
 import { ZipRegex } from "../../../constants/constants";
+import { ITheaterAddress, IUserAddress } from "../../../entities/common";
 
 export const userAddressSchema: Schema = new Schema<IUserAddress & Document>({
     country: {

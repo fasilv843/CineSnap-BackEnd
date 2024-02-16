@@ -5,7 +5,6 @@ import { getEndingTime } from "../infrastructure/helperFunctions/getMovieEnding"
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
-import { ID } from "../interfaces/common";
 import { IApiShowRes, IApiShowsRes, IShowRequirements, IShowToSave } from "../interfaces/schema/showSchema";
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
@@ -21,7 +20,7 @@ export class ShowUseCase {
         private readonly showSeatRepository: ShowSeatsRepository,
     ) {}
 
-    async findShowsOnTheater (theaterId: ID, dateStr: string | undefined, user: 'User' | 'Theater'): Promise<IApiShowsRes> {
+    async findShowsOnTheater (theaterId: string, dateStr: string | undefined, user: 'User' | 'Theater'): Promise<IApiShowsRes> {
         try {
             log(dateStr === undefined, isNaN(new Date(dateStr as string).getTime()), (user === 'User' && isPast(new Date(dateStr as string))))
             if (dateStr === undefined || isNaN(new Date(dateStr).getTime()) || (user === 'User' && isPast(new Date(dateStr)))) {
@@ -65,7 +64,7 @@ export class ShowUseCase {
                             const showSeatToSave = createEmptyShowSeat(screenSeat)
                             const savedShowSeat = await this.showSeatRepository.saveShowSeat(showSeatToSave)
                             const showTosave: IShowToSave = {
-                                movieId: movie._id as unknown as ID,
+                                movieId: movie._id,
                                 screenId: screen._id,
                                 startTime: new Date(show.startTime),
                                 endTime: endingTime,
@@ -92,7 +91,7 @@ export class ShowUseCase {
         }
     }
 
-    async getShowDetails (showId: ID | undefined): Promise<IApiShowRes> {
+    async getShowDetails (showId: string): Promise<IApiShowRes> {
         try {
             if (showId) {
                 const show = await this.showRepository.getShowDetails(showId)

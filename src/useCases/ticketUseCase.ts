@@ -6,7 +6,7 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { CancelledBy, IApiRes, ID, PaymentMethod } from "../interfaces/common";
+import { CancelledBy, IApiRes, PaymentMethod } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -20,7 +20,6 @@ import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowed
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
 import { IShow } from "../interfaces/schema/showSchema";
 import { MailSender } from "../providers/nodemailer";
-import { IUserRes } from "../interfaces/schema/userSchema";
 
 export class TicketUseCase {
     constructor(
@@ -47,7 +46,7 @@ export class TicketUseCase {
         }
     }
 
-    async getHoldedSeats(showId: ID): Promise<IApiSeatsRes> {
+    async getHoldedSeats(showId: string): Promise<IApiSeatsRes> {
         try {
             const seats = await this.tempTicketRepository.getHoldedSeats(showId)
             log(seats, 'holded seats')
@@ -57,7 +56,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTempTicketData(ticketId: ID): Promise<IApiTempTicketRes> {
+    async getTempTicketData(ticketId: string): Promise<IApiTempTicketRes> {
         try {
             const ticketData = await this.tempTicketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
@@ -67,7 +66,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketData(ticketId: ID): Promise<IApiTicketRes> {
+    async getTicketData(ticketId: string): Promise<IApiTicketRes> {
         try {
             const ticketData = await this.ticketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
@@ -77,7 +76,7 @@ export class TicketUseCase {
         }
     }
 
-    async confirmTicket(tempTicketId: ID, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: ID): Promise<IApiTicketRes> {
+    async confirmTicket(tempTicketId: string, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: string): Promise<IApiTicketRes> {
         try {
             const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
             let couponData: ICouponRes | null = null
@@ -137,7 +136,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfUser(userId: ID): Promise<IApiTicketsRes> {
+    async getTicketsOfUser(userId: string): Promise<IApiTicketsRes> {
         try {
             const ticketsOfUser = await this.ticketRepository.getTicketsByUserId(userId)
             return get200Response(ticketsOfUser)
@@ -146,7 +145,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfShow(showId: ID): Promise<IApiTicketsRes> {
+    async getTicketsOfShow(showId: string): Promise<IApiTicketsRes> {
         try {
             const ticketsOfShow = await this.ticketRepository.getTicketsByShowId(showId)
             return get200Response(ticketsOfShow)
@@ -155,7 +154,7 @@ export class TicketUseCase {
         }
     }
 
-    async cancelTicket(ticketId: ID, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
+    async cancelTicket(ticketId: string, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
         try {
             const ticket = await this.ticketRepository.findTicketById(ticketId)
             if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
@@ -199,7 +198,7 @@ export class TicketUseCase {
         }
     }
 
-    async sendInvoiceMail (ticketId: ID): Promise<IApiTicketRes> {
+    async sendInvoiceMail (ticketId: string): Promise<IApiTicketRes> {
         try {
             log(ticketId, 'ticket id')
             const ticket = await this.ticketRepository.getTicketData(ticketId)
@@ -220,7 +219,7 @@ export class TicketUseCase {
         }
     }
 
-    async getTicketsOfTheater(theaterId: ID, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
+    async getTicketsOfTheater(theaterId: string, page: number, limit: number): Promise<IApiRes<ITicketsAndCount | null>> {
         try {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10

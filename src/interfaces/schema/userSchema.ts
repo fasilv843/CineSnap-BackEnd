@@ -1,33 +1,35 @@
-import { IUserAddress, ICoords, IWalletHistory, ID } from "../common"
+// import { ICoords, IUserAddress, IWalletHistory } from "../../entities/common"
+import { IUsedCoupons, IUser } from "../../entities/user"
+// import { ID } from "../common"
 import { ICouponRes } from "./couponSchema"
 
-export interface IUsedCoupons {
-    couponId: ID
-    date: Date,
-    ticketId: ID
-}
+// export interface IUsedCoupons {
+//     couponId: string
+//     date: Date,
+//     ticketId: string
+// }
 
 export interface IPopulatedUsedCoupons extends Omit<IUsedCoupons, 'couponId'> {
     couponId: ICouponRes
 }
 
 // interface specifically for userSchema
-export interface IUser {
-    _id: ID
-    name: string
-    email: string
-    password?: string
-    mobile?: number
-    dob: Date
-    isBlocked: boolean
-    profilePic?: string
-    coords?: ICoords
-    address?: IUserAddress,
-    isGoogleAuth: boolean
-    wallet: number
-    walletHistory: IWalletHistory[] | [],
-    usedCoupons: IUsedCoupons[]
-}
+// export interface IUser {
+//     _id: ID
+//     name: string
+//     email: string
+//     password?: string
+//     mobile?: number
+//     dob: Date
+//     isBlocked: boolean
+//     profilePic?: string
+//     coords?: ICoords
+//     address?: IUserAddress,
+//     isGoogleAuth: boolean
+//     wallet: number
+//     walletHistory: IWalletHistory[]
+//     usedCoupons: IUsedCoupons[]
+// }
 
 // interface to respond to front end
 export interface IUserRes extends IUser { }
