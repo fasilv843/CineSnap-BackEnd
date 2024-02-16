@@ -10,7 +10,7 @@ import { ICoords, ITheaterAddress } from "../../entities/common";
 
 export class TheaterController {
     constructor(
-        private readonly theaterUseCase: TheaterUseCase
+        private readonly _theaterUseCase: TheaterUseCase
     ) { }
 
     // To save non-verified theater data temporarily and send otp for verification
@@ -27,7 +27,7 @@ export class TheaterController {
         // console.log(coords, 'coords');
         const theaterData: ITempTheaterReq = { name, email, liscenceId, password, address, coords, otp: 0 }
 
-        const authRes = await this.theaterUseCase.verifyAndSaveTemporarily(theaterData)
+        const authRes = await this._theaterUseCase.verifyAndSaveTemporarily(theaterData)
         res.status(authRes.status).json(authRes)
     }
 
@@ -35,21 +35,21 @@ export class TheaterController {
     async validateTheaterOTP(req: Request, res: Response) {
         const { otp } = req.body
         const authToken = req.headers.authorization;
-        const validationRes = await this.theaterUseCase.validateAndSaveTheater(authToken, otp)
+        const validationRes = await this._theaterUseCase.validateAndSaveTheater(authToken, otp)
         res.status(validationRes.status).json(validationRes)
     }
 
     // To resend otp if current one is already expired
     async resendOTP(req:Request, res: Response) {
         const authToken = req.headers.authorization;
-        const apiRes = await this.theaterUseCase.verifyAndSendNewOTP(authToken)
+        const apiRes = await this._theaterUseCase.verifyAndSendNewOTP(authToken)
         res.status(apiRes.status).json(apiRes)
     }
 
     // To authenticate theater login using email and password
     async theaterLogin(req: Request, res: Response) {
         const { email, password } = req.body as ITheaterAuth
-        const authData = await this.theaterUseCase.verifyLogin(email, password)
+        const authData = await this._theaterUseCase.verifyLogin(email, password)
         res.status(authData.status).json(authData)
     }
 
@@ -64,7 +64,7 @@ export class TheaterController {
                 return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
             }
 
-            const nearestTheater = await this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, TheaterShowLimit, maxDistance)
+            const nearestTheater = await this._theaterUseCase.getNearestTheatersByLimit(longitude, latitude, TheaterShowLimit, maxDistance)
             // console.log(nearestTheater);
 
             res.status(STATUS_CODES.OK).json({ message: 'Success', data: nearestTheater })
@@ -79,34 +79,34 @@ export class TheaterController {
         const theaterId = req.params.theaterId
         const { address, coords, mobile, name } = req.body as ITheaterUpdate
         const theater: ITheaterUpdate = { name, mobile, address, coords }
-        const apiRes = await this.theaterUseCase.updateTheater(theaterId, theater)
+        const apiRes = await this._theaterUseCase.updateTheater(theaterId, theater)
         res.status(apiRes.status).json(apiRes)
     }
 
     async updateTheaterProfilePic (req: Request, res: Response) {
         const theaterId = req.params.theaterId
         const fileName = req.file?.filename
-        const apiRes = await this.theaterUseCase.updateTheaterProfilePic(theaterId, fileName)
+        const apiRes = await this._theaterUseCase.updateTheaterProfilePic(theaterId, fileName)
         res.status(apiRes.status).json(apiRes)
     }
 
     async removeTheaterProfilePic (req: Request, res: Response) { 
         const theaterId = req.params.theaterId
-        const apiRes = await this.theaterUseCase.removeTheaterProfilePic(theaterId)
+        const apiRes = await this._theaterUseCase.removeTheaterProfilePic(theaterId)
         res.status(apiRes.status).json(apiRes)
     }
 
     // To get all the data of a theater using theater id
     async getTheaterData(req: Request, res: Response) {
         const theaterId = req.params.theaterId
-        const apiRes = await this.theaterUseCase.getTheaterData(theaterId)
+        const apiRes = await this._theaterUseCase.getTheaterData(theaterId)
         res.status(apiRes.status).json(apiRes)
     }
 
     async addToWallet (req: Request, res: Response) {
         const { theaterId } = req.params
         const amount: number = parseInt(req.body.amount)
-        const apiRes = await this.theaterUseCase.addToWallet(theaterId, amount)
+        const apiRes = await this._theaterUseCase.addToWallet(theaterId, amount)
         res.status(apiRes.status).json(apiRes)
     }
 
@@ -114,13 +114,13 @@ export class TheaterController {
         const { theaterId } = req.params
         const page = req.query.page as unknown as number
         const limit = req.query.limit as unknown as number
-        const apiRes = await this.theaterUseCase.getWalletHistory(theaterId, page, limit)
+        const apiRes = await this._theaterUseCase.getWalletHistory(theaterId, page, limit)
         res.status(apiRes.status).json(apiRes)
     }
 
     async getRevenueData (req: Request, res: Response) {
         const theaterId = req.params.theaterId
-        const apiRes = await this.theaterUseCase.getRevenueData(theaterId)
+        const apiRes = await this._theaterUseCase.getRevenueData(theaterId)
         res.status(apiRes.status).json(apiRes)
     }
 }

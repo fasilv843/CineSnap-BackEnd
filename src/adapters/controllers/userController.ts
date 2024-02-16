@@ -11,7 +11,8 @@ import { IUser } from "../../entities/user";
 
 export class UserController {
     constructor (
-        private readonly userUseCase : UserUseCase,
+        private readonly _userUseCase : UserUseCase,
+        // ! Restructure/ Modify This controller
         private readonly otpGenerator : GenerateOtp,
         private readonly encrypt : Encrypt
     ){}
@@ -21,16 +22,16 @@ export class UserController {
             const { name, email, password } = req.body as IUserAuth
             // console.log(name, email, password);
         
-            const isEmailExist = await this.userUseCase.isEmailExist(email)
+            const isEmailExist = await this._userUseCase.isEmailExist(email)
             if(isEmailExist === null){  
                 const OTP = this.otpGenerator.generateOTP()
                 
                 // console.log(OTP,'OTP');
                 const securePassword = await this.encrypt.encryptPassword(password)
                 const user: ITempUserReq = { name, email, password: securePassword, otp:OTP }
-                const tempUser = await this.userUseCase.saveUserTemporarily(user)
+                const tempUser = await this._userUseCase.saveUserTemporarily(user)
 
-                this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
+                this._userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
 
                 // console.log('responding with 200');
                 res.status(STATUS_CODES.OK).json({message: 'Success', token: tempUser.userAuthToken })
@@ -53,10 +54,10 @@ export class UserController {
             
             if(authToken){
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
-                const user = await this.userUseCase.findTempUserById(decoded.id)
+                const user = await this._userUseCase.findTempUserById(decoded.id)
                 if(user){
                     if(otp == user.otp){
-                        const savedData = await this.userUseCase.saveUserDetails({
+                        const savedData = await this._userUseCase.saveUserDetails({
                             name: user.name,
                             email: user.email,
                             password: user.password
@@ -87,13 +88,13 @@ export class UserController {
             // console.log(authToken, 'authToken from resend otp');
             if(authToken){
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
-                const tempUser = await this.userUseCase.findTempUserById(decoded.id)
+                const tempUser = await this._userUseCase.findTempUserById(decoded.id)
                 if(tempUser){
                     const OTP = this.otpGenerator.generateOTP()
                     // console.log(tempUser, 'userData');
                     console.log(OTP, 'new resend otp');
-                    await this.userUseCase.updateOtp(tempUser._id, tempUser.email, OTP)
-                    this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
+                    await this._userUseCase.updateOtp(tempUser._id, tempUser.email, OTP)
+                    this._userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP)
                     res.status(STATUS_CODES.OK).json({message: 'OTP has been sent'})
                 } else {
                     res.status(STATUS_CODES.UNAUTHORIZED).json({message: 'user timeout, register again'})
@@ -112,7 +113,7 @@ export class UserController {
     async userLogin(req:Request, res: Response){
         try {
             const { email, password } = req.body as IUser
-            const authData = await this.userUseCase.verifyLogin(email, password as string)
+            const authData = await this._userUseCase.verifyLogin(email, password as string)
             res.status(authData.status).json(authData)
         } catch (error) {
             console.log(error);
@@ -123,7 +124,7 @@ export class UserController {
     async userSocialSignUp( req: Request, res: Response){
         try {
             const { name, email, profilePic } = req.body as IUserSocialAuth
-            const authData = await this.userUseCase.handleSocialSignUp(name, email, profilePic as string)
+            const authData = await this._userUseCase.handleSocialSignUp(name, email, profilePic as string)
             res.status(authData.status).json(authData)
         } catch (error) {
             const err = error as Error
@@ -134,7 +135,7 @@ export class UserController {
     // to get user data using userId
     async getUserData (req:Request, res: Response) {
         const userId = req.params.userId
-        const apiRes = await this.userUseCase.getUserData(userId)
+        const apiRes = await this._userUseCase.getUserData(userId)
         res.json(apiRes.status).json(apiRes)
     }
 
@@ -142,27 +143,27 @@ export class UserController {
     async updateProfile(req: Request, res: Response) {
         const user = req.body as IUserUpdate
         const userId = req.params.userId
-        const apiRes = await this.userUseCase.updateUserData(userId, user)
+        const apiRes = await this._userUseCase.updateUserData(userId, user)
         res.status(apiRes.status).json(apiRes)
     }
 
     async updateUserProfileDp (req: Request, res: Response) {
         const userId = req.params.userId
         const fileName = req.file?.filename
-        const apiRes = await this.userUseCase.updateUserProfilePic(userId, fileName)
+        const apiRes = await this._userUseCase.updateUserProfilePic(userId, fileName)
         res.status(apiRes.status).json(apiRes)
     }
 
     async removeUserProfileDp (req: Request, res: Response) { 
         const userId = req.params.userId
-        const apiRes = await this.userUseCase.removeUserProfileDp(userId)
+        const apiRes = await this._userUseCase.removeUserProfileDp(userId)
         res.status(apiRes.status).json(apiRes)
     }
 
     async addToWallet (req: Request, res: Response) {
         const { userId } = req.params
         const amount: number = parseInt(req.body.amount)
-        const apiRes = await this.userUseCase.addToWallet(userId, amount)
+        const apiRes = await this._userUseCase.addToWallet(userId, amount)
         res.status(apiRes.status).json(apiRes)
     }
 
@@ -170,7 +171,7 @@ export class UserController {
         const { userId } = req.params
         const page = req.query.page as unknown as number
         const limit = req.query.limit as unknown as number
-        const apiRes = await this.userUseCase.getWalletHistory(userId, page, limit)
+        const apiRes = await this._userUseCase.getWalletHistory(userId, page, limit)
         res.status(apiRes.status).json(apiRes)
     }
 }
