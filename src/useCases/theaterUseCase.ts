@@ -7,10 +7,10 @@ import { TheaterRepository } from "../infrastructure/repositories/theaterReposit
 import { IApiAuthRes, IApiRes, IApiTempAuthRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
-import { Encrypt } from "../providers/bcryptPassword";
-import { JWTToken } from "../providers/jwtToken";
-import { MailSender } from "../providers/nodemailer";
-import { GenerateOtp } from "../providers/otpGenerator";
+import { Encrypt } from "../infrastructure/utils/bcryptPassword";
+import { JWTToken } from "../infrastructure/utils/jwtToken";
+import { MailSender } from "../infrastructure/utils/nodemailer";
+import { GenerateOtp } from "../infrastructure/utils/otpGenerator";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import fs from 'fs'

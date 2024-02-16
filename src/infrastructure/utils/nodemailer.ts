@@ -1,8 +1,8 @@
 import { log } from "console";
-import { mailTransporter } from "../infrastructure/config/mailTransporter";
-import { generateInvoiceAndGetPath, getMovieSuccessMailTemplate, getOTPTemplate } from "../infrastructure/helperFunctions/getMailTemplate";
-import { ITicketRes } from "../interfaces/schema/ticketSchema";
-import { sendMail } from "../interfaces/sendMail";
+import { mailTransporter } from "../config/mailTransporter";
+import { generateInvoiceAndGetPath, getMovieSuccessMailTemplate, getOTPTemplate } from "../helperFunctions/getMailTemplate";
+import { ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { sendMail } from "../../interfaces/sendMail";
 import fs from 'fs'
 
 export class MailSender implements sendMail {

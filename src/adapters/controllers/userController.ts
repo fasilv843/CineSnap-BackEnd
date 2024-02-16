@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
-import { GenerateOtp } from "../../providers/otpGenerator";
-import { Encrypt } from "../../providers/bcryptPassword";
+import { GenerateOtp } from "../../infrastructure/utils/otpGenerator";
+import { Encrypt } from "../../infrastructure/utils/bcryptPassword";
 import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";

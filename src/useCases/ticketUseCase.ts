@@ -19,7 +19,7 @@ import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
 import { IShow } from "../interfaces/schema/showSchema";
-import { MailSender } from "../providers/nodemailer";
+import { MailSender } from "../infrastructure/utils/nodemailer";
 
 export class TicketUseCase {
     constructor(

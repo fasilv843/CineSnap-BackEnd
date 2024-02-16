@@ -1,6 +1,6 @@
 import express from "express";
 import { theaterAuth } from "../middleware/theaterAuth";
-import { tController, scnController, showController, chatController, ticketController, screenSeatController, couponController } from "../../providers/controllers";
+import { tController, scnController, showController, chatController, ticketController, screenSeatController, couponController } from "../utils/controllers";
 import { upload } from "../config/multer";
 
 // thr = theater

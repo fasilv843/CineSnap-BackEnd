@@ -8,9 +8,9 @@ import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IApiUserAuthRes, IApiUserRes, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
-import { Encrypt } from "../providers/bcryptPassword";
-import { JWTToken } from "../providers/jwtToken";
-import { MailSender } from "../providers/nodemailer";
+import { Encrypt } from "../infrastructure/utils/bcryptPassword";
+import { JWTToken } from "../infrastructure/utils/jwtToken";
+import { MailSender } from "../infrastructure/utils/nodemailer";
 import path from "path";
 import fs from 'fs'
 import { IUser } from "../entities/user";

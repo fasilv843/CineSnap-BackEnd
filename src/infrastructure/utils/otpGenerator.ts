@@ -1,4 +1,4 @@
-import { OTP } from "../interfaces/genOTP";
+import { OTP } from "../../interfaces/genOTP";
 
 
 export class GenerateOtp implements OTP {

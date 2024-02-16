@@ -1,4 +1,4 @@
-import { HashPassword } from "../interfaces/hashPassword";
+import { HashPassword } from "../../interfaces/hashPassword";
 import bcrypt from 'bcrypt'
 
 export class Encrypt implements HashPassword {

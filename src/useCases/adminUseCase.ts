@@ -2,8 +2,8 @@
 import { STATUS_CODES } from "../constants/httpStausCodes";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { IApiAdminAuthRes } from "../interfaces/schema/adminSchema";
-import { Encrypt } from "../providers/bcryptPassword";
-import { JWTToken } from "../providers/jwtToken";
+import { Encrypt } from "../infrastructure/utils/bcryptPassword";
+import { JWTToken } from "../infrastructure/utils/jwtToken";
 
 
 export class AdminUseCase {
