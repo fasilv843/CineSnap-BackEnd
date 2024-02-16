@@ -1,6 +1,6 @@
 import { log } from "console";
-import { OTP_TIMER } from "../constants/constants";
-import { STATUS_CODES } from "../constants/httpStausCodes";
+import { OTP_TIMER } from "../infrastructure/constants/constants";
+import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";

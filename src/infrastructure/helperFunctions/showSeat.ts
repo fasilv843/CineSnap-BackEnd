@@ -1,4 +1,4 @@
-import { DEF_DIAMOND_PRICE, DEF_GOLD_PRICE, DEF_SILVER_PRICE } from "../../constants/constants";
+import { DEF_DIAMOND_PRICE, DEF_GOLD_PRICE, DEF_SILVER_PRICE } from "../constants/constants";
 import { RowType } from "../../interfaces/common";
 import { IScreenSeatCategory, IScreenSeatRes } from "../../interfaces/schema/screenSeatSchema";
 import { IShowSingleSeat } from "../../interfaces/schema/showSchema";

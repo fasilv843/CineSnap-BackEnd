@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { STATUS_CODES } from "../constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";

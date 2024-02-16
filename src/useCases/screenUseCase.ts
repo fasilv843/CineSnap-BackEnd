@@ -1,5 +1,5 @@
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
-import { STATUS_CODES } from "../constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
 import { IApiScreenRes, IApiScreensRes, IScreen, IScreenRequirements } from "../interfaces/schema/screenSchema";
 import { IApiRes } from "../interfaces/common";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";

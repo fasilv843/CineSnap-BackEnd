@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { ZipRegex } from "../../../constants/constants";
+import { ZipRegex } from "../../constants/constants";
 import { ITheaterAddress, IUserAddress } from "../../../entities/common";
 
 export const userAddressSchema: Schema = new Schema<IUserAddress & Document>({

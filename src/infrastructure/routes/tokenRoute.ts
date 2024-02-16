@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { STATUS_CODES } from "../constants/httpStausCodes";
 import { JWTToken } from "../utils/jwtToken";
 
 const tokenRouter = express.Router()

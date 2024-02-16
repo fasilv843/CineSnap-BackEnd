@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { emailRegex } from "../../../constants/constants";
+import { emailRegex } from "../../constants/constants";
 
 export const emailSchema: Schema = new Schema<{ email: string } & Document>({
     email: {

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TheaterRepository } from "../repositories/theaterRepository"
-import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { STATUS_CODES } from "../constants/httpStausCodes";
 
 const thrRepository = new TheaterRepository()
 const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = STATUS_CODES

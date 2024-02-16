@@ -1,5 +1,5 @@
 import { log } from "console";
-import { ALPHABETS } from "../../constants/constants";
+import { ALPHABETS } from "../constants/constants";
 import { IScreenSeatCategory, IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
 import { ColType } from "../../interfaces/common";
 

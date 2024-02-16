@@ -1,4 +1,4 @@
-import { NoRefundTime, QuarterRefundTime, HalfRefundTime, ThreeQuarterRefundTime } from "../../constants/constants"
+import { NoRefundTime, QuarterRefundTime, HalfRefundTime, ThreeQuarterRefundTime } from "../constants/constants"
 import { CancelledBy } from "../../interfaces/common"
 import { ITempTicketRes, ITicketRes } from "../../interfaces/schema/ticketSchema"
 import { CancelledByUnknownError } from "../errors/cancelledByUnknownError"

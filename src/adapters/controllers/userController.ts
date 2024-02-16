@@ -5,7 +5,7 @@ import { Encrypt } from "../../infrastructure/utils/bcryptPassword";
 import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { STATUS_CODES } from "../../infrastructure/constants/httpStausCodes";
 import { IUser } from "../../entities/user";
 
 

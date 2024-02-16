@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { JWT } from "../../interfaces/jwt";
-import { accessTokenExp, refreshTokenExp, tempTokenExp } from '../../constants/constants';
+import { accessTokenExp, refreshTokenExp, tempTokenExp } from '../constants/constants';
 
 
 

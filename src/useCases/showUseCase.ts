@@ -1,5 +1,5 @@
 import { log } from "console";
-import { STATUS_CODES } from "../constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
 import { isPast, isToday } from "../infrastructure/helperFunctions/date";
 import { getEndingTime } from "../infrastructure/helperFunctions/getMovieEnding";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
