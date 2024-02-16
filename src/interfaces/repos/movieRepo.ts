@@ -1,4 +1,3 @@
-import { ID } from "../common";
 import { IMovie, ITMDBMovie } from "../schema/movieSchema";
 
 export interface IMovieRepo {
@@ -7,8 +6,8 @@ export interface IMovieRepo {
     findMovieByLanguage(lang:string): Promise<IMovie[]>
     findMovieByGenre(genreId: number): Promise<IMovie[]>
     findMovieByTitle(title: string, isAdmin: boolean): Promise<IMovie[]>
-    findMovieById(id: ID): Promise<IMovie | null>
+    findMovieById(id: string): Promise<IMovie | null>
     findUpcomingMovies(): Promise<IMovie[]>
     findMovieByTmdbId(id: number): Promise<IMovie | null>
-    deleteMovie(id: ID): Promise<void | null>
+    deleteMovie(id: string): Promise<void | null>
 }
