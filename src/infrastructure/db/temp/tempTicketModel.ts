@@ -3,6 +3,7 @@ import { ITempTicketRes } from "../../../interfaces/schema/ticketSchema"
 import { baseTicketSchema } from "../base/baseTicketSchema"
 
 const tempTicketSchema: Schema = new Schema<ITempTicketRes & Document>({
+    // TTL Indexing
     expireAt: {
         type: Date,
         default: Date.now,

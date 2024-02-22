@@ -68,8 +68,11 @@ const movieSchema: Schema = new Schema<IMovie & Document>({
     }
 })
 
+// MultiKey Indexing
 movieSchema.index({ language: 1 });
 movieSchema.index({ genre_ids: 1 });
+
+// Text indexing
 movieSchema.index({ title: 'text' }, { default_language: 'en', language_override: 'en' });
 
 

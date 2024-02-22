@@ -20,6 +20,7 @@ const tempUserSchema: Schema = new Schema<ITempUserRes & Document>({
         type: String,
         required: true
     },
+    // TTL Indexing
     expireAt: {
         type: Date,
         default: Date.now,

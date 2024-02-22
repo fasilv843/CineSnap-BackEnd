@@ -10,6 +10,7 @@ const tempTheaterSchema: Schema = new Schema<ITempTheaterRes & Document>({
         // min: 1000,
         // max: 9999
     },
+    // TTL Indexing
     expireAt: {
         type: Date,
         default: Date.now,
