@@ -1,4 +1,4 @@
-import { STATUS_CODES } from "../constants/httpStausCodes"; 
+import { STATUS_CODES } from "../constants/httpStatusCodes"; 
 import { CustomError } from "./customError";
 
 export class RefundNotAllowedError extends CustomError {

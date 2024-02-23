@@ -1,5 +1,5 @@
 // import { AuthRes } from "../Types/AuthRes";
-import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { IApiAdminAuthRes } from "../interfaces/schema/adminSchema";
 import { IAdminRepo } from "./repos/adminRepo";
 import { IEncryptor } from "./utils/encryptor";

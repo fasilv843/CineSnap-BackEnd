@@ -1,5 +1,5 @@
 import { log } from "console";
-import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
 import { IApiRes } from "../interfaces/common";

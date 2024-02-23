@@ -1,4 +1,4 @@
-import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { getLastRow, getSeatCount } from "../infrastructure/helperFunctions/getScreenSeat";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";

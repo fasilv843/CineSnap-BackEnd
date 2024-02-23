@@ -1,5 +1,5 @@
 import { log } from "console";
-import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../interfaces/schema/movieSchema";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";

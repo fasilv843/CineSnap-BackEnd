@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ITheaterAuth, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { STATUS_CODES } from "../../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../../infrastructure/constants/httpStatusCodes";
 import { TheaterShowLimit, maxDistance } from "../../infrastructure/constants/constants";
 import { ITempTheaterReq } from "../../interfaces/schema/tempTheaterSchema";
 import { ICoords, ITheaterAddress } from "../../entities/common";

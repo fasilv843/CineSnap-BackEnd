@@ -4,7 +4,7 @@ import { OTPGenerator } from "../../infrastructure/utils/otpGenerator";
 import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { STATUS_CODES } from "../../infrastructure/constants/httpStausCodes";
+import { STATUS_CODES } from "../../infrastructure/constants/httpStatusCodes";
 import { IUser } from "../../entities/user";
 import { Encryptor } from "../../infrastructure/utils/bcryptPassword";
 
