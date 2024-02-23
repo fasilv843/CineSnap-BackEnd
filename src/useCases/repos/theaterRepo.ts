@@ -1,5 +1,6 @@
+import { ITheater } from "../../entities/theater"
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema"
-import { ITheater, ITheaterRes } from "../../interfaces/schema/theaterSchema"
+import { ITheaterRes } from "../../interfaces/schema/theaterSchema"
 
 
 export interface ITheaterRepo {

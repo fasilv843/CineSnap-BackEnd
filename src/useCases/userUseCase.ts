@@ -1,4 +1,3 @@
-// import { AuthRes } from "../Types/AuthRes";
 import { log } from "console";
 import { OTP_TIMER } from "../infrastructure/constants/constants";
 import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
@@ -8,21 +7,21 @@ import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IApiUserAuthRes, IApiUserRes, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
-import { Encrypt } from "../infrastructure/utils/bcryptPassword";
-import { JWTToken } from "../infrastructure/utils/jwtToken";
-import { MailSender } from "../infrastructure/utils/nodemailer";
 import path from "path";
 import fs from 'fs'
 import { IUser } from "../entities/user";
+import { IEncryptor } from "./utils/encryptor";
+import { ITokenGenerator } from "./utils/tokenGenerator";
+import { IMailSender } from "./utils/mailSender";
 
 
 export class UserUseCase {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly tempUserRepository: TempUserRepository,
-        private readonly encrypt: Encrypt,
-        private readonly jwt: JWTToken,
-        private readonly mailer: MailSender,
+        private readonly _encryptor: IEncryptor,
+        private readonly _tokenGenerator: ITokenGenerator,
+        private readonly _mailer: IMailSender,
     ) { }
 
     async isEmailExist(email: string): Promise<IUser | null> {
@@ -33,8 +32,8 @@ export class UserUseCase {
     async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserAuthRes> {
         const user = await this.userRepository.saveUser(userData)
         // console.log('user data saved, on usecase', user);
-        const accessToken = this.jwt.generateAccessToken(user._id)
-        const refreshToken = this.jwt.generateRefreshToken(user._id)
+        const accessToken = this._tokenGenerator.generateAccessToken(user._id)
+        const refreshToken = this._tokenGenerator.generateRefreshToken(user._id)
         return {
             status: STATUS_CODES.OK,
             data: user,
@@ -47,7 +46,7 @@ export class UserUseCase {
     async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
         const user = await this.tempUserRepository.saveUser(userData)
         // console.log(user, 'temp user saved');
-        const userAuthToken = this.jwt.generateTempToken(user._id) 
+        const userAuthToken = this._tokenGenerator.generateTempToken(user._id) 
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
@@ -79,8 +78,8 @@ export class UserUseCase {
                 if(!emailData.isGoogleAuth) {
                     await this.userRepository.updateGoogleAuth(emailData._id, profilePic)
                 }
-                const accessToken = this.jwt.generateAccessToken(emailData._id)
-                const refreshToken = this.jwt.generateRefreshToken(emailData._id)
+                const accessToken = this._tokenGenerator.generateAccessToken(emailData._id)
+                const refreshToken = this._tokenGenerator.generateRefreshToken(emailData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',
@@ -95,7 +94,7 @@ export class UserUseCase {
     // To send an otp to user that will expire after a certain period
     sendTimeoutOTP(id: string, email: string, OTP: number) {
         try {
-            this.mailer.sendOTP(email, OTP)
+            this._mailer.sendOTP(email, OTP)
                     
             setTimeout(async() => {
                 await this.tempUserRepository.unsetOtp(id, email)
@@ -120,10 +119,10 @@ export class UserUseCase {
                     refreshToken: ''
                 }
             } else {
-                const passwordMatch = await this.encrypt.comparePasswords(password, userData.password as string)
+                const passwordMatch = await this._encryptor.comparePasswords(password, userData.password as string)
                 if (passwordMatch) {
-                const accessToken = this.jwt.generateAccessToken(userData._id)
-                const refreshToken = this.jwt.generateRefreshToken(userData._id)
+                const accessToken = this._tokenGenerator.generateAccessToken(userData._id)
+                const refreshToken = this._tokenGenerator.generateRefreshToken(userData._id)
                     return {
                         status: STATUS_CODES.OK,
                         message: 'Success',

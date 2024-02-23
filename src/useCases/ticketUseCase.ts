@@ -17,10 +17,10 @@ import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashbo
 import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
-import { MailSender } from "../infrastructure/utils/nodemailer";
 import { CancelledBy, PaymentMethod } from "../entities/common";
 import { IShow } from "../entities/show";
 import { IApiRes } from "../interfaces/common";
+import { IMailSender } from "./utils/mailSender";
 
 export class TicketUseCase {
     constructor(
@@ -32,7 +32,7 @@ export class TicketUseCase {
         private readonly userRepository: UserRepository,
         private readonly adminRepository: AdminRepository,
         private readonly couponRepository: CouponRepository,
-        private readonly mailSender: MailSender
+        private readonly _mailSender: IMailSender
     ) { }
 
     async bookTicketDataTemporarily(ticketReqs: ITempTicketReqs): Promise<IApiTempTicketRes> {
@@ -124,7 +124,7 @@ export class TicketUseCase {
                     await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
 
                     const populatedTicket = await this.ticketRepository.getTicketData(confirmedTicket._id) as ITicketRes
-                    await this.mailSender.sendBookingSuccessMail(user.email, populatedTicket)
+                    await this._mailSender.sendBookingSuccessMail(user.email, populatedTicket)
                     return get200Response(confirmedTicket)
                 } else {
                     return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid show id')
@@ -207,7 +207,7 @@ export class TicketUseCase {
                 const user = await this.userRepository.findById(ticket.userId)
                 if (user) {
                     log('sending invoice to user ', user.email)
-                    await this.mailSender.invoiceDownloadMail(user.email, ticket)
+                    await this._mailSender.invoiceDownloadMail(user.email, ticket)
                     return get200Response(null)
                 } else {
                     return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'invalid user id in ticket')

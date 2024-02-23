@@ -1,4 +1,5 @@
-import { IMovie, ITMDBMovie } from "../../interfaces/schema/movieSchema";
+import { IMovie } from "../../entities/movie";
+import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
 
 export interface IMovieRepo {
     saveMovieDetails(movie: ITMDBMovie): Promise<IMovie | null>

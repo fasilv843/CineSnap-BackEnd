@@ -1,25 +1,25 @@
 // import { AuthRes } from "../Types/AuthRes";
 import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
-import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { IApiAdminAuthRes } from "../interfaces/schema/adminSchema";
-import { Encrypt } from "../infrastructure/utils/bcryptPassword";
-import { JWTToken } from "../infrastructure/utils/jwtToken";
+import { IAdminRepo } from "./repos/adminRepo";
+import { IEncryptor } from "./utils/encryptor";
+import { ITokenGenerator } from "./utils/tokenGenerator";
 
 
 export class AdminUseCase {
     constructor(
-        private readonly encrypt : Encrypt,
-        private readonly adminRepository: AdminRepository,
-        private readonly jwtToken: JWTToken
+        private readonly _encryptor : IEncryptor,
+        private readonly _adminRepository: IAdminRepo,
+        private readonly _tokenGenerator: ITokenGenerator
     ){}
 
     async verifyLogin(email:string, password: string): Promise<IApiAdminAuthRes>{
-        const adminData = await this.adminRepository.findAdmin()
+        const adminData = await this._adminRepository.findAdmin()
         if(adminData !== null){
-            const passwordMatch = await this.encrypt.comparePasswords(password, adminData.password)
+            const passwordMatch = await this._encryptor.comparePasswords(password, adminData.password)
             if(passwordMatch){
-                const accessToken = this.jwtToken.generateAccessToken(adminData._id)
-                const refreshToken = this.jwtToken.generateRefreshToken(adminData._id)
+                const accessToken = this._tokenGenerator.generateAccessToken(adminData._id)
+                const refreshToken = this._tokenGenerator.generateRefreshToken(adminData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',

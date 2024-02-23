@@ -7,10 +7,6 @@ import { TheaterRepository } from "../infrastructure/repositories/theaterReposit
 import { IApiAuthRes, IApiRes, IApiTempAuthRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
-import { Encrypt } from "../infrastructure/utils/bcryptPassword";
-import { JWTToken } from "../infrastructure/utils/jwtToken";
-import { MailSender } from "../infrastructure/utils/nodemailer";
-import { GenerateOtp } from "../infrastructure/utils/otpGenerator";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import fs from 'fs'
@@ -18,16 +14,20 @@ import { IRevenueData } from "../interfaces/chart";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
+import { IEncryptor } from "./utils/encryptor";
+import { ITokenGenerator } from "./utils/tokenGenerator";
+import { IMailSender } from "./utils/mailSender";
+import { IOTPGenerator } from "./utils/otpGenerator";
 
 
 export class TheaterUseCase {
     constructor(
         private readonly theaterRepository: TheaterRepository,
         private readonly tempTheaterRepository: TempTheaterRepository,
-        private readonly encrypt: Encrypt,
-        private readonly jwtToken: JWTToken,
-        private readonly mailer: MailSender,
-        private readonly otpGenerator: GenerateOtp,
+        private readonly _encryptor: IEncryptor,
+        private readonly _tokenGenerator: ITokenGenerator,
+        private readonly _mailer: IMailSender,
+        private readonly _otpGenerator: IOTPGenerator,
         private readonly ticketRepository: TicketRepository
     ) { }
 
@@ -37,12 +37,12 @@ export class TheaterUseCase {
             if (isEmailExist) {
                 return getErrorResponse(STATUS_CODES.FORBIDDEN, 'Email Already Exist')
             } else {
-                theaterData.otp = this.otpGenerator.generateOTP()
-                theaterData.password = await this.encrypt.encryptPassword(theaterData.password)
+                theaterData.otp = this._otpGenerator.generateOTP()
+                theaterData.password = await this._encryptor.encryptPassword(theaterData.password)
 
                 const tempTheater = await this.tempTheaterRepository.saveTheater(theaterData)
                 this.sendTimeoutOTP(tempTheater._id, tempTheater.email, tempTheater.otp)
-                const userAuthToken = this.jwtToken.generateTempToken(tempTheater._id)
+                const userAuthToken = this._tokenGenerator.generateTempToken(tempTheater._id)
 
                 return {
                     status: STATUS_CODES.OK,
@@ -58,8 +58,8 @@ export class TheaterUseCase {
 
     // To send an otp to mail,and delete after spcified time (OTP_TIMER)
     sendTimeoutOTP(id: string, email: string, OTP: number) {
-        console.log(OTP, 'otp from sendTimoutOTP');
-        this.mailer.sendOTP(email, OTP)
+        console.log(OTP, 'otp from sendTimeoutOTP');
+        this._mailer.sendOTP(email, OTP)
 
         setTimeout(async () => {
             await this.tempTheaterRepository.unsetTheaterOTP(id, email)
@@ -72,7 +72,7 @@ export class TheaterUseCase {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
                 const tempTheater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
                 if (tempTheater) {
-                    const newOTP = this.otpGenerator.generateOTP()
+                    const newOTP = this._otpGenerator.generateOTP()
                     await this.tempTheaterRepository.updateTheaterOTP(tempTheater._id, tempTheater.email, newOTP)
                     this.sendTimeoutOTP(tempTheater._id, tempTheater.email, newOTP)
                     return get200Response(null)
@@ -95,8 +95,8 @@ export class TheaterUseCase {
                 if (theater) {
                     if (otp == theater.otp) {
                         const savedTheater = await this.theaterRepository.saveTheater(theater)
-                        const accessToken = this.jwtToken.generateAccessToken(savedTheater._id)
-                        const refreshToken = this.jwtToken.generateRefreshToken(savedTheater._id)
+                        const accessToken = this._tokenGenerator.generateAccessToken(savedTheater._id)
+                        const refreshToken = this._tokenGenerator.generateRefreshToken(savedTheater._id)
                         return {
                             status: STATUS_CODES.OK,
                             message: 'Success',
@@ -141,10 +141,10 @@ export class TheaterUseCase {
                 }
             }
 
-            const passwordMatch = await this.encrypt.comparePasswords(password, theaterData.password)
+            const passwordMatch = await this._encryptor.comparePasswords(password, theaterData.password)
             if (passwordMatch) {
-                const accessToken = this.jwtToken.generateAccessToken(theaterData._id)
-                const refreshToken = this.jwtToken.generateRefreshToken(theaterData._id)
+                const accessToken = this._tokenGenerator.generateAccessToken(theaterData._id)
+                const refreshToken = this._tokenGenerator.generateRefreshToken(theaterData._id)
                 return {
                     status: STATUS_CODES.OK,
                     message: 'Success',
