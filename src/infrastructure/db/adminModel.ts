@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { IAdmin } from "../../interfaces/schema/adminSchema";
 import { walletSchema } from "./base/walletSchema";
 import { emailSchema } from "./base/emailSchema";
+import { IAdmin } from "../../entities/admin";
 
 const adminSchema: Schema = new Schema<IAdmin & Document>({
     password: {

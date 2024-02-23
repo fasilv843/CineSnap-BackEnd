@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { AdminUseCase } from "../../useCases/adminUseCase";
-import { IAdmin } from "../../interfaces/schema/adminSchema";
 import { UserUseCase } from "../../useCases/userUseCase";
 import { TheaterUseCase } from "../../useCases/theaterUseCase";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
+import { IAdmin } from "../../entities/admin";
 
 export class AdminController {
     constructor(

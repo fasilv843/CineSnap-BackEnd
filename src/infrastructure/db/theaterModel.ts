@@ -1,8 +1,8 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { ITheater } from "../../interfaces/schema/theaterSchema";
 import { walletSchema } from "./base/walletSchema";
 import { mobileSchema } from "./base/mobileSchema";
 import baseTheaterSchema from "./base/baseTheaterSchema";
+import { ITheater } from "../../entities/theater";
 
 
 

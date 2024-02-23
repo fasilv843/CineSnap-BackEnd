@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model, ObjectId } from "mongoose"
-import { ICoupon } from "../../interfaces/schema/couponSchema"
+import { ICoupon } from "../../entities/coupon"
 
 interface ICouponSchema extends Omit<ICoupon, 'theaterId'>, Document {
     theaterId: ObjectId

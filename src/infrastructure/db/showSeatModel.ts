@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model } from "mongoose";
-import { IShowSeatCategory, IShowSeats } from "../../interfaces/schema/showSeatsSchema";
 import { showSingleSeatSchema } from "./subSchema/showSeatSchema";
+import { IShowSeatCategory, IShowSeats } from "../../entities/showSeat";
 
 export const showSeatCatSchema: Schema = new Schema<IShowSeatCategory & Document>({
     name: {

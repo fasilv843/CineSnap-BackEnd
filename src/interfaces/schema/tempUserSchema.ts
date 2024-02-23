@@ -1,13 +1,5 @@
+import { ITempUser } from "../../entities/temp/tempUser"
 
-export interface ITempUserReq {
-    name: string
-    email: string
-    otp: number
-    password: string
-}
+export interface ITempUserReq extends Omit<ITempUser, '_id' | 'expireAt'> {}
 
-// export interface ITempUserRes extends Omit<ITempUserReq, '_id'>{}
-export interface ITempUserRes extends ITempUserReq {
-    _id: string
-    expireAt: Date
-}
+export interface ITempUserRes extends ITempUser {}

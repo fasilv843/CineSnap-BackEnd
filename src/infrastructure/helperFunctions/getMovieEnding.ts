@@ -1,4 +1,4 @@
-import { IDuration } from "../../interfaces/schema/movieSchema";
+import { IDuration } from "../../entities/movie";
 
 export function getEndingTime(startTime: Date, duration: IDuration): Date {
     const endingTime = new Date(startTime); // Create a new Date object to avoid mutating the original startTime

@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { ITicketSeat } from "../../../interfaces/schema/ticketSchema";
+import { ITicketSeat } from "../../../entities/ticket";
 
 export const ticketSeatCategorySchema: Schema = new Schema<ITicketSeat & Document>({
     seats: {

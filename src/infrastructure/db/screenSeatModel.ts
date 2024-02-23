@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { IScreenSeatCategory, IScreenSeat } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeat, IScreenSeatCategory } from "../../entities/screenSeat";
 
 export function getScreenSeatCategorySchema(defaultName: string): Schema<Document & IScreenSeatCategory> {
     return new Schema<IScreenSeatCategory & Document>({

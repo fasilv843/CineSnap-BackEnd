@@ -1,16 +1,6 @@
-import { ColType, IApiRes } from "../common"
-
-export interface IScreenSeatCategory {
-    name: string,
-    seats: Map<string, ColType[]>
-}
-
-export interface IScreenSeat {
-    _id: string
-    diamond: IScreenSeatCategory
-    gold: IScreenSeatCategory
-    silver: IScreenSeatCategory
-}
+import { ColType } from "../../entities/common"
+import { IScreenSeat, IScreenSeatCategory } from "../../entities/screenSeat"
+import { IApiRes } from "../common"
 
 export interface IScreenSeatRes extends IScreenSeat {}
 export interface IApiScreenSeatRes extends IApiRes<IScreenSeatRes | null> {}

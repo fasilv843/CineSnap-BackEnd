@@ -1,15 +1,16 @@
 import { theaterModel } from "../db/theaterModel";
 import { ITheaterRepo } from "../../useCases/repos/theaterRepo";
 import { IWalletHistoryAndCount } from "../../interfaces/common";
-import { ITheater, ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
+import { ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
 import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
 import { ICoords } from "../../entities/common";
+import { ITheater } from "../../entities/theater";
 
 
 
 export class TheaterRepository implements ITheaterRepo {
 
-    async getNearestTheaters(lon: number, lat: number, radius: number): Promise<[] | ITheater[]> {
+    async getNearestTheaters(lon: number, lat: number, radius: number): Promise<ITheater[]> {
         try {
 
             const searchLocation: ICoords = {

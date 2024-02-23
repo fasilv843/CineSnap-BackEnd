@@ -6,7 +6,6 @@ import { TempTicketRepository } from "../infrastructure/repositories/tempTicketR
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { UserRepository } from "../infrastructure/repositories/userRepository";
-import { CancelledBy, IApiRes, PaymentMethod } from "../interfaces/common";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
 import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
@@ -18,8 +17,10 @@ import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashbo
 import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { RefundNotAllowedError } from "../infrastructure/errors/refundNotAllowedError";
 import { CancelledByUnknownError } from "../infrastructure/errors/cancelledByUnknownError";
-import { IShow } from "../interfaces/schema/showSchema";
 import { MailSender } from "../infrastructure/utils/nodemailer";
+import { CancelledBy, PaymentMethod } from "../entities/common";
+import { IShow } from "../entities/show";
+import { IApiRes } from "../interfaces/common";
 
 export class TicketUseCase {
     constructor(

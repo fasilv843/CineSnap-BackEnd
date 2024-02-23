@@ -1,6 +1,6 @@
+import { IScreen } from "../../entities/screen";
 import { IScreenRepo } from "../../useCases/repos/screenRepo";
 import { screenModel } from "../db/screensModel";
-import { IScreen } from "../../interfaces/schema/screenSchema";
 
 export class ScreenRepository implements IScreenRepo {
     async saveScreen(screenData: Omit<IScreen, '_id'>): Promise<IScreen> {

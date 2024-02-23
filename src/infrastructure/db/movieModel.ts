@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { IMovie } from "../../interfaces/schema/movieSchema";
 import { Languages } from "../constants/langAbbreviation";
 import { reviewSchema } from "./subSchema/reviewSchema";
+import { IMovie } from "../../entities/movie";
 
 
 

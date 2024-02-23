@@ -1,6 +1,5 @@
 import { Schema } from "mongoose";
-import { IShowSingleSeat } from "../../../interfaces/schema/showSchema";
-
+import { IShowSingleSeat } from "../../../entities/showSeat";
 
 export const showSingleSeatSchema: Schema = new Schema<IShowSingleSeat & Document>({
     col: {

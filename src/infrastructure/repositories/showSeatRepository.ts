@@ -1,8 +1,8 @@
 import { log } from "console";
 import { showSeatsModel } from "../db/showSeatModel";
-import { RowType } from "../../interfaces/common";
 import { IShowSeatToSave, IShowSeatsRes } from "../../interfaces/schema/showSeatsSchema";
-import { ITicketSeat } from "../../interfaces/schema/ticketSchema";
+import { RowType } from "../../entities/common";
+import { ITicketSeat } from "../../entities/ticket";
 
 export class ShowSeatsRepository { // implements IChatRepo
 

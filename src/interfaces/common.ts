@@ -1,21 +1,22 @@
 // import { Schema } from "mongoose";
-import { IShowRes, IShowsOnAScreen, IShow } from "./schema/showSchema";
+import { IShowRes, IShowsOnAScreen } from "./schema/showSchema";
 import { IChatRes, IUsersListForChats } from "./schema/chatSchems";
 import { ITheaterRes, ITheatersAndCount } from "./schema/theaterSchema";
 import { IUserRes, IUsersAndCount } from "./schema/userSchema";
 import { ITempTicketRes, ITicketRes, ITicketsAndCount, Seats } from "./schema/ticketSchema";
 import { ITempTheaterRes } from "./schema/tempTheaterSchema";
-import { IMovie } from "./schema/movieSchema";
-import { IScreen } from "./schema/screenSchema";
-import { IAvailCatsOnScreen, IScreenSeat } from "./schema/screenSeatSchema";
+import { IAvailCatsOnScreen } from "./schema/screenSeatSchema";
 import { IShowSeatsRes } from "./schema/showSeatsSchema";
 import { ICouponRes } from "./schema/couponSchema";
 import { IRevenueData } from "./chart";
 import { IWalletHistory } from "../entities/common";
+import { IMovie } from "../entities/movie";
+import { IScreen } from "../entities/screen";
+import { IShow } from "../entities/show";
+import { IScreenSeat } from "../entities/screenSeat";
 
 export type Location = [number, number];
 
-export type PaymentMethod = 'Razorpay' | 'Wallet'
 
 export interface IWalletHistoryAndCount {
     walletHistory: IWalletHistory[],
@@ -44,9 +45,4 @@ export interface IApiAuthRes extends Omit<IApiTempAuthRes<AllResTypes>, 'token'>
     accessToken?: string,
     refreshToken?: string
 }
-
-export type CancelledBy = 'User' | 'Theater' | 'Admin';
-
-export type RowType = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U';
-export type ColType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30;
 

@@ -1,7 +1,8 @@
 import { log } from "console";
 import { ALPHABETS } from "../constants/constants";
-import { IScreenSeatCategory, IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
-import { ColType } from "../../interfaces/common";
+import { IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { ColType } from "../../entities/common";
+import { IScreenSeatCategory } from "../../entities/screenSeat";
 
 function splitAlphabetsToThree (rows: string) {
     const index = ALPHABETS.indexOf(rows.toUpperCase());

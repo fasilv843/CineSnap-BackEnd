@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { IReview } from "../../../interfaces/schema/movieSchema";
+import { IReview } from "../../../entities/common";
 
 interface IReviewSchema extends Omit<IReview, 'userId'>, Document {
     userId: Schema.Types.ObjectId

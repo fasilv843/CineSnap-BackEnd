@@ -1,5 +1,4 @@
 import mongoose, { Model, Schema } from "mongoose";
-// import { theaterAddressSchema } from "../subSchema/addressSchema";
 import { ITempTheaterRes } from "../../../interfaces/schema/tempTheaterSchema";
 import baseTheaterSchema from "../base/baseTheaterSchema";
 

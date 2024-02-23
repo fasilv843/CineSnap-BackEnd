@@ -1,20 +1,8 @@
-import { ICoords, ITheaterAddress } from "../../entities/common"
+import { ITempTheater } from "../../entities/temp/tempTheater"
 import { IApiRes } from "../common"
 
-export interface ITempTheaterReq {
-    name: string
-    email: string
-    otp: number
-    password: string
-    liscenceId: string
-    coords: ICoords,
-    address: ITheaterAddress
-}
+export interface ITempTheaterReq extends Omit<ITempTheater, '_id' | 'expireAt'> {}
 
-
-export interface ITempTheaterRes extends ITempTheaterReq {
-    _id: string
-    expireAt: Date
-}
+export interface ITempTheaterRes extends ITempTheater {}
 
 export interface IApiTempTheaterRes extends IApiRes<ITempTheaterRes | null> {}

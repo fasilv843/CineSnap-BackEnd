@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { IScreen } from "../../interfaces/schema/screenSchema";
+import { IScreen } from "../../entities/screen";
 
 interface IScreenSchema extends Omit<IScreen, 'theaterId' | 'seatId'>, Document {
     theaterId: Schema.Types.ObjectId,

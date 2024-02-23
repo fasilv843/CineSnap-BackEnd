@@ -1,21 +1,23 @@
-import { ColType, IApiRes } from "../common"
-import { IMovie } from "./movieSchema"
+import { IMovie } from "../../entities/movie"
+import { IShow } from "../../entities/show"
+import { IApiRes } from "../common"
+// import { IMovie } from "./movieSchema"
 
-export interface IShowSingleSeat {
-    col: ColType
-    isBooked: boolean
-}
+// export interface IShowSingleSeat {
+//     col: ColType
+//     isBooked: boolean
+// }
 
-export interface IShow {
-    _id: string
-    movieId: string
-    screenId: string
-    startTime: Date
-    endTime: Date
-    totalSeatCount: number
-    availableSeatCount: number
-    seatId: string
-}
+// export interface IShow {
+//     _id: string
+//     movieId: string
+//     screenId: string
+//     startTime: Date
+//     endTime: Date
+//     totalSeatCount: number
+//     availableSeatCount: number
+//     seatId: string
+// }
 
 export interface IShowToSave extends Omit<IShow, '_id'> {}
 

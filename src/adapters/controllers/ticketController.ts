@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
 import { TicketUseCase } from "../../useCases/ticketUseCase";
-import { CancelledBy, PaymentMethod } from "../../interfaces/common";
-import { log } from "console";
+import { CancelledBy, PaymentMethod } from "../../entities/common";
 
 export class TicketController {
     constructor (
@@ -22,7 +21,6 @@ export class TicketController {
     }
 
     async getTicketData (req: Request, res: Response) { 
-        log('user router get ticket data is working')
         const ticketId = req.params.ticketId
         const apiRes = await this._ticketUseCase.getTicketData(ticketId)
         res.status(apiRes.status).json(apiRes)
@@ -39,7 +37,6 @@ export class TicketController {
         const couponId = req.body.couponId
         const paymentMethod = req.body.paymentMethod as PaymentMethod
         const useWallet = Boolean(req.body.useWallet)
-        log(tempTicketId, 'tempId from controller')
         const apiRes = await this._ticketUseCase.confirmTicket(tempTicketId, paymentMethod, useWallet, couponId)
         res.status(apiRes.status).json(apiRes)
     }
@@ -60,7 +57,6 @@ export class TicketController {
         const ticketId = req.params.ticketId
         const cancelledBy = req.body.cancelledBy as unknown as CancelledBy 
         const apiRes = await this._ticketUseCase.cancelTicket(ticketId, cancelledBy)
-        log(apiRes, 'response of cancelled ticket')
         res.status(apiRes.status).json(apiRes)
     }
 

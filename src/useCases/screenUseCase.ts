@@ -1,6 +1,6 @@
 import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
 import { STATUS_CODES } from "../infrastructure/constants/httpStausCodes";
-import { IApiScreenRes, IApiScreensRes, IScreen, IScreenRequirements } from "../interfaces/schema/screenSchema";
+import { IApiScreenRes, IApiScreensRes, IScreenRequirements } from "../interfaces/schema/screenSchema";
 import { IApiRes } from "../interfaces/common";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
 import { getAvailSeatData, getDefaultScreenSeatSetup } from "../infrastructure/helperFunctions/getScreenSeat";
@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { log } from "console";
 import { IAvailCatsOnScreen } from "../interfaces/schema/screenSeatSchema";
+import { IScreen } from "../entities/screen";
 
 export class ScreenUseCase {
     constructor(

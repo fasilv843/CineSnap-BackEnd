@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { ITicket } from "../../interfaces/schema/ticketSchema";
 import { baseTicketSchema } from "./base/baseTicketSchema";
+import { ITicket } from "../../entities/ticket";
 
 interface ITicketSchema extends Omit<ITicket, 'couponId'>, Document {
     couponId: Schema.Types.ObjectId
