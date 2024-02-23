@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 import { UserUseCase } from "../../useCases/userUseCase";
-import { GenerateOtp } from "../../infrastructure/utils/otpGenerator";
-import { Encrypt } from "../../infrastructure/utils/bcryptPassword";
+import { OTPGenerator } from "../../infrastructure/utils/otpGenerator";
 import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
 import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { STATUS_CODES } from "../../infrastructure/constants/httpStausCodes";
 import { IUser } from "../../entities/user";
+import { Encryptor } from "../../infrastructure/utils/bcryptPassword";
 
 
 export class UserController {
     constructor (
         private readonly _userUseCase : UserUseCase,
         // ! Restructure/ Modify This controller
-        private readonly otpGenerator : GenerateOtp,
-        private readonly encrypt : Encrypt
+        private readonly otpGenerator : OTPGenerator,
+        private readonly encrypt : Encryptor
     ){}
 
     async userRegister (req:Request, res: Response){

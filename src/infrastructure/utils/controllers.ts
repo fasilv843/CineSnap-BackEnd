@@ -34,24 +34,26 @@ import { ShowUseCase } from "../../useCases/showUseCase"
 import { TheaterUseCase } from "../../useCases/theaterUseCase"
 import { TicketUseCase } from "../../useCases/ticketUseCase"
 import { UserUseCase } from "../../useCases/userUseCase"
-import { Encrypt } from "./bcryptPassword"
-import { JWTToken } from "./jwtToken"
+import { Encryptor } from "./bcryptPassword"
+import { TokenGenerator } from "./jwtToken"
 import { MailSender } from "./nodemailer"
-import { GenerateOtp } from "./otpGenerator"
+import { OTPGenerator } from "./otpGenerator"
 
-const encrypt = new Encrypt()
-const jwtToken = new JWTToken()
+// Utils
+const encryptor = new Encryptor()
+const tokenGenerator = new TokenGenerator()
 const mailSender = new MailSender()
-const otpGenerator = new GenerateOtp()
+const otpGenerator = new OTPGenerator()
 
+// Repositories
 const adminRepository = new AdminRepository()
 const userRepository = new UserRepository()
 const thrRepository = new TheaterRepository()
 const movieRepository = new MovieRepository()
 const tempUserRepository = new TempUserRepository()
 const tempThrRepository = new TempTheaterRepository()
-const scnRepositoty = new ScreenRepository()
-const screenSeatRepositoty = new ScreenSeatRepository()
+const scnRepository = new ScreenRepository()
+const screenSeatRepository = new ScreenSeatRepository()
 const showRepository = new ShowRepository()
 const showSeatRepository = new ShowSeatsRepository()
 const chatRepository = new ChatRepository()
@@ -59,20 +61,22 @@ const ticketRepository = new TicketRepository()
 const tempTicketRepository = new TempTicketRepository()
 const couponRepository = new CouponRepository()
 
-const adminUseCase = new AdminUseCase(encrypt, adminRepository, jwtToken)
-const userUseCase = new UserUseCase(userRepository, tempUserRepository, encrypt, jwtToken, mailSender)
-const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encrypt, jwtToken, mailSender, otpGenerator, ticketRepository)
+// Use Cases
+const adminUseCase = new AdminUseCase(encryptor, adminRepository, tokenGenerator)
+const userUseCase = new UserUseCase(userRepository, tempUserRepository, encryptor, tokenGenerator, mailSender)
+const thrUseCase = new TheaterUseCase(thrRepository, tempThrRepository, encryptor, tokenGenerator, mailSender, otpGenerator, ticketRepository)
 const movieUseCase = new MovieUseCase(movieRepository)
-const scnUseCase = new ScreenUseCase(scnRepositoty, screenSeatRepositoty, thrRepository)
-const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepositoty, screenSeatRepositoty, showSeatRepository)
+const scnUseCase = new ScreenUseCase(scnRepository, screenSeatRepository, thrRepository)
+const showUseCase = new ShowUseCase(showRepository, movieRepository, scnRepository, screenSeatRepository, showSeatRepository)
 export const chatUseCase = new ChatUseCase(chatRepository)
 const ticketUseCase = new TicketUseCase(ticketRepository, tempTicketRepository, showRepository, showSeatRepository, thrRepository, userRepository, adminRepository, couponRepository, mailSender)
-const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepositoty, scnRepositoty)
+const screenSeatUseCase = new ScreenSeatUseCase(screenSeatRepository, scnRepository)
 const showSeatUseCase = new ShowSeatsUseCase(showSeatRepository)
 const couponUseCase = new CouponUseCase(couponRepository, thrRepository, tempTicketRepository, userRepository)
 
+// Controllers
 export const aController = new AdminController(adminUseCase, userUseCase, thrUseCase, ticketUseCase)
-export const uController = new UserController(userUseCase, otpGenerator, encrypt )
+export const uController = new UserController(userUseCase, otpGenerator, encryptor )
 export const tController = new TheaterController(thrUseCase)
 export const mController = new MovieController(movieUseCase)
 export const scnController = new ScreenController(scnUseCase)
