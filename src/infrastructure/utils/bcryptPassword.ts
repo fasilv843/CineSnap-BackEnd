@@ -1,7 +1,7 @@
-import { HashPassword } from "../../interfaces/hashPassword";
+import { IEncryptor } from "../../useCases/utils/encryptor";
 import bcrypt from 'bcrypt'
 
-export class Encrypt implements HashPassword {
+export class Encryptor implements IEncryptor {
 
     // To encrypt password using salt
     async encryptPassword (password: string): Promise<string> {

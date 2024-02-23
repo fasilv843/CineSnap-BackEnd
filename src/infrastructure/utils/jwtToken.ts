@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken'
-import { JWT } from "../../interfaces/jwt";
+import { ITokenGenerator } from "../../useCases/utils/tokenGenerator";
 import { accessTokenExp, refreshTokenExp, tempTokenExp } from '../constants/constants';
 
 
 
-export class JWTToken implements JWT{
+export class TokenGenerator implements ITokenGenerator{
 
     generateAccessToken(id: string): string {
         const KEY = process.env.JWT_SECRET_KEY
