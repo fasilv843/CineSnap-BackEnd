@@ -9,6 +9,7 @@ import { ShowSeatController } from "../../adapters/controllers/showSeatsControll
 import { TheaterController } from "../../adapters/controllers/theaterController"
 import { TicketController } from "../../adapters/controllers/ticketController"
 import { UserController } from "../../adapters/controllers/userController"
+
 import { AdminRepository } from "../repositories/adminRepository"
 import { ChatRepository } from "../repositories/chatRepository"
 import { CouponRepository } from "../repositories/couponRepository"
@@ -23,6 +24,7 @@ import { TempUserRepository } from "../repositories/tempUserRepository"
 import { TheaterRepository } from "../repositories/theaterRepository"
 import { TicketRepository } from "../repositories/ticketRepository"
 import { UserRepository } from "../repositories/userRepository"
+
 import { AdminUseCase } from "../../useCases/adminUseCase"
 import { ChatUseCase } from "../../useCases/chatUseCase"
 import { CouponUseCase } from "../../useCases/couponUseCase"
@@ -34,6 +36,7 @@ import { ShowUseCase } from "../../useCases/showUseCase"
 import { TheaterUseCase } from "../../useCases/theaterUseCase"
 import { TicketUseCase } from "../../useCases/ticketUseCase"
 import { UserUseCase } from "../../useCases/userUseCase"
+
 import { Encryptor } from "./bcryptPassword"
 import { TokenGenerator } from "./jwtToken"
 import { MailSender } from "./nodemailer"
