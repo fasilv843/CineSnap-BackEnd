@@ -2,8 +2,6 @@ import { log } from "console";
 import { OTP_TIMER } from "../infrastructure/constants/constants";
 import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { TempTheaterRepository } from "../infrastructure/repositories/tempTheaterRepository";
-import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
 import { IApiAuthRes, IApiRes, IApiTempAuthRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { IApiTempTheaterRes, ITempTheaterReq, ITempTheaterRes } from "../interfaces/schema/tempTheaterSchema";
 import { IApiTheaterAuthRes, IApiTheaterRes, ITheaterUpdate, ITheatersAndCount } from "../interfaces/schema/theaterSchema";
@@ -11,24 +9,26 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import fs from 'fs'
 import { IRevenueData } from "../interfaces/chart";
-import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
 import { calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
 import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
 import { IEncryptor } from "./utils/encryptor";
 import { ITokenGenerator } from "./utils/tokenGenerator";
 import { IMailSender } from "./utils/mailSender";
 import { IOTPGenerator } from "./utils/otpGenerator";
+import { ITheaterRepo } from "./repos/theaterRepo";
+import { ITempTheaterRepo } from "./repos/tempTheaterRepo";
+import { ITicketRepo } from "./repos/ticketRepo";
 
 
 export class TheaterUseCase {
     constructor(
-        private readonly theaterRepository: TheaterRepository,
-        private readonly tempTheaterRepository: TempTheaterRepository,
+        private readonly _theaterRepository: ITheaterRepo,
+        private readonly _tempTheaterRepository: ITempTheaterRepo,
+        private readonly _ticketRepository: ITicketRepo,
         private readonly _encryptor: IEncryptor,
         private readonly _tokenGenerator: ITokenGenerator,
         private readonly _mailer: IMailSender,
-        private readonly _otpGenerator: IOTPGenerator,
-        private readonly ticketRepository: TicketRepository
+        private readonly _otpGenerator: IOTPGenerator
     ) { }
 
     async verifyAndSaveTemporarily(theaterData: ITempTheaterReq): Promise<IApiTempAuthRes<ITempTheaterRes>> {
@@ -40,7 +40,7 @@ export class TheaterUseCase {
                 theaterData.otp = this._otpGenerator.generateOTP()
                 theaterData.password = await this._encryptor.encryptPassword(theaterData.password)
 
-                const tempTheater = await this.tempTheaterRepository.saveTheater(theaterData)
+                const tempTheater = await this._tempTheaterRepository.saveTheater(theaterData)
                 this.sendTimeoutOTP(tempTheater._id, tempTheater.email, tempTheater.otp)
                 const userAuthToken = this._tokenGenerator.generateTempToken(tempTheater._id)
 
@@ -62,7 +62,7 @@ export class TheaterUseCase {
         this._mailer.sendOTP(email, OTP)
 
         setTimeout(async () => {
-            await this.tempTheaterRepository.unsetTheaterOTP(id, email)
+            await this._tempTheaterRepository.unsetTheaterOTP(id, email)
         }, OTP_TIMER)
     }
 
@@ -70,10 +70,10 @@ export class TheaterUseCase {
         try {
             if (authToken) {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
-                const tempTheater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
+                const tempTheater = await this._tempTheaterRepository.findTempTheaterById(decoded.id)
                 if (tempTheater) {
                     const newOTP = this._otpGenerator.generateOTP()
-                    await this.tempTheaterRepository.updateTheaterOTP(tempTheater._id, tempTheater.email, newOTP)
+                    await this._tempTheaterRepository.updateTheaterOTP(tempTheater._id, tempTheater.email, newOTP)
                     this.sendTimeoutOTP(tempTheater._id, tempTheater.email, newOTP)
                     return get200Response(null)
                 } else {
@@ -91,10 +91,10 @@ export class TheaterUseCase {
         try {
             if (authToken) {
                 const decoded = jwt.verify(authToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload
-                const theater = await this.tempTheaterRepository.findTempTheaterById(decoded.id)
+                const theater = await this._tempTheaterRepository.findTempTheaterById(decoded.id)
                 if (theater) {
                     if (otp == theater.otp) {
-                        const savedTheater = await this.theaterRepository.saveTheater(theater)
+                        const savedTheater = await this._theaterRepository.saveTheater(theater)
                         const accessToken = this._tokenGenerator.generateAccessToken(savedTheater._id)
                         const refreshToken = this._tokenGenerator.generateRefreshToken(savedTheater._id)
                         return {
@@ -119,16 +119,16 @@ export class TheaterUseCase {
     }
 
     // async saveTheater(theaterData: ITheater): Promise<ITheater> {
-    //     return await this.theaterRepository.saveTheater(theaterData)
+    //     return await this._theaterRepository.saveTheater(theaterData)
     // }
 
     async isEmailExist(email: string): Promise<boolean> {
-        const isUserExist = await this.theaterRepository.findByEmail(email)
+        const isUserExist = await this._theaterRepository.findByEmail(email)
         return Boolean(isUserExist)
     }
 
     async verifyLogin(email: string, password: string): Promise<IApiTheaterAuthRes> {
-        const theaterData = await this.theaterRepository.findByEmail(email)
+        const theaterData = await this._theaterRepository.findByEmail(email)
         if (theaterData !== null) {
 
             if (theaterData.isBlocked) {
@@ -178,8 +178,8 @@ export class TheaterUseCase {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
             if (!searchQuery) searchQuery = ''
-            const theaters = await this.theaterRepository.findAllTheaters(page, limit, searchQuery)
-            const theaterCount = await this.theaterRepository.findTheaterCount(searchQuery)
+            const theaters = await this._theaterRepository.findAllTheaters(page, limit, searchQuery)
+            const theaterCount = await this._theaterRepository.findTheaterCount(searchQuery)
             return get200Response({ theaters, theaterCount })
         } catch (error) {
             return get500Response(error as Error)
@@ -189,7 +189,7 @@ export class TheaterUseCase {
     // To Block Theater
     async blockTheater(theaterId: string) {
         try {
-            await this.theaterRepository.blockTheater(theaterId)
+            await this._theaterRepository.blockTheater(theaterId)
             return get200Response(null)
         } catch (error) {
             return get500Response(error as Error)
@@ -198,18 +198,18 @@ export class TheaterUseCase {
 
     // Returns Every theaters within a radius
     async getNearestTheaters(lon: number, lat: number, radius: number) {
-        return await this.theaterRepository.getNearestTheaters(lon, lat, radius)
+        return await this._theaterRepository.getNearestTheaters(lon, lat, radius)
     }
 
     // Returns theaters within radius maxDistance, and limit count
     async getNearestTheatersByLimit(lon: number, lat: number, limit: number, maxDistance: number) {
-        return await this.theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
+        return await this._theaterRepository.getNearestTheatersByLimit(lon, lat, limit, maxDistance)
     }
 
     // To update theater data, from theater profile
     async updateTheater(theaterId: string, theater: ITheaterUpdate): Promise<IApiTheaterRes> {
         try {
-            const theaterData = await this.theaterRepository.updateTheater(theaterId, theater)
+            const theaterData = await this._theaterRepository.updateTheater(theaterId, theater)
             if (theaterData !== null) {
                 return get200Response(theaterData)
             } else {
@@ -224,7 +224,7 @@ export class TheaterUseCase {
     async getTheaterData(theaterId: string): Promise<IApiTheaterRes> {
         try {
             if (theaterId === undefined) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
-            const theater = await this.theaterRepository.findById(theaterId)
+            const theater = await this._theaterRepository.findById(theaterId)
             if (theater === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             return get200Response(theater)
         } catch (error) {
@@ -240,11 +240,11 @@ export class TheaterUseCase {
             }
 
             if (action === 'approve') {
-                const theater = await this.theaterRepository.approveTheater(theaterId)
+                const theater = await this._theaterRepository.approveTheater(theaterId)
                 if (theater) return get200Response(theater)
                 else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             } else {
-                const theater = await this.theaterRepository.rejectTheater(theaterId)
+                const theater = await this._theaterRepository.rejectTheater(theaterId)
                 if (theater) return get200Response(theater)
                 else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
             }
@@ -259,13 +259,13 @@ export class TheaterUseCase {
         try {
             if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
             log(theaterId, fileName, 'theaterId, filename from use case')
-            const theater = await this.theaterRepository.findById(theaterId)
+            const theater = await this._theaterRepository.findById(theaterId)
             // Deleting theater dp if it already exist
             if (theater && theater.profilePic) {
                 const filePath = path.join(__dirname, `../../images/${theater.profilePic}`)
                 fs.unlinkSync(filePath);
             }
-            const updatedTheater = await this.theaterRepository.updateTheaterProfilePic(theaterId, fileName)
+            const updatedTheater = await this._theaterRepository.updateTheaterProfilePic(theaterId, fileName)
             if (updatedTheater) return get200Response(updatedTheater)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
         } catch (error) {
@@ -276,14 +276,14 @@ export class TheaterUseCase {
     // To delete Theater Profile
     async removeTheaterProfilePic (theaterId: string): Promise<IApiTheaterRes> {
         try {
-            const user = await this.theaterRepository.findById(theaterId)
+            const user = await this._theaterRepository.findById(theaterId)
             if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
             // Deleting user dp if it already exist
             if (user.profilePic) {
                 const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
                 fs.unlinkSync(filePath);
             }
-            const updatedTheater = await this.theaterRepository.removeTheaterProfilePic(theaterId)
+            const updatedTheater = await this._theaterRepository.removeTheaterProfilePic(theaterId)
             if (updatedTheater) {
                 return get200Response(updatedTheater) 
             }
@@ -298,7 +298,7 @@ export class TheaterUseCase {
     async addToWallet (theaterId: string, amount: number): Promise<IApiTheaterRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
-            const user = await this.theaterRepository.updateWallet(theaterId, amount, 'Added To Wallet')
+            const user = await this._theaterRepository.updateWallet(theaterId, amount, 'Added To Wallet')
 
             if (user !== null) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -311,7 +311,7 @@ export class TheaterUseCase {
     // To get wallet history of a theater
     async getWalletHistory (theaterId: string, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
         try {
-            const userWallet = await this.theaterRepository.getWalletHistory(theaterId, page, limit)
+            const userWallet = await this._theaterRepository.getWalletHistory(theaterId, page, limit)
             if (userWallet) return get200Response(userWallet)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid theaterId')
         } catch (error) {
@@ -331,7 +331,7 @@ export class TheaterUseCase {
                 endDate = new Date();
             }
             
-            const ticketsOfTheater = await this.ticketRepository.getTicketsOfTheaterByTime(theaterId, startDate, endDate)
+            const ticketsOfTheater = await this._ticketRepository.getTicketsOfTheaterByTime(theaterId, startDate, endDate)
             log(ticketsOfTheater, 'tickets to handle in get revenue use case')
             const addedAmt: Record<string, number> = {}
             ticketsOfTheater.forEach(tkt => {

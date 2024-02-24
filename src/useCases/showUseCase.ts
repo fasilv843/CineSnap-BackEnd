@@ -3,21 +3,21 @@ import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { isPast, isToday } from "../infrastructure/helperFunctions/date";
 import { getEndingTime } from "../infrastructure/helperFunctions/getMovieEnding";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { MovieRepository } from "../infrastructure/repositories/movieRepository";
-import { ShowRepository } from "../infrastructure/repositories/showRepository";
 import { IApiShowRes, IApiShowsRes, IShowRequirements, IShowToSave } from "../interfaces/schema/showSchema";
-import { ScreenRepository } from "../infrastructure/repositories/screenRepository";
-import { ScreenSeatRepository } from "../infrastructure/repositories/screenSeatRepository";
-import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
 import { createEmptyShowSeat } from "../infrastructure/helperFunctions/showSeat";
+import { IShowRepo } from "./repos/showRepo";
+import { IMovieRepo } from "./repos/movieRepo";
+import { IScreenRepo } from "./repos/screenRepo";
+import { IScreenSeatRepo } from "./repos/screenSeatRepo";
+import { IShowSeatRepo } from "./repos/showSeatRepo";
 
 export class ShowUseCase {
     constructor (
-        private readonly showRepository: ShowRepository,
-        private readonly movieRepository: MovieRepository,
-        private readonly screenRepository: ScreenRepository,
-        private readonly screenSeatRepository: ScreenSeatRepository,
-        private readonly showSeatRepository: ShowSeatsRepository,
+        private readonly _showRepository: IShowRepo,
+        private readonly _movieRepository: IMovieRepo,
+        private readonly _screenRepository: IScreenRepo,
+        private readonly _screenSeatRepository: IScreenSeatRepo,
+        private readonly _showSeatRepository: IShowSeatRepo,
     ) {}
 
     async findShowsOnTheater (theaterId: string, dateStr: string | undefined, user: 'User' | 'Theater'): Promise<IApiShowsRes> {
@@ -36,7 +36,7 @@ export class ShowUseCase {
                 const to = new Date(date);
                 to.setHours(23, 59, 59, 999);
                 // console.log(typeof date, 'type from usecase')
-                const shows = await this.showRepository.findShowsOnDate(theaterId, from, to)
+                const shows = await this._showRepository.findShowsOnDate(theaterId, from, to)
                 return get200Response(shows)
             }
         } catch (error) {
@@ -46,23 +46,21 @@ export class ShowUseCase {
 
     async addShow(show: IShowRequirements): Promise<IApiShowRes> {
         try {
-            // console.log(show, 'show data from use case');
-            // console.log(show.movieId, show.screenId, show.startTime);
             if (!show.movieId || !show.screenId || !show.startTime) {
                 return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Bad Request, data missing')
             }
 
-            const movie = await this.movieRepository.findMovieById(show.movieId)
+            const movie = await this._movieRepository.findMovieById(show.movieId)
             if (movie !== null) {
                 const endingTime = getEndingTime(show.startTime, movie.duration)
-                const collidedShows = await this.showRepository.getCollidingShowsOnTheScreen(show.screenId, show.startTime, endingTime)
+                const collidedShows = await this._showRepository.getCollidingShowsOnTheScreen(show.screenId, show.startTime, endingTime)
                 if (collidedShows.length === 0) {
-                    const screen = await this.screenRepository.findScreenById(show.screenId)
+                    const screen = await this._screenRepository.findScreenById(show.screenId)
                     if (screen) {
-                        const screenSeat = await this.screenSeatRepository.findScreenSeatById(screen.seatId)
+                        const screenSeat = await this._screenSeatRepository.findScreenSeatById(screen.seatId)
                         if (screenSeat) {
                             const showSeatToSave = createEmptyShowSeat(screenSeat)
-                            const savedShowSeat = await this.showSeatRepository.saveShowSeat(showSeatToSave)
+                            const savedShowSeat = await this._showSeatRepository.saveShowSeat(showSeatToSave)
                             const showTosave: IShowToSave = {
                                 movieId: movie._id,
                                 screenId: screen._id,
@@ -72,7 +70,7 @@ export class ShowUseCase {
                                 availableSeatCount: screen.seatsCount,
                                 seatId: savedShowSeat._id
                             }
-                            const savedShow = await this.showRepository.saveShow(showTosave)
+                            const savedShow = await this._showRepository.saveShow(showTosave)
                             return get200Response(savedShow)
                         } else {
                             return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Something went wrong, seatId of screen missing')
@@ -94,7 +92,7 @@ export class ShowUseCase {
     async getShowDetails (showId: string): Promise<IApiShowRes> {
         try {
             if (showId) {
-                const show = await this.showRepository.getShowDetails(showId)
+                const show = await this._showRepository.getShowDetails(showId)
                 if (show !== null) return get200Response(show)
                 else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Show does not exist on requested Id')
             } else {

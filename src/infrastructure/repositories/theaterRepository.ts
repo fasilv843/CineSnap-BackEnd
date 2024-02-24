@@ -70,10 +70,6 @@ export class TheaterRepository implements ITheaterRepo {
         return await theaterModel.findById({ _id: id })
     }
 
-    // async findByLocation(location: ILocation): Promise<ITheater | null> {
-    //     throw new Error("Method not implemented.");
-    // }
-
     async findAllTheaters(page: number, limit: number, searchQuery: string): Promise<ITheaterRes[]> {
         const regex = new RegExp(searchQuery, 'i')
         return await theaterModel.find({
@@ -172,10 +168,6 @@ export class TheaterRepository implements ITheaterRepo {
     }
 
     async updateWallet (theaterId: string, amount: number, message: string): Promise<ITheaterRes | null> {
-        // const walletHistory: Omit<IWalletHistory, 'date'> = {
-        //     amount,
-        //     message
-        // }
         return await theaterModel.findByIdAndUpdate(
             { _id: theaterId },
             {

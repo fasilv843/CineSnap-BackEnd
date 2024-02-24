@@ -2,8 +2,6 @@ import { log } from "console";
 import { OTP_TIMER } from "../infrastructure/constants/constants";
 import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { TempUserRepository } from "../infrastructure/repositories/tempUserRepository";
-import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiRes, IWalletHistoryAndCount } from "../interfaces/common";
 import { ITempUserReq, ITempUserRes } from "../interfaces/schema/tempUserSchema";
 import { IApiUserAuthRes, IApiUserRes, IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate, IUsersAndCount } from "../interfaces/schema/userSchema";
@@ -13,24 +11,26 @@ import { IUser } from "../entities/user";
 import { IEncryptor } from "./utils/encryptor";
 import { ITokenGenerator } from "./utils/tokenGenerator";
 import { IMailSender } from "./utils/mailSender";
+import { IUserRepo } from "./repos/userRepo";
+import { ITempUserRepo } from "./repos/tempUserRepo";
 
 
 export class UserUseCase {
     constructor(
-        private readonly userRepository: UserRepository,
-        private readonly tempUserRepository: TempUserRepository,
+        private readonly _userRepository: IUserRepo,
+        private readonly _tempUserRepository: ITempUserRepo,
         private readonly _encryptor: IEncryptor,
         private readonly _tokenGenerator: ITokenGenerator,
         private readonly _mailer: IMailSender,
     ) { }
 
     async isEmailExist(email: string): Promise<IUser | null> {
-        const isUserExist = await this.userRepository.findByEmail(email)
+        const isUserExist = await this._userRepository.findByEmail(email)
         return isUserExist
     }
 
     async saveUserDetails(userData: IUserAuth | IUserSocialAuth): Promise<IApiUserAuthRes> {
-        const user = await this.userRepository.saveUser(userData)
+        const user = await this._userRepository.saveUser(userData)
         // console.log('user data saved, on usecase', user);
         const accessToken = this._tokenGenerator.generateAccessToken(user._id)
         const refreshToken = this._tokenGenerator.generateRefreshToken(user._id)
@@ -44,18 +44,18 @@ export class UserUseCase {
     }
 
     async saveUserTemporarily(userData: ITempUserReq): Promise<ITempUserRes & { userAuthToken: string}> {
-        const user = await this.tempUserRepository.saveUser(userData)
+        const user = await this._tempUserRepository.saveUser(userData)
         // console.log(user, 'temp user saved');
         const userAuthToken = this._tokenGenerator.generateTempToken(user._id) 
         return { ...JSON.parse(JSON.stringify(user)), userAuthToken} 
     }
 
     async updateOtp(id: string, email: string, OTP: number) {
-        return await this.tempUserRepository.updateOTP(id, email, OTP)
+        return await this._tempUserRepository.updateOTP(id, email, OTP)
     }
 
     async findTempUserById(id: string){
-        return await this.tempUserRepository.findById(id)
+        return await this._tempUserRepository.findById(id)
     }
 
     async handleSocialSignUp(name: string, email: string, profilePic: string | undefined): Promise<IApiUserAuthRes>{
@@ -76,7 +76,7 @@ export class UserUseCase {
                 }
             }else{
                 if(!emailData.isGoogleAuth) {
-                    await this.userRepository.updateGoogleAuth(emailData._id, profilePic)
+                    await this._userRepository.updateGoogleAuth(emailData._id, profilePic)
                 }
                 const accessToken = this._tokenGenerator.generateAccessToken(emailData._id)
                 const refreshToken = this._tokenGenerator.generateRefreshToken(emailData._id)
@@ -97,7 +97,7 @@ export class UserUseCase {
             this._mailer.sendOTP(email, OTP)
                     
             setTimeout(async() => {
-                await this.tempUserRepository.unsetOtp(id, email)
+                await this._tempUserRepository.unsetOtp(id, email)
             }, OTP_TIMER)
 
         } catch (error) {
@@ -108,7 +108,7 @@ export class UserUseCase {
 
 
     async verifyLogin(email: string, password: string): Promise<IApiUserAuthRes> {
-        const userData = await this.userRepository.findByEmail(email)
+        const userData = await this._userRepository.findByEmail(email)
         if (userData !== null) {
             if (userData.isBlocked) {
                 return {
@@ -157,8 +157,8 @@ export class UserUseCase {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
             if (!searchQuery) searchQuery = ''
-            const users = await this.userRepository.findAllUsers(page, limit, searchQuery)
-            const userCount = await this.userRepository.findUserCount(searchQuery)
+            const users = await this._userRepository.findAllUsers(page, limit, searchQuery)
+            const userCount = await this._userRepository.findUserCount(searchQuery)
             return get200Response({ users, userCount })
         } catch (error) {
             return get500Response(error as Error)
@@ -167,7 +167,7 @@ export class UserUseCase {
 
     async blockUser(userId: string) {
         try {
-            await this.userRepository.blockUnblockUser(userId)
+            await this._userRepository.blockUnblockUser(userId)
             return get200Response(null)
         } catch (error) {
             return get500Response(error as Error)
@@ -176,7 +176,7 @@ export class UserUseCase {
 
     async getUserData (userId: string): Promise<IApiUserRes> {
         try {
-            const user = await this.userRepository.getUserData(userId)
+            const user = await this._userRepository.getUserData(userId)
             if(user) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -186,7 +186,7 @@ export class UserUseCase {
 
     async updateUserData (userId: string, user: IUserUpdate): Promise<IApiUserRes> {
         try {
-            const updatedUser = await this.userRepository.updateUser(userId, user)
+            const updatedUser = await this._userRepository.updateUser(userId, user)
             return get200Response(updatedUser as IUserRes)
         } catch (error) {
             return get500Response(error as Error)
@@ -197,13 +197,13 @@ export class UserUseCase {
         try {
             if (!fileName) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'We didnt got the image, try again')
             log(userId, fileName, 'userId, filename from use case')
-            const user = await this.userRepository.findById(userId)
+            const user = await this._userRepository.findById(userId)
             // Deleting user dp if it already exist
             if (user && user.profilePic) {
                 const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
                 fs.unlinkSync(filePath);
             }
-            const updatedUser = await this.userRepository.updateUserProfilePic(userId, fileName)
+            const updatedUser = await this._userRepository.updateUserProfilePic(userId, fileName)
             if (updatedUser) return get200Response(updatedUser)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
         } catch (error) {
@@ -213,14 +213,14 @@ export class UserUseCase {
 
     async removeUserProfileDp (userId: string): Promise<IApiUserRes> {
         try {
-            const user = await this.userRepository.findById(userId)
+            const user = await this._userRepository.findById(userId)
             if (!user) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userId')
             // Deleting user dp if it already exist
             if (user.profilePic) {
                 const filePath = path.join(__dirname, `../../images/${user.profilePic}`)
                 fs.unlinkSync(filePath);
             }
-            const updatedUser = await this.userRepository.removeUserProfileDp(userId)
+            const updatedUser = await this._userRepository.removeUserProfileDp(userId)
             if (updatedUser) {
                 return get200Response(updatedUser) 
             }
@@ -234,7 +234,7 @@ export class UserUseCase {
     async addToWallet (userId: string, amount: number): Promise<IApiUserRes> {
         try {
             if (typeof amount !== 'number') return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Amount recieved is not a number')
-            const user = await this.userRepository.updateWallet(userId, amount, 'Added To Wallet')
+            const user = await this._userRepository.updateWallet(userId, amount, 'Added To Wallet')
 
             if (user !== null) return get200Response(user)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -246,7 +246,7 @@ export class UserUseCase {
 
     async getWalletHistory (userId: string, page: number, limit: number): Promise<IApiRes<IWalletHistoryAndCount | null>> {
         try {
-            const userWallet = await this.userRepository.getWalletHistory(userId, page, limit)
+            const userWallet = await this._userRepository.getWalletHistory(userId, page, limit)
             if (userWallet) return get200Response(userWallet)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Invalid userid')
         } catch (error) {

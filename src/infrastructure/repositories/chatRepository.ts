@@ -3,9 +3,10 @@ import { chatModel } from "../db/chatModel";
 import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../interfaces/schema/chatSchems";
 import { ITheaterRes } from "../../interfaces/schema/theaterSchema";
 import { IUserRes } from "../../interfaces/schema/userSchema";
+import { IChatRepo } from "../../useCases/repos/chatRepo";
 
 
-export class ChatRepository { // implements IChatRepo
+export class ChatRepository implements IChatRepo {
 
     async saveMessage (chatReqs: IChatReqs): Promise<IChatRes | null> {
         // console.log(chatReqs, 'chat data from repo');

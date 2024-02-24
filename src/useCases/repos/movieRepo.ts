@@ -3,12 +3,16 @@ import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
 
 export interface IMovieRepo {
     saveMovieDetails(movie: ITMDBMovie): Promise<IMovie | null>
-    // findAllMovies(): Promise<IMovie[]>
-    findMovieByLanguage(lang:string): Promise<IMovie[]>
+    findMoviesLazily(page: number, genreFilters: number[], langFilters: string[], availability: string): Promise<IMovie[]>
+    findMovieByTmdbId(id: number): Promise<IMovie | null>
+    findMovieByLanguage(lang: string): Promise<IMovie[]>
     findMovieByGenre(genreId: number): Promise<IMovie[]>
     findMovieByTitle(title: string, isAdmin: boolean): Promise<IMovie[]>
-    findMovieById(id: string): Promise<IMovie | null>
+    findMovieById(movieId: string): Promise<IMovie | null>
     findUpcomingMovies(): Promise<IMovie[]>
-    findMovieByTmdbId(id: number): Promise<IMovie | null>
     deleteMovie(id: string): Promise<void | null>
+    findBannerMovies(): Promise<IMovie[]>
+    fetchTmdbMovieIds(): Promise<number[]>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getFilters(): Promise<any> //! Create a type 
 }

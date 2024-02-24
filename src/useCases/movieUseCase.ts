@@ -1,13 +1,13 @@
 import { log } from "console";
 import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
-import { MovieRepository } from "../infrastructure/repositories/movieRepository";
 import { IApiCSMovieRes, IApiCSMoviesRes, IApiFilters, ITMDBMovie } from "../interfaces/schema/movieSchema";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
+import { IMovieRepo } from "./repos/movieRepo";
 
 
 export class MovieUseCase {
     constructor (
-        private readonly movieRepository: MovieRepository
+        private readonly _movieRepository: IMovieRepo
     ) {}
 
     async saveMovie(movieData: ITMDBMovie): Promise<IApiCSMovieRes>{
@@ -19,7 +19,7 @@ export class MovieUseCase {
                     data: null
                 }
             }
-            const movie =  await this.movieRepository.saveMovieDetails(movieData)
+            const movie =  await this._movieRepository.saveMovieDetails(movieData)
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
@@ -35,7 +35,7 @@ export class MovieUseCase {
         try {
             console.log(availability, 'availability from usecase')
             if (availability === undefined) availability = 'Available'
-            const movies = await this.movieRepository.findMoviesLazily(page, genreFilters, langFilters, availability)
+            const movies = await this._movieRepository.findMoviesLazily(page, genreFilters, langFilters, availability)
             return get200Response(movies)
         } catch (error) {
             log(error)
@@ -45,7 +45,7 @@ export class MovieUseCase {
 
     async searchMovie(title: string, isAdmin: boolean): Promise<IApiCSMoviesRes>{
         try {
-            const movies = await this.movieRepository.findMovieByTitle(title, isAdmin)
+            const movies = await this._movieRepository.findMovieByTitle(title, isAdmin)
             return get200Response(movies)
         } catch (error) {
             return get500Response(error as Error)
@@ -53,16 +53,16 @@ export class MovieUseCase {
     }
 
     async findMovieByGenre(genreId: number){
-        return await this.movieRepository.findMovieByGenre(genreId)
+        return await this._movieRepository.findMovieByGenre(genreId)
     }
 
     async findMoviesByLanguage(lang: string){
-        return await this.movieRepository.findMovieByLanguage(lang)
+        return await this._movieRepository.findMovieByLanguage(lang)
     }
 
     async findMovieById(movieId: string): Promise<IApiCSMovieRes> {
         try {
-            const movie = await this.movieRepository.findMovieById(movieId)
+            const movie = await this._movieRepository.findMovieById(movieId)
 
             if (movie !== null) return get200Response(movie)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
@@ -72,12 +72,12 @@ export class MovieUseCase {
     }
 
     async findUpcomingMovies(){
-        return await this.movieRepository.findUpcomingMovies()
+        return await this._movieRepository.findUpcomingMovies()
     }
 
     async deleteMovie(movieId: string): Promise<IApiCSMovieRes>{
         try {
-            await this.movieRepository.deleteMovie(movieId)
+            await this._movieRepository.deleteMovie(movieId)
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
@@ -90,7 +90,7 @@ export class MovieUseCase {
 
     async getBannerMovies (): Promise<IApiCSMoviesRes> {
         try {
-            const movies = await this.movieRepository.findBannerMovies()
+            const movies = await this._movieRepository.findBannerMovies()
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
@@ -103,7 +103,7 @@ export class MovieUseCase {
 
     async getMovieIds (): Promise<{status: number, message: string, data: number[] | null}> {
         try {
-            const ids = await this.movieRepository.fetchTmdbMovieIds()
+            const ids = await this._movieRepository.fetchTmdbMovieIds()
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',
@@ -116,7 +116,7 @@ export class MovieUseCase {
 
     async getFilters (): Promise<IApiFilters> {
         try {
-            const { languages, genres } = await this.movieRepository.getFilters()
+            const { languages, genres } = await this._movieRepository.getFilters()
             return {
                 status: STATUS_CODES.OK,
                 message: 'Success',

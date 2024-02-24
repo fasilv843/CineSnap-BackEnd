@@ -2,7 +2,7 @@ import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTh
 
 export interface ITempTheaterRepo {
     saveTheater(theater: ITempTheaterReq): Promise<ITempTheaterRes>
-    // findByEmail(email: string): Promise<ITempTheaterRes | null>
-    // findById(id: string): Promise<ITempTheaterRes | null>
-    unsetTheaterOTP (id: string, email: string ): Promise<ITempTheaterRes | null>
+    unsetTheaterOTP(id: string, email: string): Promise<ITempTheaterRes | null>
+    findTempTheaterById(id: string): Promise<ITempTheaterRes | null>
+    updateTheaterOTP(id: string, email: string, OTP: number): Promise<ITempTheaterRes | null>
 }

@@ -1,17 +1,9 @@
 import mongoose from "mongoose";
 import { STATUS_CODES } from "../infrastructure/constants/httpStatusCodes";
 import { get200Response, get500Response, getErrorResponse } from "../infrastructure/helperFunctions/response";
-import { ShowRepository } from "../infrastructure/repositories/showRepository";
-import { TempTicketRepository } from "../infrastructure/repositories/tempTicketRepository";
-import { TheaterRepository } from "../infrastructure/repositories/theaterRepository";
-import { TicketRepository } from "../infrastructure/repositories/ticketRepository";
-import { UserRepository } from "../infrastructure/repositories/userRepository";
 import { IApiSeatsRes, IApiTempTicketRes, IApiTicketRes, IApiTicketsRes, ITempTicketReqs, ITempTicketRes, ITicketRes, ITicketsAndCount } from "../interfaces/schema/ticketSchema";
-import { AdminRepository } from "../infrastructure/repositories/adminRepository";
 import { log } from "console";
-import { ShowSeatsRepository } from "../infrastructure/repositories/showSeatRepository";
 import { ICouponRes } from "../interfaces/schema/couponSchema";
-import { CouponRepository } from "../infrastructure/repositories/couponRepository";
 import { IRevenueData } from "../interfaces/chart";
 import { getDateKeyWithInterval } from "../infrastructure/helperFunctions/dashboardHelpers";
 import { calculateAdminShare, calculateRefundShare, calculateTheaterShare } from "../infrastructure/helperFunctions/calculateTheaterShare";
@@ -21,17 +13,25 @@ import { CancelledBy, PaymentMethod } from "../entities/common";
 import { IShow } from "../entities/show";
 import { IApiRes } from "../interfaces/common";
 import { IMailSender } from "./utils/mailSender";
+import { ITicketRepo } from "./repos/ticketRepo";
+import { ITempTicketRepo } from "./repos/tempTicketRepo";
+import { IShowRepo } from "./repos/showRepo";
+import { IShowSeatRepo } from "./repos/showSeatRepo";
+import { ITheaterRepo } from "./repos/theaterRepo";
+import { IUserRepo } from "./repos/userRepo";
+import { IAdminRepo } from "./repos/adminRepo";
+import { ICouponRepo } from "./repos/couponRepo";
 
 export class TicketUseCase {
     constructor(
-        private readonly ticketRepository: TicketRepository,
-        private readonly tempTicketRepository: TempTicketRepository,
-        private readonly showRepository: ShowRepository,
-        private readonly showSeatRepository: ShowSeatsRepository,
-        private readonly theaterRepository: TheaterRepository,
-        private readonly userRepository: UserRepository,
-        private readonly adminRepository: AdminRepository,
-        private readonly couponRepository: CouponRepository,
+        private readonly _ticketRepository: ITicketRepo,
+        private readonly _tempTicketRepository: ITempTicketRepo,
+        private readonly _showRepository: IShowRepo,
+        private readonly _showSeatRepository: IShowSeatRepo,
+        private readonly _theaterRepository: ITheaterRepo,
+        private readonly _userRepository: IUserRepo,
+        private readonly _adminRepository: IAdminRepo,
+        private readonly _couponRepository: ICouponRepo,
         private readonly _mailSender: IMailSender
     ) { }
 
@@ -39,7 +39,7 @@ export class TicketUseCase {
         try {
             if (new Date(ticketReqs.startTime) < new Date()) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Show Already Started')
             log(ticketReqs, 'ticketReqs for tempTicket')
-            const ticketData = await this.tempTicketRepository.saveTicketDataTemporarily(ticketReqs)
+            const ticketData = await this._tempTicketRepository.saveTicketDataTemporarily(ticketReqs)
             if (ticketData !== null) return get200Response(ticketData)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -49,7 +49,7 @@ export class TicketUseCase {
 
     async getHoldedSeats(showId: string): Promise<IApiSeatsRes> {
         try {
-            const seats = await this.tempTicketRepository.getHoldedSeats(showId)
+            const seats = await this._tempTicketRepository.getHoldedSeats(showId)
             log(seats, 'holded seats')
             return get200Response(seats)
         } catch (error) {
@@ -59,7 +59,7 @@ export class TicketUseCase {
 
     async getTempTicketData(ticketId: string): Promise<IApiTempTicketRes> {
         try {
-            const ticketData = await this.tempTicketRepository.getTicketData(ticketId)
+            const ticketData = await this._tempTicketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -69,7 +69,7 @@ export class TicketUseCase {
 
     async getTicketData(ticketId: string): Promise<IApiTicketRes> {
         try {
-            const ticketData = await this.ticketRepository.getTicketData(ticketId)
+            const ticketData = await this._ticketRepository.getTicketData(ticketId)
             if (ticketData) return get200Response(ticketData)
             else return getErrorResponse(STATUS_CODES.BAD_REQUEST)
         } catch (error) {
@@ -79,31 +79,31 @@ export class TicketUseCase {
 
     async confirmTicket(tempTicketId: string, paymentMethod: PaymentMethod, useWallet: boolean, couponId?: string): Promise<IApiTicketRes> {
         try {
-            const tempTicket = await this.tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
+            const tempTicket = await this._tempTicketRepository.getTicketDataWithoutPopulate(tempTicketId)
             let couponData: ICouponRes | null = null
-            if (couponId) couponData = await this.couponRepository.findCouponById(couponId)
+            if (couponId) couponData = await this._couponRepository.findCouponById(couponId)
             log(tempTicket, 'tempTicket from confirmTicket use case')
             if (tempTicket !== null) {
                 const tempTicketData = JSON.parse(JSON.stringify(tempTicket)) as ITempTicketRes
-                const show = await this.showRepository.getShowDetails(tempTicket.showId)
+                const show = await this._showRepository.getShowDetails(tempTicket.showId)
                 if (show) {
-                    await this.showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
+                    await this._showSeatRepository.markAsBooked(show.seatId, tempTicketData.diamondSeats, tempTicketData.goldSeats, tempTicketData.silverSeats)
 
                     let confirmedTicket: ITicketRes
                     if (couponData) {
-                        confirmedTicket = await this.ticketRepository.saveTicket({ ...tempTicketData, paymentMethod, couponId: couponData._id })
+                        confirmedTicket = await this._ticketRepository.saveTicket({ ...tempTicketData, paymentMethod, couponId: couponData._id })
                     } else {
-                        confirmedTicket = await this.ticketRepository.saveTicket({ ...tempTicketData, paymentMethod })
+                        confirmedTicket = await this._ticketRepository.saveTicket({ ...tempTicketData, paymentMethod })
                     }
 
                     log(confirmedTicket, 'confirmedTicket')
                     if (paymentMethod === 'Wallet') {
-                        await this.userRepository.updateWallet(confirmedTicket.userId, -confirmedTicket.totalPrice, 'Booked a show')
+                        await this._userRepository.updateWallet(confirmedTicket.userId, -confirmedTicket.totalPrice, 'Booked a show')
                     }
-                    const user = await this.userRepository.findById(confirmedTicket.userId)
+                    const user = await this._userRepository.findById(confirmedTicket.userId)
                     if (user) {
                         if (useWallet) {
-                            await this.userRepository.updateWallet(confirmedTicket.userId, -user.wallet, 'For booking Ticket')
+                            await this._userRepository.updateWallet(confirmedTicket.userId, -user.wallet, 'For booking Ticket')
                         }
                     } else {
                         return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'userid invalid')
@@ -112,7 +112,7 @@ export class TicketUseCase {
                     const adminShare = calculateAdminShare(confirmedTicket)
 
                     if (couponData) {
-                        await this.userRepository.addToUsedCoupons(confirmedTicket.userId, couponData._id, confirmedTicket._id)
+                        await this._userRepository.addToUsedCoupons(confirmedTicket.userId, couponData._id, confirmedTicket._id)
                         if (couponData.discountType === 'Fixed Amount') {
                             theaterShare -= couponData.discount
                         } else if (couponData.discountType === 'Percentage') {
@@ -120,10 +120,10 @@ export class TicketUseCase {
                         }
                     }
                     log(paymentMethod, 'paymentMethod')
-                    await this.theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Profit from Ticket')
-                    await this.adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
+                    await this._theaterRepository.updateWallet(tempTicket.theaterId, theaterShare, 'Profit from Ticket')
+                    await this._adminRepository.updateWallet(adminShare, 'Fee for booking ticket')
 
-                    const populatedTicket = await this.ticketRepository.getTicketData(confirmedTicket._id) as ITicketRes
+                    const populatedTicket = await this._ticketRepository.getTicketData(confirmedTicket._id) as ITicketRes
                     await this._mailSender.sendBookingSuccessMail(user.email, populatedTicket)
                     return get200Response(confirmedTicket)
                 } else {
@@ -139,7 +139,7 @@ export class TicketUseCase {
 
     async getTicketsOfUser(userId: string): Promise<IApiTicketsRes> {
         try {
-            const ticketsOfUser = await this.ticketRepository.getTicketsByUserId(userId)
+            const ticketsOfUser = await this._ticketRepository.getTicketsByUserId(userId)
             return get200Response(ticketsOfUser)
         } catch (error) {
             return get500Response(error as Error)
@@ -148,7 +148,7 @@ export class TicketUseCase {
 
     async getTicketsOfShow(showId: string): Promise<IApiTicketsRes> {
         try {
-            const ticketsOfShow = await this.ticketRepository.getTicketsByShowId(showId)
+            const ticketsOfShow = await this._ticketRepository.getTicketsByShowId(showId)
             return get200Response(ticketsOfShow)
         } catch (error) {
             return get500Response(error as Error)
@@ -157,7 +157,7 @@ export class TicketUseCase {
 
     async cancelTicket(ticketId: string, cancelledBy: CancelledBy): Promise<IApiTicketRes> {
         try {
-            const ticket = await this.ticketRepository.findTicketById(ticketId)
+            const ticket = await this._ticketRepository.findTicketById(ticketId)
             if (ticket === null) return getErrorResponse(STATUS_CODES.BAD_REQUEST, 'Ticket id not available')
 
             const { refundByTheater, refundByAdmin } = calculateRefundShare(ticket, cancelledBy)
@@ -168,18 +168,18 @@ export class TicketUseCase {
                 await session.withTransaction(async () => {
 
                     // taking refund amount from theater and giving it to user
-                    await this.theaterRepository.updateWallet(ticket.theaterId, -refundByTheater, 'For Giving Refund for Ticket Cancellation')
-                    await this.userRepository.updateWallet(ticket.userId, refundByTheater, 'Ticket Cancellation Refund')
+                    await this._theaterRepository.updateWallet(ticket.theaterId, -refundByTheater, 'For Giving Refund for Ticket Cancellation')
+                    await this._userRepository.updateWallet(ticket.userId, refundByTheater, 'Ticket Cancellation Refund')
                     if (cancelledBy === 'Admin') {
-                        await this.adminRepository.updateWallet(-refundByAdmin, 'Ticket Cancellation Refund')
-                        await this.userRepository.updateWallet(ticket.userId, refundByAdmin, 'Convenience Fee Refund')
+                        await this._adminRepository.updateWallet(-refundByAdmin, 'Ticket Cancellation Refund')
+                        await this._userRepository.updateWallet(ticket.userId, refundByAdmin, 'Convenience Fee Refund')
                     }
                     // code to re assign cancelled ticket seat
-                    cancelledTicket = await this.ticketRepository.cancelTicket(ticketId, cancelledBy)
+                    cancelledTicket = await this._ticketRepository.cancelTicket(ticketId, cancelledBy)
                     if (cancelledTicket === null) throw Error('Something went wrong while canceling ticket')
 
-                    const show = await this.showRepository.getShowDetails(cancelledTicket.showId) as IShow
-                    await this.showSeatRepository.markAsNotBooked(show.seatId, cancelledTicket.diamondSeats, cancelledTicket.goldSeats, cancelledTicket.silverSeats)
+                    const show = await this._showRepository.getShowDetails(cancelledTicket.showId) as IShow
+                    await this._showSeatRepository.markAsNotBooked(show.seatId, cancelledTicket.diamondSeats, cancelledTicket.goldSeats, cancelledTicket.silverSeats)
                 });
 
                 await session.commitTransaction();
@@ -202,9 +202,9 @@ export class TicketUseCase {
     async sendInvoiceMail (ticketId: string): Promise<IApiTicketRes> {
         try {
             log(ticketId, 'ticket id')
-            const ticket = await this.ticketRepository.getTicketData(ticketId)
+            const ticket = await this._ticketRepository.getTicketData(ticketId)
             if (ticket) {
-                const user = await this.userRepository.findById(ticket.userId)
+                const user = await this._userRepository.findById(ticket.userId)
                 if (user) {
                     log('sending invoice to user ', user.email)
                     await this._mailSender.invoiceDownloadMail(user.email, ticket)
@@ -224,8 +224,8 @@ export class TicketUseCase {
         try {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
-            const tickets = await this.ticketRepository.getTicketsByTheaterId(theaterId, page, limit)
-            const ticketCount = await this.ticketRepository.getTicketsByTheaterIdCount(theaterId)
+            const tickets = await this._ticketRepository.getTicketsByTheaterId(theaterId, page, limit)
+            const ticketCount = await this._ticketRepository.getTicketsByTheaterIdCount(theaterId)
             log(ticketCount, 'ticketCount', tickets)
             return get200Response({ tickets, ticketCount })
         } catch (error) {
@@ -237,8 +237,8 @@ export class TicketUseCase {
         try {
             if (isNaN(page)) page = 1
             if (isNaN(limit)) limit = 10
-            const tickets = await this.ticketRepository.getAllTickets(page, limit)
-            const ticketCount = await this.ticketRepository.getAllTicketsCount()
+            const tickets = await this._ticketRepository.getAllTickets(page, limit)
+            const ticketCount = await this._ticketRepository.getAllTicketsCount()
             log(ticketCount, 'ticketCount', tickets)
             return get200Response({ tickets, ticketCount })
         } catch (error) {
@@ -257,7 +257,7 @@ export class TicketUseCase {
                 endDate = new Date();
             }
 
-            const tickets = await this.ticketRepository.findTicketsByTime(startDate, endDate)
+            const tickets = await this._ticketRepository.findTicketsByTime(startDate, endDate)
             const addedAmt: Record<string, number> = {}
             tickets.forEach(tkt => {
                 const dateKey = getDateKeyWithInterval(startDate as Date, endDate as Date, tkt.startTime)
