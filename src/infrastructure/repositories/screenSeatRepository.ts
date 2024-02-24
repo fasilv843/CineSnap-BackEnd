@@ -1,6 +1,6 @@
 import { screenSeatModel } from "../db/screenSeatModel";
-import { IScreenSeatRepo } from "../../useCases/repos/screenSeatRepo";
-import { IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeatRepo } from "../../application/interfaces/repos/screenSeatRepo";
+import { IScreenSeatRes, IScreenSeatSave } from "../../application/interfaces/types/screenSeat";
 
 export class ScreenSeatRepository implements IScreenSeatRepo {
     async saveScreenSeat (screenSeat: IScreenSeatSave): Promise<IScreenSeatRes> {

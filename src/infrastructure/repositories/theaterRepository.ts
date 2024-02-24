@@ -1,8 +1,8 @@
 import { theaterModel } from "../db/theaterModel";
-import { ITheaterRepo } from "../../useCases/repos/theaterRepo";
-import { IWalletHistoryAndCount } from "../../interfaces/common";
-import { ITheaterRes, ITheaterUpdate } from "../../interfaces/schema/theaterSchema";
-import { ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
+import { ITheaterRepo } from "../../application/interfaces/repos/theaterRepo";
+import { IWalletHistoryAndCount } from "../../application/interfaces/types/common";
+import { ITheaterRes, ITheaterUpdate } from "../../application/interfaces/types/theater";
+import { ITempTheaterRes } from "../../application/interfaces/types/tempTheater";
 import { ICoords } from "../../entities/common";
 import { ITheater } from "../../entities/theater";
 

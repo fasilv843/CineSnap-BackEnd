@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ChatUseCase } from "../../useCases/chatUseCase";
-import { IChatReadReqs, IChatReqs } from "../../interfaces/schema/chatSchems";
+import { ChatUseCase } from "../../application/useCases/chatUseCase";
+import { IChatReadReqs, IChatReqs } from "../../application/interfaces/types/chat";
 
 export class ChatController {
     constructor(

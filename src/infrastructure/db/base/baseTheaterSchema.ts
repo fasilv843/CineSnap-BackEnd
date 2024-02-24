@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { ITempTheaterRes } from "../../../interfaces/schema/tempTheaterSchema";
+import { ITempTheaterRes } from "../../../application/interfaces/types/tempTheater";
 import { emailSchema } from "./emailSchema";
 import { theaterAddressSchema } from "../subSchema/addressSchema";
 

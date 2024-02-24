@@ -1,6 +1,6 @@
 import { tempUserModel } from "../db/temp/tempUserModel";
-import { ITempUserRepo } from "../../useCases/repos/tempUserRepo";
-import { ITempUserReq, ITempUserRes } from "../../interfaces/schema/tempUserSchema";
+import { ITempUserRepo } from "../../application/interfaces/repos/tempUserRepo";
+import { ITempUserReq, ITempUserRes } from "../../application/interfaces/types/tempUser";
 
 
 export class TempUserRepository implements ITempUserRepo {

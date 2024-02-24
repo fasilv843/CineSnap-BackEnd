@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { ShowSeatsUseCase } from "../../useCases/showSeatUseCase"
+import { ShowSeatsUseCase } from "../../application/useCases/showSeatUseCase"
 
 export class ShowSeatController {
     constructor(

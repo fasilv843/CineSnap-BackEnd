@@ -3,7 +3,7 @@ import { mongoConnect } from "./infrastructure/config/db";
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { chatUseCase } from "./infrastructure/utils/controllers";
-import { IChatReqs } from "./interfaces/schema/chatSchems";
+import { IChatReqs } from "./application/interfaces/types/chat";
 
 const PORT = process.env.PORT || 3000
 

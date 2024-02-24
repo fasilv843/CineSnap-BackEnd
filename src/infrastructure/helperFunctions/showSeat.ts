@@ -1,7 +1,7 @@
 import { RowType } from "../../entities/common";
 import { IScreenSeatCategory } from "../../entities/screenSeat";
 import { IShowSeatCategory, IShowSingleSeat, IShowSeats } from "../../entities/showSeat";
-import { IScreenSeatRes } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeatRes } from "../../application/interfaces/types/screenSeat";
 import { DEF_DIAMOND_PRICE, DEF_GOLD_PRICE, DEF_SILVER_PRICE } from "../constants/constants";
 
 export function getShowSeatCategory (screenCat: IScreenSeatCategory, price: number): IShowSeatCategory | undefined {

@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from "mongoose";
-import { IChatHistory } from "../../interfaces/schema/chatSchems";
+import { IChatHistory } from "../../application/interfaces/types/chat";
 
 
 export const chatSchema: Schema = new Schema<IChatHistory & Document>({

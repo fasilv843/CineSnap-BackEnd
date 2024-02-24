@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { MovieUseCase } from "../../useCases/movieUseCase";
-import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
+import { MovieUseCase } from "../../application/useCases/movieUseCase";
+import { ITMDBMovie } from "../../application/interfaces/types/movie";
 
 export class MovieController {
     constructor(

@@ -1,6 +1,6 @@
 import { couponModel } from "../db/couponModel";
-import { ICouponRepo } from "../../useCases/repos/couponRepo"; 
-import { ICouponReqs, ICouponRes } from "../../interfaces/schema/couponSchema";
+import { ICouponRepo } from "../../application/interfaces/repos/couponRepo"; 
+import { ICouponReqs, ICouponRes } from "../../application/interfaces/types/coupon";
 
 export class CouponRepository implements ICouponRepo {
     async addCoupon (coupon: ICouponReqs): Promise<ICouponRes> {

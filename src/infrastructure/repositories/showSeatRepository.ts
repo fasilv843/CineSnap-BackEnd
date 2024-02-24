@@ -1,6 +1,6 @@
 import { log } from "console";
 import { showSeatsModel } from "../db/showSeatModel";
-import { IShowSeatToSave, IShowSeatsRes } from "../../interfaces/schema/showSeatsSchema";
+import { IShowSeatToSave, IShowSeatsRes } from "../../application/interfaces/types/showSeats";
 import { RowType } from "../../entities/common";
 import { ITicketSeat } from "../../entities/ticket";
 

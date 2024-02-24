@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ScreenUseCase } from "../../useCases/screenUseCase";
-import { IScreenRequirements } from "../../interfaces/schema/screenSchema";
+import { ScreenUseCase } from "../../application/useCases/screenUseCase";
+import { IScreenRequirements } from "../../application/interfaces/types/screen";
 
 export class ScreenController {
   constructor(

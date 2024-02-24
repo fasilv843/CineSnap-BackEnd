@@ -1,6 +1,6 @@
 import { tempTicketModel } from "../db/temp/tempTicketModel";
-import { ITempTicketRepo } from "../../useCases/repos/tempTicketRepo";
-import { ITempTicketRes, ITempTicketReqs, Seats } from "../../interfaces/schema/ticketSchema";
+import { ITempTicketRepo } from "../../application/interfaces/repos/tempTicketRepo";
+import { ITempTicketRes, ITempTicketReqs, Seats } from "../../application/interfaces/types/ticket";
 
 export class TempTicketRepository implements ITempTicketRepo {
     async saveTicketDataTemporarily (ticketData: ITempTicketReqs): Promise<ITempTicketRes> {

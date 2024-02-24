@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { ITokenGenerator } from "../../useCases/utils/tokenGenerator";
+import { ITokenGenerator } from "../../application/interfaces/utils/tokenGenerator";
 import { accessTokenExp, refreshTokenExp, tempTokenExp } from '../constants/constants';
 
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { CouponUseCase } from "../../useCases/couponUseCase"; 
-import { ICouponReqs } from "../../interfaces/schema/couponSchema";
+import { CouponUseCase } from "../../application/useCases/couponUseCase"; 
+import { ICouponReqs } from "../../application/interfaces/types/coupon";
 
 export class CouponController {
     constructor (

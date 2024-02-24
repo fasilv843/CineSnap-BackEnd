@@ -1,4 +1,4 @@
-import { IEncryptor } from "../../useCases/utils/encryptor";
+import { IEncryptor } from "../../application/interfaces/utils/encryptor";
 import bcrypt from 'bcrypt'
 
 export class Encryptor implements IEncryptor {

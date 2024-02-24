@@ -1,9 +1,9 @@
 
 import { chatModel } from "../db/chatModel";
-import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../interfaces/schema/chatSchems";
-import { ITheaterRes } from "../../interfaces/schema/theaterSchema";
-import { IUserRes } from "../../interfaces/schema/userSchema";
-import { IChatRepo } from "../../useCases/repos/chatRepo";
+import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../application/interfaces/types/chat";
+import { ITheaterRes } from "../../application/interfaces/types/theater";
+import { IUserRes } from "../../application/interfaces/types/user";
+import { IChatRepo } from "../../application/interfaces/repos/chatRepo";
 
 
 export class ChatRepository implements IChatRepo {

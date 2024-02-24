@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ITempTicketReqs } from "../../interfaces/schema/ticketSchema";
-import { TicketUseCase } from "../../useCases/ticketUseCase";
+import { ITempTicketReqs } from "../../application/interfaces/types/ticket";
+import { TicketUseCase } from "../../application/useCases/ticketUseCase";
 import { CancelledBy, PaymentMethod } from "../../entities/common";
 
 export class TicketController {

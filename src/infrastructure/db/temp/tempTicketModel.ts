@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from "mongoose"
-import { ITempTicketRes } from "../../../interfaces/schema/ticketSchema"
+import { ITempTicketRes } from "../../../application/interfaces/types/ticket"
 import { baseTicketSchema } from "../base/baseTicketSchema"
 
 const tempTicketSchema: Schema = new Schema<ITempTicketRes & Document>({

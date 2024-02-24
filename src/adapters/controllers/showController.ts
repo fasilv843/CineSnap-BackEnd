@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ShowUseCase } from "../../useCases/showUseCase";
-import { IShowRequirements } from "../../interfaces/schema/showSchema";
+import { ShowUseCase } from "../../application/useCases/showUseCase";
+import { IShowRequirements } from "../../application/interfaces/types/show";
 
 
 export class ShowController {

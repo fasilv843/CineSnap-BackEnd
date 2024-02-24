@@ -1,8 +1,8 @@
 import { log } from "console";
 import userModel from "../db/userModel";
-import { IWalletHistoryAndCount } from "../../interfaces/common";
-import { IUserRepo } from "../../useCases/repos/userRepo";
-import { IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema"; 
+import { IWalletHistoryAndCount } from "../../application/interfaces/types/common";
+import { IUserRepo } from "../../application/interfaces/repos/userRepo";
+import { IUserAuth, IUserRes, IUserSocialAuth, IUserUpdate } from "../../application/interfaces/types/user"; 
 import { IUser } from "../../entities/user";
 
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AdminUseCase } from "../../useCases/adminUseCase";
-import { UserUseCase } from "../../useCases/userUseCase";
-import { TheaterUseCase } from "../../useCases/theaterUseCase";
-import { TicketUseCase } from "../../useCases/ticketUseCase";
+import { AdminUseCase } from "../../application/useCases/adminUseCase";
+import { UserUseCase } from "../../application/useCases/userUseCase";
+import { TheaterUseCase } from "../../application/useCases/theaterUseCase";
+import { TicketUseCase } from "../../application/useCases/ticketUseCase";
 import { IAdmin } from "../../entities/admin";
 
 export class AdminController {

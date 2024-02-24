@@ -1,5 +1,5 @@
 import { log } from "console";
-import { ICouponRes } from "../../interfaces/schema/couponSchema";
+import { ICouponRes } from "../../application/interfaces/types/coupon";
 import { getCurrentWeekPeriod, isDateInBetween, getCurrentMonthPeriod, getCurrentYearPeriod } from "./getPeriods";
 import { IUsedCoupons } from "../../entities/user";
 

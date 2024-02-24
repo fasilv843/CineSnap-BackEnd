@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { ITempTicket } from "../../../interfaces/schema/ticketSchema";
+import { ITempTicket } from "../../../application/interfaces/types/ticket";
 import { ticketSeatCategorySchema } from "../subSchema/ticketSeatSchema";
 
 interface ITempTicketSchema extends Omit<ITempTicket, 'showId' | 'userId' | 'movieId' | 'theaterId' | 'screenId' | 'expireAt'>, Document {

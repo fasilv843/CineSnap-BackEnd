@@ -1,5 +1,5 @@
 import { NoRefundTime, QuarterRefundTime, HalfRefundTime, ThreeQuarterRefundTime } from "../constants/constants"
-import { ITempTicketRes, ITicketRes } from "../../interfaces/schema/ticketSchema"
+import { ITempTicketRes, ITicketRes } from "../../application/interfaces/types/ticket"
 import { CancelledByUnknownError } from "../errors/cancelledByUnknownError"
 import { RefundNotAllowedError } from "../errors/refundNotAllowedError"
 import { calculateHoursDifference } from "./date"

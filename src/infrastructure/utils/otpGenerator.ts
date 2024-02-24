@@ -1,4 +1,4 @@
-import { IOTPGenerator } from "../../useCases/utils/otpGenerator";
+import { IOTPGenerator } from "../../application/interfaces/utils/otpGenerator";
 
 
 export class OTPGenerator implements IOTPGenerator {

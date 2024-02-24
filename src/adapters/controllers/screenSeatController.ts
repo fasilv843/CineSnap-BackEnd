@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ScreenSeatUseCase } from "../../useCases/screenSeatUseCase";
-import { IScreenSeatRes } from "../../interfaces/schema/screenSeatSchema";
+import { ScreenSeatUseCase } from "../../application/useCases/screenSeatUseCase";
+import { IScreenSeatRes } from "../../application/interfaces/types/screenSeat";
 
 export class ScreenSeatController {
     constructor(

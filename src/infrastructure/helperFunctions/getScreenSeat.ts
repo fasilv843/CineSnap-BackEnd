@@ -1,6 +1,6 @@
 import { log } from "console";
 import { ALPHABETS } from "../constants/constants";
-import { IScreenSeatRes, IScreenSeatSave } from "../../interfaces/schema/screenSeatSchema";
+import { IScreenSeatRes, IScreenSeatSave } from "../../application/interfaces/types/screenSeat";
 import { ColType } from "../../entities/common";
 import { IScreenSeatCategory } from "../../entities/screenSeat";
 

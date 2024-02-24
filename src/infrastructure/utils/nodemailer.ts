@@ -1,8 +1,8 @@
 import { log } from "console";
 import { mailTransporter } from "../config/mailTransporter";
 import { generateInvoiceAndGetPath, getMovieSuccessMailTemplate, getOTPTemplate } from "../helperFunctions/getMailTemplate";
-import { ITicketRes } from "../../interfaces/schema/ticketSchema";
-import { IMailSender } from "../../useCases/utils/mailSender";
+import { ITicketRes } from "../../application/interfaces/types/ticket";
+import { IMailSender } from "../../application/interfaces/utils/mailSender";
 import fs from 'fs'
 
 export class MailSender implements IMailSender {

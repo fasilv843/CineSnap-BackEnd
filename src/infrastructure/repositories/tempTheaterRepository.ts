@@ -1,6 +1,6 @@
 import { tempTheaterModel } from "../db/temp/tempTheaterModel";
-import { ITempTheaterRepo } from "../../useCases/repos/tempTheaterRepo";
-import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
+import { ITempTheaterRepo } from "../../application/interfaces/repos/tempTheaterRepo";
+import { ITempTheaterReq, ITempTheaterRes } from "../../application/interfaces/types/tempTheater";
 
 
 export class TempTheaterRepository implements ITempTheaterRepo {

@@ -1,7 +1,7 @@
 import { log } from "console";
 import { ticketModel } from "../db/ticketModel";
-import { ITicketRepo } from "../../useCases/repos/ticketRepo";
-import { ISaveRequestReqs, ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { ITicketRepo } from "../../application/interfaces/repos/ticketRepo";
+import { ISaveRequestReqs, ITicketRes } from "../../application/interfaces/types/ticket";
 
 export class TicketRepository implements ITicketRepo {
     async saveTicket (tempTicket: ISaveRequestReqs): Promise<ITicketRes> {

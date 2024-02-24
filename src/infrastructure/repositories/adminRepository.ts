@@ -1,5 +1,5 @@
 import { IAdmin } from "../../entities/admin";
-import { IAdminRepo } from "../../useCases/repos/adminRepo";
+import { IAdminRepo } from "../../application/interfaces/repos/adminRepo";
 import { adminModel } from "../db/adminModel";
 
 export class AdminRepository implements IAdminRepo {

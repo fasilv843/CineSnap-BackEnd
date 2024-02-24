@@ -1,7 +1,7 @@
 import { screenModel } from "../db/screensModel";
 import { showModel } from "../db/showModel";
-import { IShowRepo } from "../../useCases/repos/showRepo";
-import { IShowRes, IShowToSave, IShowsOnAScreen } from "../../interfaces/schema/showSchema";
+import { IShowRepo } from "../../application/interfaces/repos/showRepo";
+import { IShowRes, IShowToSave, IShowsOnAScreen } from "../../application/interfaces/types/show";
 import { IMovie } from "../../entities/movie";
 import { IScreen } from "../../entities/screen";
 import { IShow } from "../../entities/show";

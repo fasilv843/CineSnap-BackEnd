@@ -1,5 +1,5 @@
 import { IScreen } from "../../entities/screen";
-import { IScreenRepo } from "../../useCases/repos/screenRepo";
+import { IScreenRepo } from "../../application/interfaces/repos/screenRepo";
 import { screenModel } from "../db/screensModel";
 
 export class ScreenRepository implements IScreenRepo {

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { UserUseCase } from "../../useCases/userUseCase";
+import { UserUseCase } from "../../application/useCases/userUseCase";
 import { OTPGenerator } from "../../infrastructure/utils/otpGenerator";
-import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../interfaces/schema/userSchema";
-import { ITempUserReq } from "../../interfaces/schema/tempUserSchema";
+import { IUserAuth, IUserSocialAuth, IUserUpdate } from "../../application/interfaces/types/user";
+import { ITempUserReq } from "../../application/interfaces/types/tempUser";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { STATUS_CODES } from "../../infrastructure/constants/httpStatusCodes";
 import { IUser } from "../../entities/user";
