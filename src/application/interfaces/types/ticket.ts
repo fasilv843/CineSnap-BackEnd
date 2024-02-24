@@ -1,4 +1,5 @@
 import { ColType, RowType, PaymentMethod } from "../../../entities/common";
+import { ITempTicket } from "../../../entities/temp/tempTicket";
 import { ITicket } from "../../../entities/ticket";
 import { IApiRes } from "./common";
 
@@ -11,9 +12,6 @@ export type SeatRes = {
     [Key in RowType]?: ColType[];
 };
 
-export interface ITempTicket extends Omit<ITicket, 'isCancelled' | 'cancelledBy' | 'paymentMethod'> {
-    expireAt: Date
-}
 export interface ISaveRequestReqs extends ITempTicket {
     paymentMethod: PaymentMethod
 }

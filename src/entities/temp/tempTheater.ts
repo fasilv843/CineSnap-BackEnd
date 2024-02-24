@@ -11,9 +11,3 @@ export interface ITempTheater {
     address: ITheaterAddress
     expireAt: Date
 }
-
-
-// export interface ITempTheaterRes extends ITempTheaterReq {
-//     _id: string
-//     expireAt: Date
-// }
