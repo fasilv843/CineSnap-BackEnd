@@ -11,13 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScreenSeatController = void 0;
 class ScreenSeatController {
-    constructor(screenSeatUseCase) {
-        this.screenSeatUseCase = screenSeatUseCase;
+    constructor(_screenSeatUseCase) {
+        this._screenSeatUseCase = _screenSeatUseCase;
     }
     findScreenSeatById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const screenSeatId = req.params.seatId;
-            const screenSeatRes = yield this.screenSeatUseCase.findScreenSeatById(screenSeatId);
+            const screenSeatRes = yield this._screenSeatUseCase.findScreenSeatById(screenSeatId);
             res.status(screenSeatRes.status).json(screenSeatRes);
         });
     }
@@ -25,7 +25,7 @@ class ScreenSeatController {
         return __awaiter(this, void 0, void 0, function* () {
             const screenSeatId = req.params.seatId;
             const { screenSeatData } = req.body;
-            const screenSeatRes = yield this.screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData);
+            const screenSeatRes = yield this._screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData);
             res.status(screenSeatRes.status).json(screenSeatRes);
         });
     }

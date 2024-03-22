@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShowSeatsRepository = void 0;
 const console_1 = require("console");
-const showSeatModel_1 = require("../../entities/models/showSeatModel");
+const showSeatModel_1 = require("../db/showSeatModel");
 class ShowSeatsRepository {
     // Save new seat document for each show newly created
     saveShowSeat(showSeat) {

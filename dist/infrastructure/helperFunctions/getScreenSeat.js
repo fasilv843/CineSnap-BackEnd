@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAvailSeatData = exports.getLastRow = exports.getRowKeys = exports.getSeatCount = exports.getCategorySeatCount = exports.getDefaultScreenSeatSetup = void 0;
 const console_1 = require("console");
-const constants_1 = require("../../constants/constants");
+const constants_1 = require("../constants/constants");
 function splitAlphabetsToThree(rows) {
     const index = constants_1.ALPHABETS.indexOf(rows.toUpperCase());
     const availRows = constants_1.ALPHABETS.slice(0, index + 1);

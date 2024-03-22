@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CouponRepository = void 0;
-const couponModel_1 = require("../../entities/models/couponModel");
+const couponModel_1 = require("../db/couponModel");
 class CouponRepository {
     addCoupon(coupon) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,7 +41,7 @@ class CouponRepository {
                 isCancelled: false,
                 couponCount: { $gte: 1 },
                 $or: [
-                    { couponType: { $ne: 'Once' } },
+                    { couponType: { $ne: 'Once' } }, // Exclude 'Once' type from date checks
                     {
                         couponType: 'Once',
                         endDate: { $gte: currentDate },

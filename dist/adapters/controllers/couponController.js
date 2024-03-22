@@ -11,27 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CouponController = void 0;
 class CouponController {
-    constructor(couponUseCase) {
-        this.couponUseCase = couponUseCase;
+    constructor(_couponUseCase) {
+        this._couponUseCase = _couponUseCase;
     }
     addCoupon(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const coupon = req.body.coupon;
-            const couponRes = yield this.couponUseCase.addCoupon(coupon);
+            const couponRes = yield this._couponUseCase.addCoupon(coupon);
             res.status(couponRes.status).json(couponRes);
         });
     }
     getCouponsOnTheater(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const couponRes = yield this.couponUseCase.getCouponsOnTheater(theaterId);
+            const couponRes = yield this._couponUseCase.getCouponsOnTheater(theaterId);
             res.status(couponRes.status).json(couponRes);
         });
     }
     cancelCoupon(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const couponId = req.params.couponId;
-            const couponRes = yield this.couponUseCase.cancelCoupon(couponId);
+            const couponRes = yield this._couponUseCase.cancelCoupon(couponId);
             res.status(couponRes.status).json(couponRes);
         });
     }
@@ -39,7 +39,7 @@ class CouponController {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.params.userId;
             const ticketId = req.query.ticketId;
-            const couponRes = yield this.couponUseCase.getApplicableCoupons(userId, ticketId);
+            const couponRes = yield this._couponUseCase.getApplicableCoupons(userId, ticketId);
             res.status(couponRes.status).json(couponRes);
         });
     }

@@ -11,27 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatController = void 0;
 class ChatController {
-    constructor(chatUseCase) {
-        this.chatUseCase = chatUseCase;
+    constructor(_chatUseCase) {
+        this._chatUseCase = _chatUseCase;
     }
     getChatHistory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId, theaterId, adminId } = req.query;
-            const apiRes = yield this.chatUseCase.getChatHistory(userId, theaterId, adminId);
+            const apiRes = yield this._chatUseCase.getChatHistory(userId, theaterId, adminId);
             res.status(apiRes.status).json(apiRes);
         });
     }
     getTheatersChattedWith(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.params.userId;
-            const apiRes = yield this.chatUseCase.getTheatersChattedWith(userId);
+            const apiRes = yield this._chatUseCase.getTheatersChattedWith(userId);
             res.status(apiRes.status).json(apiRes);
         });
     }
     getUsersChattedWith(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const apiRes = yield this.chatUseCase.getUsersChattedWith(theaterId);
+            const apiRes = yield this._chatUseCase.getUsersChattedWith(theaterId);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -39,7 +39,7 @@ class ChatController {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId, theaterId, adminId, msgId } = req.query;
             const msgData = { userId, theaterId, adminId, msgId };
-            const apiRes = yield this.chatUseCase.markLastMsgAsRead(msgData);
+            const apiRes = yield this._chatUseCase.markLastMsgAsRead(msgData);
             res.status(apiRes.status).json(apiRes);
         });
     }

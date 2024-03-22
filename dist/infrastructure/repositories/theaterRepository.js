@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TheaterRepository = void 0;
-const theaterModel_1 = require("../../entities/models/theaterModel");
+const theaterModel_1 = require("../db/theaterModel");
 class TheaterRepository {
     getNearestTheaters(lon, lat, radius) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -73,9 +73,6 @@ class TheaterRepository {
             return yield theaterModel_1.theaterModel.findById({ _id: id });
         });
     }
-    // async findByLocation(location: ILocation): Promise<ITheater | null> {
-    //     throw new Error("Method not implemented.");
-    // }
     findAllTheaters(page, limit, searchQuery) {
         return __awaiter(this, void 0, void 0, function* () {
             const regex = new RegExp(searchQuery, 'i');
@@ -165,10 +162,6 @@ class TheaterRepository {
     }
     updateWallet(theaterId, amount, message) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const walletHistory: Omit<IWalletHistory, 'date'> = {
-            //     amount,
-            //     message
-            // }
             return yield theaterModel_1.theaterModel.findByIdAndUpdate({ _id: theaterId }, {
                 $inc: { wallet: amount },
                 $push: { walletHistory: { amount, message } }

@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.theaterAuth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const theaterRepository_1 = require("../repositories/theaterRepository");
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
+const httpStatusCodes_1 = require("../constants/httpStatusCodes");
 const thrRepository = new theaterRepository_1.TheaterRepository();
-const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStausCodes_1.STATUS_CODES;
+const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStatusCodes_1.STATUS_CODES;
 const theaterAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.headers.authorization;

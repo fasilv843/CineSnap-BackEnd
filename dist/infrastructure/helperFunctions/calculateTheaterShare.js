@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateRefundShare = exports.calculateAdminShare = exports.calculateTheaterShare = void 0;
-const constants_1 = require("../../constants/constants");
+const constants_1 = require("../constants/constants");
 const cancelledByUnknownError_1 = require("../errors/cancelledByUnknownError");
 const refundNotAllowedError_1 = require("../errors/refundNotAllowedError");
 const date_1 = require("./date");

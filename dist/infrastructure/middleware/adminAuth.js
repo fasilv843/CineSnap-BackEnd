@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminAuth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const adminRepository_1 = require("../repositories/adminRepository");
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
+const httpStatusCodes_1 = require("../constants/httpStatusCodes");
 const adminRepository = new adminRepository_1.AdminRepository();
-const { UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStausCodes_1.STATUS_CODES;
+const { UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStatusCodes_1.STATUS_CODES;
 const adminAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.headers.authorization;

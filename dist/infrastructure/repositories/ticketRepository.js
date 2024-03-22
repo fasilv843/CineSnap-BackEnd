@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TicketRepository = void 0;
 const console_1 = require("console");
-const ticketModel_1 = require("../../entities/models/ticketModel");
+const ticketModel_1 = require("../db/ticketModel");
 class TicketRepository {
     saveTicket(tempTicket) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -49,7 +49,7 @@ class TicketRepository {
                 theaterId,
                 isCancelled: false,
                 $and: [
-                    { startTime: { $gte: startDate } },
+                    { startTime: { $gte: startDate } }, // Date is greater than or equal to startDate
                     { startTime: { $lte: endDate } } // Date is less than or equal to endDate
                 ]
             });
@@ -61,7 +61,7 @@ class TicketRepository {
             return yield ticketModel_1.ticketModel.find({
                 isCancelled: false,
                 $and: [
-                    { startTime: { $gte: startDate } },
+                    { startTime: { $gte: startDate } }, // Date is greater than or equal to startDate
                     { startTime: { $lte: endDate } } // Date is less than or equal to endDate
                 ]
             });

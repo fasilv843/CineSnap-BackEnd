@@ -14,9 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoConnect = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const movieModel_1 = require("../../entities/models/movieModel");
-const theaterModel_1 = require("../../entities/models/theaterModel");
-const tempUserModel_1 = require("../../entities/models/temp/tempUserModel");
+const movieModel_1 = require("../db/movieModel");
+const theaterModel_1 = require("../db/theaterModel");
+const tempUserModel_1 = require("../db/temp/tempUserModel");
 const mongoConnect = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const MONGO_URI = process.env.MONGO_URI;

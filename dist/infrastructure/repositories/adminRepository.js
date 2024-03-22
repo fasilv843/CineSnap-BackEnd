@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminRepository = void 0;
-const adminModel_1 = require("../../entities/models/adminModel");
+const adminModel_1 = require("../db/adminModel");
 class AdminRepository {
     findAdmin() {
         return __awaiter(this, void 0, void 0, function* () {

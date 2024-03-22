@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const adminAuth_1 = require("../middleware/adminAuth");
-const controllers_1 = require("../../providers/controllers");
+const controllers_1 = require("../utils/controllers");
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', (req, res) => controllers_1.aController.adminLogin(req, res));
 adminRouter.get('/dashboard/revenue', adminAuth_1.adminAuth, (req, res) => controllers_1.aController.getRevenueData(req, res));

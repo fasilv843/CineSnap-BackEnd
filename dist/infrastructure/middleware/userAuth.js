@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userAuth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userRepository_1 = require("../repositories/userRepository");
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
+const httpStatusCodes_1 = require("../constants/httpStatusCodes");
 const userRepository = new userRepository_1.UserRepository();
-const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStausCodes_1.STATUS_CODES;
+const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = httpStatusCodes_1.STATUS_CODES;
 const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.headers.authorization;

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScreenRepository = void 0;
-const screensModel_1 = require("../../entities/models/screensModel");
+const screensModel_1 = require("../db/screensModel");
 class ScreenRepository {
     saveScreen(screenData) {
         return __awaiter(this, void 0, void 0, function* () {

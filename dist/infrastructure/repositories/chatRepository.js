@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatRepository = void 0;
-const chatModel_1 = require("../../entities/models/chatModel");
+const chatModel_1 = require("../db/chatModel");
 class ChatRepository {
     saveMessage(chatReqs) {
         return __awaiter(this, void 0, void 0, function* () {

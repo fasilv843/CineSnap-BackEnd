@@ -11,13 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShowSeatController = void 0;
 class ShowSeatController {
-    constructor(showSeatUseCase) {
-        this.showSeatUseCase = showSeatUseCase;
+    constructor(_showSeatUseCase) {
+        this._showSeatUseCase = _showSeatUseCase;
     }
     findShowSeatById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const showSeatId = req.params.showSeatId;
-            const showSeatRes = yield this.showSeatUseCase.findShowSeatById(showSeatId);
+            const showSeatRes = yield this._showSeatUseCase.findShowSeatById(showSeatId);
             res.status(showSeatRes.status).json(showSeatRes);
         });
     }

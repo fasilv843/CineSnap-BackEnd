@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScreenController = void 0;
 class ScreenController {
-    constructor(screenUseCase) {
-        this.screenUseCase = screenUseCase;
+    constructor(_screenUseCase) {
+        this._screenUseCase = _screenUseCase;
     }
     // To Save Screen data of theaters
     saveScreen(req, res) {
@@ -20,7 +20,7 @@ class ScreenController {
             const { name, rows, cols } = req.body;
             const theaterId = req.params.theaterId;
             const screen = { theaterId, name, rows, cols };
-            const apiRes = yield this.screenUseCase.saveScreenDetails(screen);
+            const apiRes = yield this._screenUseCase.saveScreenDetails(screen);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -28,7 +28,7 @@ class ScreenController {
     findScreenById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const screenId = req.params.screenId;
-            const apiRes = yield this.screenUseCase.findScreenById(screenId);
+            const apiRes = yield this._screenUseCase.findScreenById(screenId);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -36,7 +36,7 @@ class ScreenController {
     findScreensInTheater(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const apiRes = yield this.screenUseCase.findScreensInTheater(theaterId);
+            const apiRes = yield this._screenUseCase.findScreensInTheater(theaterId);
             // console.log(apiRes.data, 'screens that returned to client');
             res.status(apiRes.status).json(apiRes);
         });
@@ -46,7 +46,7 @@ class ScreenController {
         return __awaiter(this, void 0, void 0, function* () {
             const screenName = req.body.screenName;
             const screenId = req.params.screenId;
-            const apiRes = yield this.screenUseCase.updateScreenName(screenId, screenName);
+            const apiRes = yield this._screenUseCase.updateScreenName(screenId, screenName);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -54,14 +54,14 @@ class ScreenController {
     deleteScreen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const screenId = req.params.screenId;
-            const apiRes = yield this.screenUseCase.deleteScreen(screenId);
+            const apiRes = yield this._screenUseCase.deleteScreen(screenId);
             res.status(apiRes.status).json(apiRes);
         });
     }
     getAvailSeatsOnScreen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const screenId = req.params.screenId;
-            const apiRes = yield this.screenUseCase.getAvailSeatsOnScreen(screenId);
+            const apiRes = yield this._screenUseCase.getAvailSeatsOnScreen(screenId);
             res.status(apiRes.status).json(apiRes);
         });
     }

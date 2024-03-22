@@ -10,18 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
 class AdminController {
-    constructor(adminUseCase, userUseCase, theaterUseCase, ticketUseCase) {
-        this.adminUseCase = adminUseCase;
-        this.userUseCase = userUseCase;
-        this.theaterUseCase = theaterUseCase;
-        this.ticketUseCase = ticketUseCase;
+    constructor(_adminUseCase, _userUseCase, _theaterUseCase, _ticketUseCase) {
+        this._adminUseCase = _adminUseCase;
+        this._userUseCase = _userUseCase;
+        this._theaterUseCase = _theaterUseCase;
+        this._ticketUseCase = _ticketUseCase;
     }
     adminLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
-            const authData = yield this.adminUseCase.verifyLogin(email, password);
+            const authData = yield this._adminUseCase.verifyLogin(email, password);
             res.status(authData.status).json(authData);
         });
     }
@@ -30,7 +29,7 @@ class AdminController {
             const page = parseInt(req.query.page);
             const limit = parseInt(req.query.limit);
             const searchQuery = req.query.searchQuery;
-            const apiRes = yield this.userUseCase.getAllUsers(page, limit, searchQuery);
+            const apiRes = yield this._userUseCase.getAllUsers(page, limit, searchQuery);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -39,47 +38,33 @@ class AdminController {
             const page = parseInt(req.query.page);
             const limit = parseInt(req.query.limit);
             const searchQuery = req.query.searchQuery;
-            const apiRes = yield this.theaterUseCase.getAllTheaters(page, limit, searchQuery);
+            const apiRes = yield this._theaterUseCase.getAllTheaters(page, limit, searchQuery);
             res.status(apiRes.status).json(apiRes);
         });
     }
     blockUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                // console.log(req.params, 'req.params');
-                yield this.userUseCase.blockUser(req.params.userId);
-                res.status(httpStausCodes_1.STATUS_CODES.OK).json();
-            }
-            catch (error) {
-                const err = error;
-                res.status(httpStausCodes_1.STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: err.message });
-            }
+            const apiRes = yield this._userUseCase.blockUser(req.params.userId);
+            res.status(apiRes.status).json(apiRes);
         });
     }
     blockTheater(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                // console.log(req.params, 'req.params');
-                yield this.theaterUseCase.blockTheater(req.params.theaterId);
-                res.status(httpStausCodes_1.STATUS_CODES.OK).json();
-            }
-            catch (error) {
-                const err = error;
-                res.status(httpStausCodes_1.STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: err.message });
-            }
+            const apiRes = yield this._theaterUseCase.blockTheater(req.params.theaterId);
+            res.status(apiRes.status).json(apiRes);
         });
     }
     theaterApproval(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
             const action = req.query.action;
-            const apiRes = yield this.theaterUseCase.theaterApproval(theaterId, action);
+            const apiRes = yield this._theaterUseCase.theaterApproval(theaterId, action);
             res.status(apiRes.status).json(apiRes);
         });
     }
     getRevenueData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiRes = yield this.ticketUseCase.getAdminRevenue();
+            const apiRes = yield this._ticketUseCase.getAdminRevenue();
             res.status(apiRes.status).json(apiRes);
         });
     }

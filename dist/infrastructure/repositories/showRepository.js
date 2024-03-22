@@ -21,42 +21,12 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShowRepository = void 0;
-const screensModel_1 = require("../../entities/models/screensModel");
-const showModel_1 = require("../../entities/models/showModel");
+const screensModel_1 = require("../db/screensModel");
+const showModel_1 = require("../db/showModel");
 class ShowRepository {
-    // async saveShowOld(show: IShowRequirements): Promise<IShow> {
-    //     const movie = await movieModel.findById(show.movieId) as IMovie
-    //     const screen = await screenModel.findById(show.screenId) as IScreen
-    //     if (screen !== null || movie !== null) {
-    //         const showSeat: Map<string, Array<IShowSeat>> = new Map()
-    //         for (const row of screen.seats.keys()) {
-    //             const rowArr = screen.seats.get(row)?.map(col => ({ col, isBooked: false })) || [];
-    //             showSeat.set(row, rowArr)
-    //         }
-    //         const startTime = new Date(show.startTime);
-    //         // console.log(startTime, 'show start time');
-    //         const endTime = new Date(startTime);
-    //         endTime.setHours(startTime.getHours() + movie.duration.hours);
-    //         endTime.setMinutes(startTime.getMinutes() + movie.duration.minutes);
-    //         // const ticketPrice: number = show.ticketPrice
-    //         const showTosave: Omit<IShow, '_id'> = {
-    //             movieId: show.movieId,
-    //             screenId: show.screenId,
-    //             startTime: show.startTime,
-    //             endTime,
-    //             // ticketPrice,
-    //             seats: showSeat,
-    //             totalSeatCount: screen.seatsCount,
-    //             availableSeatCount: screen.seatsCount
-    //         }
-    //         return await new showModel(showTosave).save()
-    //     } else {
-    //         throw Error('screen or movie id is not available')
-    //     }
-    // }
-    saveShow(showTosave) {
+    saveShow(showToSave) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield new showModel_1.showModel(showTosave).save();
+            return yield new showModel_1.showModel(showToSave).save();
         });
     }
     findShowsOnDate(theaterId, from, to) {
@@ -104,19 +74,19 @@ class ShowRepository {
                 $or: [
                     {
                         $and: [
-                            { startTime: { $lte: startTime } },
+                            { startTime: { $lte: startTime } }, // Existing show starts before or at the same time as the new show
                             { endTime: { $gte: startTime } } // Existing show ends after or at the same time as the new show starts
                         ]
                     },
                     {
                         $and: [
-                            { startTime: { $lte: endTime } },
+                            { startTime: { $lte: endTime } }, // Existing show starts before or at the same time as the new show ends
                             { endTime: { $gte: endTime } } // Existing show ends after or at the same time as the new show ends
                         ]
                     },
                     {
                         $and: [
-                            { startTime: { $gte: startTime } },
+                            { startTime: { $gte: startTime } }, // Existing show starts after or at the same time as the new show starts
                             { endTime: { $lte: endTime } } // Existing show ends before or at the same time as the new show ends
                         ]
                     }

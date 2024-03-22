@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TempTheaterRepository = void 0;
-const tempTheaterModel_1 = require("../../entities/models/temp/tempTheaterModel");
+const tempTheaterModel_1 = require("../db/temp/tempTheaterModel");
 class TempTheaterRepository {
     saveTheater(theater) {
         return __awaiter(this, void 0, void 0, function* () {

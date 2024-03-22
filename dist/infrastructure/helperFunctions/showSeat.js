@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createEmptyShowSeat = exports.getShowSeatCategory = void 0;
-const constants_1 = require("../../constants/constants");
+const constants_1 = require("../constants/constants");
 function getShowSeatCategory(screenCat, price) {
     if (screenCat.seats.size === 0)
         return undefined;

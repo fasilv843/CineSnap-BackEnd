@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TempTicketRepository = void 0;
-const tempTicketModel_1 = require("../../entities/models/temp/tempTicketModel");
+const tempTicketModel_1 = require("../db/temp/tempTicketModel");
 class TempTicketRepository {
     saveTicketDataTemporarily(ticketData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32,11 +32,9 @@ class TempTicketRepository {
             return yield tempTicketModel_1.tempTicketModel.findByIdAndDelete(ticketId).select({ _id: 0, expireAt: 0 });
         });
     }
-    deleteTicketData(tempTicketId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield tempTicketModel_1.tempTicketModel.findByIdAndDelete(tempTicketId);
-        });
-    }
+    // async deleteTicketData (tempTicketId: string): Promise<ITempTicketRes | null> {
+    //     return await tempTicketModel.findByIdAndDelete(tempTicketId)
+    // }
     getHoldedSeats(showId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield tempTicketModel_1.tempTicketModel.find({ showId }, { _id: 0, diamondSeats: 1, goldSeats: 1, silverSeats: 1 });

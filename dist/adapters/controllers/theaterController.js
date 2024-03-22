@@ -10,12 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TheaterController = void 0;
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
-const constants_1 = require("../../constants/constants");
-const console_1 = require("console");
+const httpStatusCodes_1 = require("../../infrastructure/constants/httpStatusCodes");
+const constants_1 = require("../../infrastructure/constants/constants");
 class TheaterController {
-    constructor(theaterUseCase) {
-        this.theaterUseCase = theaterUseCase;
+    constructor(_theaterUseCase) {
+        this._theaterUseCase = _theaterUseCase;
     }
     // To save non-verified theater data temporarily and send otp for verification
     theaterRegister(req, res) {
@@ -30,7 +29,7 @@ class TheaterController {
             };
             // console.log(coords, 'coords');
             const theaterData = { name, email, liscenceId, password, address, coords, otp: 0 };
-            const authRes = yield this.theaterUseCase.verifyAndSaveTemporarily(theaterData);
+            const authRes = yield this._theaterUseCase.verifyAndSaveTemporarily(theaterData);
             res.status(authRes.status).json(authRes);
         });
     }
@@ -39,7 +38,7 @@ class TheaterController {
         return __awaiter(this, void 0, void 0, function* () {
             const { otp } = req.body;
             const authToken = req.headers.authorization;
-            const validationRes = yield this.theaterUseCase.validateAndSaveTheater(authToken, otp);
+            const validationRes = yield this._theaterUseCase.validateAndSaveTheater(authToken, otp);
             res.status(validationRes.status).json(validationRes);
         });
     }
@@ -47,7 +46,7 @@ class TheaterController {
     resendOTP(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const authToken = req.headers.authorization;
-            const apiRes = yield this.theaterUseCase.verifyAndSendNewOTP(authToken);
+            const apiRes = yield this._theaterUseCase.verifyAndSendNewOTP(authToken);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -55,7 +54,7 @@ class TheaterController {
     theaterLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
-            const authData = yield this.theaterUseCase.verifyLogin(email, password);
+            const authData = yield this._theaterUseCase.verifyLogin(email, password);
             res.status(authData.status).json(authData);
         });
     }
@@ -66,11 +65,11 @@ class TheaterController {
                 const latitude = parseFloat(req.query.latitude);
                 // console.log('on load theateres controller', longitude, latitude);
                 if (isNaN(longitude) || isNaN(latitude)) {
-                    return res.status(httpStausCodes_1.STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
+                    return res.status(httpStatusCodes_1.STATUS_CODES.BAD_REQUEST).json({ message: 'Invalid coordinates' });
                 }
-                const nearestTheater = yield this.theaterUseCase.getNearestTheatersByLimit(longitude, latitude, constants_1.TheaterShowLimit, constants_1.maxDistance);
+                const nearestTheater = yield this._theaterUseCase.getNearestTheatersByLimit(longitude, latitude, constants_1.TheaterShowLimit, constants_1.maxDistance);
                 // console.log(nearestTheater);
-                res.status(httpStausCodes_1.STATUS_CODES.OK).json({ message: 'Success', data: nearestTheater });
+                res.status(httpStatusCodes_1.STATUS_CODES.OK).json({ message: 'Success', data: nearestTheater });
             }
             catch (error) {
                 const err = error;
@@ -84,7 +83,7 @@ class TheaterController {
             const theaterId = req.params.theaterId;
             const { address, coords, mobile, name } = req.body;
             const theater = { name, mobile, address, coords };
-            const apiRes = yield this.theaterUseCase.updateTheater(theaterId, theater);
+            const apiRes = yield this._theaterUseCase.updateTheater(theaterId, theater);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -93,14 +92,14 @@ class TheaterController {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
             const fileName = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-            const apiRes = yield this.theaterUseCase.updateTheaterProfilePic(theaterId, fileName);
+            const apiRes = yield this._theaterUseCase.updateTheaterProfilePic(theaterId, fileName);
             res.status(apiRes.status).json(apiRes);
         });
     }
     removeTheaterProfilePic(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const apiRes = yield this.theaterUseCase.removeTheaterProfilePic(theaterId);
+            const apiRes = yield this._theaterUseCase.removeTheaterProfilePic(theaterId);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -108,7 +107,7 @@ class TheaterController {
     getTheaterData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const apiRes = yield this.theaterUseCase.getTheaterData(theaterId);
+            const apiRes = yield this._theaterUseCase.getTheaterData(theaterId);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -116,7 +115,7 @@ class TheaterController {
         return __awaiter(this, void 0, void 0, function* () {
             const { theaterId } = req.params;
             const amount = parseInt(req.body.amount);
-            const apiRes = yield this.theaterUseCase.addToWallet(theaterId, amount);
+            const apiRes = yield this._theaterUseCase.addToWallet(theaterId, amount);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -125,15 +124,14 @@ class TheaterController {
             const { theaterId } = req.params;
             const page = req.query.page;
             const limit = req.query.limit;
-            const apiRes = yield this.theaterUseCase.getWalletHistory(theaterId, page, limit);
+            const apiRes = yield this._theaterUseCase.getWalletHistory(theaterId, page, limit);
             res.status(apiRes.status).json(apiRes);
         });
     }
     getRevenueData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const theaterId = req.params.theaterId;
-            const apiRes = yield this.theaterUseCase.getRevenueData(theaterId);
-            (0, console_1.log)(apiRes.data, 'apiRes.data from controller, revenue');
+            const apiRes = yield this._theaterUseCase.getRevenueData(theaterId);
             res.status(apiRes.status).json(apiRes);
         });
     }

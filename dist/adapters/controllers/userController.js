@@ -14,10 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const httpStausCodes_1 = require("../../constants/httpStausCodes");
+const httpStatusCodes_1 = require("../../infrastructure/constants/httpStatusCodes");
 class UserController {
-    constructor(userUseCase, otpGenerator, encrypt) {
-        this.userUseCase = userUseCase;
+    constructor(_userUseCase, 
+    // ! Restructure/ Modify This controller
+    otpGenerator, encrypt) {
+        this._userUseCase = _userUseCase;
         this.otpGenerator = otpGenerator;
         this.encrypt = encrypt;
     }
@@ -26,19 +28,19 @@ class UserController {
             try {
                 const { name, email, password } = req.body;
                 // console.log(name, email, password);
-                const isEmailExist = yield this.userUseCase.isEmailExist(email);
+                const isEmailExist = yield this._userUseCase.isEmailExist(email);
                 if (isEmailExist === null) {
                     const OTP = this.otpGenerator.generateOTP();
                     // console.log(OTP,'OTP');
                     const securePassword = yield this.encrypt.encryptPassword(password);
                     const user = { name, email, password: securePassword, otp: OTP };
-                    const tempUser = yield this.userUseCase.saveUserTemporarily(user);
-                    this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP);
+                    const tempUser = yield this._userUseCase.saveUserTemporarily(user);
+                    this._userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP);
                     // console.log('responding with 200');
-                    res.status(httpStausCodes_1.STATUS_CODES.OK).json({ message: 'Success', token: tempUser.userAuthToken });
+                    res.status(httpStatusCodes_1.STATUS_CODES.OK).json({ message: 'Success', token: tempUser.userAuthToken });
                 }
                 else {
-                    res.status(httpStausCodes_1.STATUS_CODES.FORBIDDEN).json({ message: "Email already Exist" });
+                    res.status(httpStatusCodes_1.STATUS_CODES.FORBIDDEN).json({ message: "Email already Exist" });
                 }
             }
             catch (error) {
@@ -57,10 +59,10 @@ class UserController {
                 // console.log(authToken, 'authToken from validate otp');
                 if (authToken) {
                     const decoded = jsonwebtoken_1.default.verify(authToken.slice(7), process.env.JWT_SECRET_KEY);
-                    const user = yield this.userUseCase.findTempUserById(decoded.id);
+                    const user = yield this._userUseCase.findTempUserById(decoded.id);
                     if (user) {
                         if (otp == user.otp) {
-                            const savedData = yield this.userUseCase.saveUserDetails({
+                            const savedData = yield this._userUseCase.saveUserDetails({
                                 name: user.name,
                                 email: user.email,
                                 password: user.password
@@ -70,15 +72,15 @@ class UserController {
                         }
                         else {
                             console.log('otp didnt match');
-                            res.status(httpStausCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'Invalid OTP' });
+                            res.status(httpStatusCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'Invalid OTP' });
                         }
                     }
                     else {
-                        res.status(httpStausCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'Timeout, Register again' });
+                        res.status(httpStatusCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'Timeout, Register again' });
                     }
                 }
                 else {
-                    res.status(httpStausCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'authToken missing, Register again' });
+                    res.status(httpStatusCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'authToken missing, Register again' });
                 }
             }
             catch (error) {
@@ -94,21 +96,21 @@ class UserController {
                 // console.log(authToken, 'authToken from resend otp');
                 if (authToken) {
                     const decoded = jsonwebtoken_1.default.verify(authToken.slice(7), process.env.JWT_SECRET_KEY);
-                    const tempUser = yield this.userUseCase.findTempUserById(decoded.id);
+                    const tempUser = yield this._userUseCase.findTempUserById(decoded.id);
                     if (tempUser) {
                         const OTP = this.otpGenerator.generateOTP();
                         // console.log(tempUser, 'userData');
                         console.log(OTP, 'new resend otp');
-                        yield this.userUseCase.updateOtp(tempUser._id, tempUser.email, OTP);
-                        this.userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP);
-                        res.status(httpStausCodes_1.STATUS_CODES.OK).json({ message: 'OTP has been sent' });
+                        yield this._userUseCase.updateOtp(tempUser._id, tempUser.email, OTP);
+                        this._userUseCase.sendTimeoutOTP(tempUser._id, tempUser.email, OTP);
+                        res.status(httpStatusCodes_1.STATUS_CODES.OK).json({ message: 'OTP has been sent' });
                     }
                     else {
-                        res.status(httpStausCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'user timeout, register again' });
+                        res.status(httpStatusCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'user timeout, register again' });
                     }
                 }
                 else {
-                    res.status(httpStausCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'AuthToken missing' });
+                    res.status(httpStatusCodes_1.STATUS_CODES.UNAUTHORIZED).json({ message: 'AuthToken missing' });
                 }
             }
             catch (error) {
@@ -122,7 +124,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
-                const authData = yield this.userUseCase.verifyLogin(email, password);
+                const authData = yield this._userUseCase.verifyLogin(email, password);
                 res.status(authData.status).json(authData);
             }
             catch (error) {
@@ -135,7 +137,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { name, email, profilePic } = req.body;
-                const authData = yield this.userUseCase.handleSocialSignUp(name, email, profilePic);
+                const authData = yield this._userUseCase.handleSocialSignUp(name, email, profilePic);
                 res.status(authData.status).json(authData);
             }
             catch (error) {
@@ -148,7 +150,7 @@ class UserController {
     getUserData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.params.userId;
-            const apiRes = yield this.userUseCase.getUserData(userId);
+            const apiRes = yield this._userUseCase.getUserData(userId);
             res.json(apiRes.status).json(apiRes);
         });
     }
@@ -157,7 +159,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const user = req.body;
             const userId = req.params.userId;
-            const apiRes = yield this.userUseCase.updateUserData(userId, user);
+            const apiRes = yield this._userUseCase.updateUserData(userId, user);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -166,14 +168,14 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.params.userId;
             const fileName = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
-            const apiRes = yield this.userUseCase.updateUserProfilePic(userId, fileName);
+            const apiRes = yield this._userUseCase.updateUserProfilePic(userId, fileName);
             res.status(apiRes.status).json(apiRes);
         });
     }
     removeUserProfileDp(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = req.params.userId;
-            const apiRes = yield this.userUseCase.removeUserProfileDp(userId);
+            const apiRes = yield this._userUseCase.removeUserProfileDp(userId);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -181,7 +183,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId } = req.params;
             const amount = parseInt(req.body.amount);
-            const apiRes = yield this.userUseCase.addToWallet(userId, amount);
+            const apiRes = yield this._userUseCase.addToWallet(userId, amount);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -190,7 +192,7 @@ class UserController {
             const { userId } = req.params;
             const page = req.query.page;
             const limit = req.query.limit;
-            const apiRes = yield this.userUseCase.getWalletHistory(userId, page, limit);
+            const apiRes = yield this._userUseCase.getWalletHistory(userId, page, limit);
             res.status(apiRes.status).json(apiRes);
         });
     }

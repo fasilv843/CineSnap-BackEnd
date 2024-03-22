@@ -16,7 +16,7 @@ const app_1 = require("./infrastructure/config/app");
 const db_1 = require("./infrastructure/config/db");
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
-const controllers_1 = require("./providers/controllers");
+const controllers_1 = require("./infrastructure/utils/controllers");
 const PORT = process.env.PORT || 3000;
 const app = (0, app_1.createServer)();
 (0, db_1.mongoConnect)()
@@ -51,7 +51,6 @@ const app = (0, app_1.createServer)();
                 }
                 else {
                     recipientId = (_c = chatData.theaterId) !== null && _c !== void 0 ? _c : chatData.userId;
-                    // senderId = chatData.adminId as ID
                 }
                 const savedData = yield controllers_1.chatUseCase.sendMessage(chatData);
                 socket.to(userSockets.get(recipientId)).emit('recieve-message', savedData);

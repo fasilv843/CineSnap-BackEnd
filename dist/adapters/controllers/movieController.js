@@ -11,20 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MovieController = void 0;
 class MovieController {
-    constructor(movieUseCase) {
-        this.movieUseCase = movieUseCase;
+    constructor(_movieUseCase) {
+        this._movieUseCase = _movieUseCase;
     }
     getMovieDetails(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const movieId = req.params.movieId;
-            const apiRes = yield this.movieUseCase.findMovieById(movieId);
+            const apiRes = yield this._movieUseCase.findMovieById(movieId);
             res.status(apiRes.status).json(apiRes);
         });
     }
     // To get movies to show on user Home, focusing on latest released movies
     getBannerMovies(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiRes = yield this.movieUseCase.getBannerMovies();
+            const apiRes = yield this._movieUseCase.getBannerMovies();
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -49,10 +49,10 @@ class MovieController {
             if (page)
                 pageNum = parseInt(page);
             if (title) {
-                const apiRes = yield this.movieUseCase.searchMovie(title, isAdmin);
+                const apiRes = yield this._movieUseCase.searchMovie(title, isAdmin);
                 return res.status(apiRes.status).json(apiRes);
             }
-            const apiRes = yield this.movieUseCase.findMoviesLazily(pageNum, genreFilters, langFilters, availability);
+            const apiRes = yield this._movieUseCase.findMoviesLazily(pageNum, genreFilters, langFilters, availability);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -61,7 +61,7 @@ class MovieController {
         return __awaiter(this, void 0, void 0, function* () {
             const movie = req.body.movie;
             console.log(movie, 'movie from controller');
-            const apiRes = yield this.movieUseCase.saveMovie(movie);
+            const apiRes = yield this._movieUseCase.saveMovie(movie);
             res.status(apiRes.status).json(apiRes);
         });
     }
@@ -69,21 +69,21 @@ class MovieController {
     deleteMovie(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const movieId = req.params.movieId;
-            const deleteRes = yield this.movieUseCase.deleteMovie(movieId);
+            const deleteRes = yield this._movieUseCase.deleteMovie(movieId);
             res.status(deleteRes.status).json();
         });
     }
     // to get tmdb ids of movies that stored in CineSnap - used only in admin side
     getCineSnapMovieIds(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiRes = yield this.movieUseCase.getMovieIds();
+            const apiRes = yield this._movieUseCase.getMovieIds();
             res.status(apiRes.status).json(apiRes);
         });
     }
     // To get the filter data, based on which data that we are filtering
     getFilters(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiRes = yield this.movieUseCase.getFilters();
+            const apiRes = yield this._movieUseCase.getFilters();
             res.status(apiRes.status).json(apiRes);
         });
     }

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MovieRepository = void 0;
 const console_1 = require("console");
-const movieModel_1 = require("../../entities/models/movieModel");
+const movieModel_1 = require("../db/movieModel");
 class MovieRepository {
     saveMovieDetails(movie) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -28,12 +28,6 @@ class MovieRepository {
             }, { upsert: true });
         });
     }
-    // async findAllMovies(): Promise<IMovie[]> {
-    //     return await movieModel.find({})
-    // }
-    // async findAvailableMovies(): Promise<IMovie[]> {
-    //     return await movieModel.find({ isDeleted: false })
-    // }
     findMoviesLazily(page, genreFilters, langFilters, availability = 'Available') {
         return __awaiter(this, void 0, void 0, function* () {
             (0, console_1.log)(genreFilters, 'genreFilters number array');
@@ -75,10 +69,6 @@ class MovieRepository {
             return yield movieModel_1.movieModel.find(query);
         });
     }
-    // async findMovieByTitleAdmin(title: string): Promise<IMovie[]> {
-    //     const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
-    //     return await movieModel.find({ title: regex });
-    // }
     findMovieById(movieId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield movieModel_1.movieModel.findById({ _id: movieId });
@@ -126,8 +116,8 @@ class MovieRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const languages = yield movieModel_1.movieModel.distinct('language').exec();
             const result = yield movieModel_1.movieModel.aggregate([
-                { $unwind: '$genre_ids' },
-                { $group: { _id: '$genre_ids' } },
+                { $unwind: '$genre_ids' }, // Unwind the array to individual documents
+                { $group: { _id: '$genre_ids' } }, // Group by genre_ids to get unique values
                 { $project: { _id: 0, genreId: '$_id' } }, // Project to rename _id to genreId
             ]).exec();
             const genres = result.map(entry => entry.genreId);
