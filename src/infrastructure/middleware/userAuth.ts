@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { UserRepository } from "../repositories/userRepository";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { STATUS_CODES } from "../constants/httpStatusCodes";
 
 const userRepository = new UserRepository()
 const { FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = STATUS_CODES

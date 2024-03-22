@@ -1,6 +1,6 @@
 import express from "express";
 import { adminAuth } from "../middleware/adminAuth";
-import { aController, mController, ticketController } from "../../providers/controllers";
+import { aController, mController, ticketController } from "../utils/controllers";
 const adminRouter = express.Router()
 
 adminRouter.post('/login',  (req, res) => aController.adminLogin(req, res))

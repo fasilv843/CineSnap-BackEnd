@@ -1,12 +1,12 @@
 
-import { chatModel } from "../../entities/models/chatModel";
-import { ID } from "../../interfaces/common";
-import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../interfaces/schema/chatSchems";
-import { ITheaterRes } from "../../interfaces/schema/theaterSchema";
-import { IUserRes } from "../../interfaces/schema/userSchema";
+import { chatModel } from "../db/chatModel";
+import { IChatReadReqs, IChatReqs, IChatRes, IUsersListForChats } from "../../application/interfaces/types/chat";
+import { ITheaterRes } from "../../application/interfaces/types/theater";
+import { IUserRes } from "../../application/interfaces/types/user";
+import { IChatRepo } from "../../application/interfaces/repos/chatRepo";
 
 
-export class ChatRepository { // implements IChatRepo
+export class ChatRepository implements IChatRepo {
 
     async saveMessage (chatReqs: IChatReqs): Promise<IChatRes | null> {
         // console.log(chatReqs, 'chat data from repo');
@@ -32,7 +32,7 @@ export class ChatRepository { // implements IChatRepo
         )
     }
 
-    async getChatHistory (userId: ID | undefined, theaterId: ID | undefined, adminId: ID | undefined): Promise<IChatRes | null>{
+    async getChatHistory (userId: string | undefined, theaterId: string | undefined, adminId: string | undefined): Promise<IChatRes | null>{
         return await chatModel.findOneAndUpdate(
             { userId, theaterId, adminId },
             { $set: { "messages.$[].isRead": true } },  // Update isRead for all elements in the messages array
@@ -40,14 +40,14 @@ export class ChatRepository { // implements IChatRepo
         )
     }
 
-    async getTheatersChattedWith (userId: ID): Promise<ITheaterRes[]> {
+    async getTheatersChattedWith (userId: string): Promise<ITheaterRes[]> {
         const allChats = await chatModel.find({ userId }).populate('theaterId')
         const theaters = allChats.map(chat => chat.theaterId)
         // console.log(theaters, 'theaters from get theaters for chats');
         return theaters as unknown as ITheaterRes[]
     }
 
-    async getUsersChattedWith (theaterId: ID): Promise<IUsersListForChats[]> {
+    async getUsersChattedWith (theaterId: string): Promise<IUsersListForChats[]> {
         const allChats = await chatModel.find({ theaterId }).populate('userId')
         const users: IUsersListForChats[] = allChats.map(chat => {
             const unreadCount = chat.messages.filter(msg => msg.sender === 'User' && msg.isRead === false).length

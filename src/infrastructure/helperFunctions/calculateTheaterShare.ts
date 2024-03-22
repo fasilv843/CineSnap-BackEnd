@@ -1,9 +1,9 @@
-import { NoRefundTime, QuarterRefundTime, HalfRefundTime, ThreeQuarterRefundTime } from "../../constants/constants"
-import { CancelledBy } from "../../interfaces/common"
-import { ITempTicketRes, ITicketRes } from "../../interfaces/schema/ticketSchema"
+import { NoRefundTime, QuarterRefundTime, HalfRefundTime, ThreeQuarterRefundTime } from "../constants/constants"
+import { ITempTicketRes, ITicketRes } from "../../application/interfaces/types/ticket"
 import { CancelledByUnknownError } from "../errors/cancelledByUnknownError"
 import { RefundNotAllowedError } from "../errors/refundNotAllowedError"
 import { calculateHoursDifference } from "./date"
+import { CancelledBy } from "../../entities/common"
 
 export function calculateTheaterShare (ticket: ITempTicketRes | ITicketRes): number {
     let price = 0

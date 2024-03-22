@@ -2,9 +2,8 @@ import { createServer } from "./infrastructure/config/app";
 import { mongoConnect } from "./infrastructure/config/db";
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { chatUseCase } from "./providers/controllers";
-import { IChatReqs } from "./interfaces/schema/chatSchems";
-import { ID } from "./interfaces/common";
+import { chatUseCase } from "./infrastructure/utils/controllers";
+import { IChatReqs } from "./application/interfaces/types/chat";
 
 const PORT = process.env.PORT || 3000
 
@@ -34,21 +33,20 @@ mongoConnect()
                 userSockets.set(id, socket.id);
 
                 socket.on('send-message', async (chatData: IChatReqs) => {
-                    let recipientId: ID;
+                    let recipientId: string;
                     // let senderId: ID;
                     if (chatData.sender === 'User') {
-                        recipientId = chatData.theaterId ?? chatData.adminId as ID
+                        recipientId = chatData.theaterId ?? chatData.adminId as string
                         // senderId = chatData.userId as ID
                     } else if (chatData.sender === 'Theater') {
-                        recipientId = chatData.userId ?? chatData.adminId as ID
+                        recipientId = chatData.userId ?? chatData.adminId as string
                         // senderId = chatData.theaterId as ID
                     } else {
-                        recipientId = chatData.theaterId ?? chatData.userId as ID
-                        // senderId = chatData.adminId as ID
+                        recipientId = chatData.theaterId ?? chatData.userId as string
                     }
                     
                     const savedData = await chatUseCase.sendMessage(chatData)
-                    socket.to(userSockets.get(recipientId as unknown as string) as string).emit('recieve-message', savedData);
+                    socket.to(userSockets.get(recipientId) as string).emit('recieve-message', savedData);
                     // socket.to(userSockets.get(senderId as unknown as string) as string).emit('recieve-message', savedData);
                 });
 

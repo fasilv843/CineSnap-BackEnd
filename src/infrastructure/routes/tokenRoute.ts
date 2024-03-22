@@ -1,20 +1,19 @@
 import express, { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
-import { JWTToken } from "../../providers/jwtToken";
+import { STATUS_CODES } from "../constants/httpStatusCodes";
+import { TokenGenerator } from "../utils/jwtToken";
 
 const tokenRouter = express.Router()
 
-const jwtToken = new JWTToken()
+const tokenGenerator = new TokenGenerator()
 
 tokenRouter.get('/', (req: Request, res: Response) => {
     try {
         const refreshToken = req.headers.authorization;
-        // console.log(refreshToken, 'refresh token in tokenRouer');
         
         if(refreshToken) {
             const decoded = jwt.verify(refreshToken.slice(7), process.env.JWT_SECRET_KEY as string) as JwtPayload;
-            const accessToken = jwtToken.generateAccessToken(decoded.id)
+            const accessToken = tokenGenerator.generateAccessToken(decoded.id)
             res.status(STATUS_CODES.OK).json({
                 status: STATUS_CODES.OK,
                 message: 'Success',

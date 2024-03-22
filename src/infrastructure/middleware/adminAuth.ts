@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AdminRepository } from "../repositories/adminRepository";
-import { STATUS_CODES } from "../../constants/httpStausCodes";
+import { STATUS_CODES } from "../constants/httpStatusCodes";
 
 
 const adminRepository = new AdminRepository()

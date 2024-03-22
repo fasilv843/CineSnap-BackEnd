@@ -1,22 +1,21 @@
-import { couponModel } from "../../entities/models/couponModel";
-import { ID } from "../../interfaces/common";
-import { ICouponRepo } from "../../interfaces/repos/couponRepo"; 
-import { ICouponReqs, ICouponRes } from "../../interfaces/schema/couponSchema";
+import { couponModel } from "../db/couponModel";
+import { ICouponRepo } from "../../application/interfaces/repos/couponRepo"; 
+import { ICouponReqs, ICouponRes } from "../../application/interfaces/types/coupon";
 
 export class CouponRepository implements ICouponRepo {
     async addCoupon (coupon: ICouponReqs): Promise<ICouponRes> {
-        return await new couponModel(coupon).save()
+        return await new couponModel(coupon).save() as unknown as ICouponRes
     }
 
-    async findCouponsOnTheater (theaterId: ID): Promise<ICouponRes[]> {
+    async findCouponsOnTheater (theaterId: string): Promise<ICouponRes[]> {
         return await couponModel.find({ theaterId })
     }
 
-    async findCouponById (couponId: ID): Promise<ICouponRes | null> {
+    async findCouponById (couponId: string): Promise<ICouponRes | null> {
         return await couponModel.findById(couponId)
     }
 
-    async updateCancelStatus (couponId: ID, currCancelStatus: boolean): Promise<ICouponRes | null> {
+    async updateCancelStatus (couponId: string, currCancelStatus: boolean): Promise<ICouponRes | null> {
         return await couponModel.findByIdAndUpdate(
             { _id: couponId },
             {

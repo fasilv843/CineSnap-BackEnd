@@ -1,7 +1,6 @@
-import { tempTheaterModel } from "../../entities/models/temp/tempTheaterModel";
-import { ID } from "../../interfaces/common";
-import { ITempTheaterRepo } from "../../interfaces/repos/tempTheaterRepo";
-import { ITempTheaterReq, ITempTheaterRes } from "../../interfaces/schema/tempTheaterSchema";
+import { tempTheaterModel } from "../db/temp/tempTheaterModel";
+import { ITempTheaterRepo } from "../../application/interfaces/repos/tempTheaterRepo";
+import { ITempTheaterReq, ITempTheaterRes } from "../../application/interfaces/types/tempTheater";
 
 
 export class TempTheaterRepository implements ITempTheaterRepo {
@@ -24,7 +23,7 @@ export class TempTheaterRepository implements ITempTheaterRepo {
         )
     }
 
-    async unsetTheaterOTP(id: ID, email: string): Promise<ITempTheaterRes | null> {
+    async unsetTheaterOTP(id: string, email: string): Promise<ITempTheaterRes | null> {
         return await tempTheaterModel.findByIdAndUpdate(
             { _id: id, email },
             { $unset: { otp: 1 } },
@@ -32,11 +31,11 @@ export class TempTheaterRepository implements ITempTheaterRepo {
         );
     }
 
-    async findTempTheaterById(id: ID): Promise<ITempTheaterRes | null> {
+    async findTempTheaterById(id: string): Promise<ITempTheaterRes | null> {
         return await tempTheaterModel.findById({ _id: id })
     }
 
-    async updateTheaterOTP(id: ID, email: string, OTP: number): Promise<ITempTheaterRes | null> {
+    async updateTheaterOTP(id: string, email: string, OTP: number): Promise<ITempTheaterRes | null> {
         return tempTheaterModel.findOneAndUpdate(
             { _id: id, email },
             {

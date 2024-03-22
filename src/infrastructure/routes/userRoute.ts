@@ -1,6 +1,6 @@
 import express from "express";
 import { userAuth } from "../middleware/userAuth";
-import { uController, tController, mController, chatController, showController, ticketController, showSeatsController, couponController } from "../../providers/controllers";
+import { uController, tController, mController, chatController, showController, ticketController, showSeatsController, couponController } from "../utils/controllers";
 import { upload } from "../config/multer";
 
 const userRouter = express.Router()

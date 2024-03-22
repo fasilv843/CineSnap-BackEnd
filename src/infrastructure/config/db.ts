@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { movieModel } from "../../entities/models/movieModel";
-import { theaterModel } from "../../entities/models/theaterModel";
-import { tempUserModel } from "../../entities/models/temp/tempUserModel";
+import { movieModel } from "../db/movieModel";
+import { theaterModel } from "../db/theaterModel";
+import { tempUserModel } from "../db/temp/tempUserModel";
 
 
 export const mongoConnect = async () => {

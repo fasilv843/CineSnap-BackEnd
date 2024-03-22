@@ -1,4 +1,4 @@
-import { ISelectedSeat } from "../../interfaces/schema/ticketSchema"
+import { ISelectedSeat } from "../../application/interfaces/types/ticket"
 
 export function getSeatMap(seats: ISelectedSeat[]): Map<string, number[]> {
     const seatsMap = new Map<string, number[]>()

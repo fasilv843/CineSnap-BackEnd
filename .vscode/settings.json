@@ -1,3 +1,8 @@
 {
-    "explorer.excludeGitIgnore": false
+    "explorer.excludeGitIgnore": false,
+    "cSpell.words": [
+        "Encryptor",
+        "IOTP",
+        "ITMDB"
+    ]
 }

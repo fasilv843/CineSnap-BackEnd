@@ -1,8 +1,8 @@
 import { log } from "console";
-import { movieModel } from "../../entities/models/movieModel";
-import { ID } from "../../interfaces/common";
-import { IMovieRepo } from "../../interfaces/repos/movieRepo";
-import { IMovie, ITMDBMovie } from "../../interfaces/schema/movieSchema";
+import { movieModel } from "../db/movieModel";
+import { IMovieRepo } from "../../application/interfaces/repos/movieRepo";
+import { ITMDBMovie } from "../../application/interfaces/types/movie";
+import { IMovie } from "../../entities/movie";
 
 interface IMovieQuery {
     language?: { $in: string[] };
@@ -31,14 +31,6 @@ export class MovieRepository implements IMovieRepo {
             { upsert: true }
         )
     }
-
-    // async findAllMovies(): Promise<IMovie[]> {
-    //     return await movieModel.find({})
-    // }
-
-    // async findAvailableMovies(): Promise<IMovie[]> {
-    //     return await movieModel.find({ isDeleted: false })
-    // }
 
     async findMoviesLazily(page: number, genreFilters: number[], langFilters: string[], availability: string = 'Available'): Promise<IMovie[]> {
 
@@ -77,13 +69,7 @@ export class MovieRepository implements IMovieRepo {
         return await movieModel.find(query);
     }
 
-    // async findMovieByTitleAdmin(title: string): Promise<IMovie[]> {
-    //     const regex = new RegExp(title, 'i'); // 'i' for case-insensitive search
-    //     return await movieModel.find({ title: regex });
-    // }
-
-
-    async findMovieById(movieId: ID): Promise<IMovie | null> {
+    async findMovieById(movieId: string): Promise<IMovie | null> {
         return await movieModel.findById({ _id: movieId })
     }
 
@@ -91,7 +77,7 @@ export class MovieRepository implements IMovieRepo {
         return await movieModel.find({ release_date: { $gt: new Date() } })
     }
 
-    async deleteMovie(id: ID): Promise<void | null> {
+    async deleteMovie(id: string): Promise<void | null> {
         const movie = await movieModel.findById({ _id: id })
         log('movie to delete', movie)
         if (movie !== null) {

@@ -1,22 +1,21 @@
-import { IScreenRepo } from "../../interfaces/repos/screenRepo";
-import { screenModel } from "../../entities/models/screensModel";
-import { ID } from "../../interfaces/common";
-import { IScreen } from "../../interfaces/schema/screenSchema";
+import { IScreen } from "../../entities/screen";
+import { IScreenRepo } from "../../application/interfaces/repos/screenRepo";
+import { screenModel } from "../db/screensModel";
 
 export class ScreenRepository implements IScreenRepo {
     async saveScreen(screenData: Omit<IScreen, '_id'>): Promise<IScreen> {
-        return await new screenModel(screenData).save()
+        return await new screenModel(screenData).save() as unknown as IScreen
     }
 
-    async findScreenById(id: ID): Promise<IScreen | null> {
+    async findScreenById(id: string): Promise<IScreen | null> {
         return await screenModel.findById({_id: id})
     }
 
-    async findScreensInTheater(theaterId: ID): Promise<IScreen[]> {
+    async findScreensInTheater(theaterId: string): Promise<IScreen[]> {
         return await screenModel.find({theaterId})
     }
 
-    async updateScreenName (screenId: ID, screenName: string): Promise<IScreen | null> {
+    async updateScreenName (screenId: string, screenName: string): Promise<IScreen | null> {
         return await screenModel.findByIdAndUpdate(
             { _id: screenId },
             {
@@ -26,11 +25,11 @@ export class ScreenRepository implements IScreenRepo {
         )
     }
 
-    async deleteScreen (screenId: ID): Promise<IScreen | null> {
+    async deleteScreen (screenId: string): Promise<IScreen | null> {
         return await screenModel.findByIdAndDelete(screenId)
     }
 
-    async updateSeatCount (seatId: ID, seatsCount: number, rows: string): Promise<IScreen | null> {
+    async updateSeatCount (seatId: string, seatsCount: number, rows: string): Promise<IScreen | null> {
         return await screenModel.findOneAndUpdate (
             { seatId },
             {

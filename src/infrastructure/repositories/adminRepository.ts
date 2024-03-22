@@ -1,14 +1,13 @@
-import { IAdminRepo } from "../../interfaces/repos/adminRepo";
-import { IAdmin } from "../../interfaces/schema/adminSchema";
-import { adminModel } from "../../entities/models/adminModel";
-import { ID } from "../../interfaces/common";
+import { IAdmin } from "../../entities/admin";
+import { IAdminRepo } from "../../application/interfaces/repos/adminRepo";
+import { adminModel } from "../db/adminModel";
 
 export class AdminRepository implements IAdminRepo {
     async findAdmin(): Promise<IAdmin | null> {
         return await adminModel.findOne()
     }
 
-    async findById(adminId: ID): Promise<IAdmin | null> {
+    async findById(adminId: string): Promise<IAdmin | null> {
         return await adminModel.findById(adminId)
     }
 

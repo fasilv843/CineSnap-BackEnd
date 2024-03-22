@@ -1,23 +1,22 @@
 import { Request, Response } from "express";
-import { ScreenSeatUseCase } from "../../useCases/screenSeatUseCase";
-import { ID } from "../../interfaces/common";
-import { IScreenSeatRes } from "../../interfaces/schema/screenSeatSchema";
+import { ScreenSeatUseCase } from "../../application/useCases/screenSeatUseCase";
+import { IScreenSeatRes } from "../../application/interfaces/types/screenSeat";
 
 export class ScreenSeatController {
     constructor(
-      private readonly screenSeatUseCase: ScreenSeatUseCase
+      private readonly _screenSeatUseCase: ScreenSeatUseCase
     ) { }
 
     async findScreenSeatById (req: Request, res: Response) {
-        const screenSeatId = req.params.seatId as unknown as ID
-        const screenSeatRes = await this.screenSeatUseCase.findScreenSeatById(screenSeatId)
+        const screenSeatId = req.params.seatId
+        const screenSeatRes = await this._screenSeatUseCase.findScreenSeatById(screenSeatId)
         res.status(screenSeatRes.status).json(screenSeatRes)
     }
 
     async updateScreenSeat (req: Request, res: Response) {
-        const screenSeatId = req.params.seatId as unknown as ID
+        const screenSeatId = req.params.seatId
         const { screenSeatData } = req.body as { screenSeatData: IScreenSeatRes }
-        const screenSeatRes = await this.screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData)
+        const screenSeatRes = await this._screenSeatUseCase.updateScreenSeat(screenSeatId, screenSeatData)
         res.status(screenSeatRes.status).json(screenSeatRes)
     }
 }

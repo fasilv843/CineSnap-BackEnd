@@ -1,24 +1,21 @@
 import { Request, Response } from "express";
-import { MovieUseCase } from "../../useCases/movieUseCase";
-import { ITMDBMovie } from "../../interfaces/schema/movieSchema";
-import { ID } from "../../interfaces/common";
-
-
+import { MovieUseCase } from "../../application/useCases/movieUseCase";
+import { ITMDBMovie } from "../../application/interfaces/types/movie";
 
 export class MovieController {
     constructor(
-        private readonly movieUseCase: MovieUseCase
+        private readonly _movieUseCase: MovieUseCase
     ) { }
 
     async getMovieDetails (req: Request, res: Response) { 
-        const movieId = req.params.movieId as unknown as ID
-        const apiRes = await this.movieUseCase.findMovieById(movieId)
+        const movieId = req.params.movieId
+        const apiRes = await this._movieUseCase.findMovieById(movieId)
         res.status(apiRes.status).json(apiRes)
     }
 
     // To get movies to show on user Home, focusing on latest released movies
     async getBannerMovies(req: Request, res: Response) {
-        const apiRes = await this.movieUseCase.getBannerMovies()
+        const apiRes = await this._movieUseCase.getBannerMovies()
         res.status(apiRes.status).json(apiRes)
     }
 
@@ -44,10 +41,10 @@ export class MovieController {
         let pageNum = 1
         if(page) pageNum = parseInt(page)
         if (title) {
-            const apiRes = await this.movieUseCase.searchMovie(title, isAdmin)
+            const apiRes = await this._movieUseCase.searchMovie(title, isAdmin)
             return res.status(apiRes.status).json(apiRes)
         }
-        const apiRes = await this.movieUseCase.findMoviesLazily(pageNum, genreFilters, langFilters, availability)
+        const apiRes = await this._movieUseCase.findMoviesLazily(pageNum, genreFilters, langFilters, availability)
         res.status(apiRes.status).json(apiRes)
     }
 
@@ -55,26 +52,26 @@ export class MovieController {
     async addMovie(req: Request, res: Response) {
         const movie: ITMDBMovie = req.body.movie
         console.log(movie, 'movie from controller');
-        const apiRes = await this.movieUseCase.saveMovie(movie)
+        const apiRes = await this._movieUseCase.saveMovie(movie)
         res.status(apiRes.status).json(apiRes)
     }
 
     // To delete/hide a movie from users and theaters
     async deleteMovie(req: Request, res: Response) {
-        const movieId: ID = req.params.movieId as unknown as ID
-        const deleteRes = await this.movieUseCase.deleteMovie(movieId)
+        const movieId = req.params.movieId
+        const deleteRes = await this._movieUseCase.deleteMovie(movieId)
         res.status(deleteRes.status).json()
     }
 
     // to get tmdb ids of movies that stored in CineSnap - used only in admin side
     async getCineSnapMovieIds (req: Request, res: Response) {
-        const apiRes = await this.movieUseCase.getMovieIds()
+        const apiRes = await this._movieUseCase.getMovieIds()
         res.status(apiRes.status).json(apiRes)
     }
 
     // To get the filter data, based on which data that we are filtering
     async getFilters (req: Request, res: Response) {
-        const apiRes = await this.movieUseCase.getFilters()
+        const apiRes = await this._movieUseCase.getFilters()
         res.status(apiRes.status).json(apiRes)
     }
 }

@@ -1,6 +1,6 @@
 import path from "path";
 import ejs from 'ejs'
-import { ITicketRes } from "../../interfaces/schema/ticketSchema";
+import { ITicketRes } from "../../application/interfaces/types/ticket";
 import { log } from "console";
 import puppeteer from "puppeteer";
 import { promises as fs } from 'fs'

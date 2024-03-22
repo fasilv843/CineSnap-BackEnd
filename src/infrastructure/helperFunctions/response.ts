@@ -1,5 +1,5 @@
-import { ERR_MESSAGE, STATUS_CODES } from "../../constants/httpStausCodes";
-import { AllResTypes, IApiRes } from "../../interfaces/common";
+import { ERR_MESSAGE, STATUS_CODES } from "../constants/httpStatusCodes";
+import { AllResTypes, IApiRes } from "../../application/interfaces/types/common";
 
 export function get200Response<T extends AllResTypes>(data: T): IApiRes<T> {
     return {
