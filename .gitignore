@@ -1,4 +1,3 @@
 .env.dev
 .env.prod
 node_modules
-docker-compose.yml
