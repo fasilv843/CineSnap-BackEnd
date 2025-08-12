@@ -13,7 +13,7 @@ export const createServer = () => {
     try {
         const app = express()
 
-        console.log(process.env.CORS_URI, 'cors url')
+        console.log(process.env.ALLOWED_CORS_ORIGINS, 'ALLOWED_CORS_ORIGINS')
         console.log(process.env.NODE_ENV, 'NODE_ENV')
 
         app.use(express.json())
@@ -23,7 +23,19 @@ export const createServer = () => {
 
         app.use(cors({
             credentials: true,
-            origin: process.env.CORS_URI
+            origin(requestOrigin, callback) {
+                // If no origin (like from Postman or server-to-server) allow it
+                if (!requestOrigin) return callback(null, true);
+
+                const allowedOrigins = process.env.ALLOWED_CORS_ORIGINS?.split(",").map(origin => origin.trim());
+
+                if (allowedOrigins?.includes(requestOrigin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error("Not allowed by CORS"));
+                }
+
+            },
         }))
 
         app.use('/api/admin', adminRouter)
