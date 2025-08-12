@@ -1,9 +1,12 @@
-import { log } from "console";
 import { mailTransporter } from "../config/mailTransporter";
-import { generateInvoiceAndGetPath, getMovieSuccessMailTemplate, getOTPTemplate } from "../helperFunctions/getMailTemplate";
+import { 
+    // generateInvoiceAndGetPath,
+    getMovieSuccessMailTemplate,
+    getOTPTemplate 
+} from "../helperFunctions/getMailTemplate";
 import { ITicketRes } from "../../application/interfaces/types/ticket";
 import { IMailSender } from "../../application/interfaces/utils/mailSender";
-import fs from 'fs'
+// import fs from 'fs'
 
 export class MailSender implements IMailSender {
     sendOTP(email: string, otp: number): void {
@@ -78,8 +81,6 @@ export class MailSender implements IMailSender {
                 // },
             ]
         };
-
-        log('details added with attachment , sending mail')
 
         mailTransporter.sendMail(details, ( err:Error | null ) => {
             if (err) {

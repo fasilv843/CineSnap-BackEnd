@@ -1,11 +1,10 @@
 import path from "path";
 import ejs from 'ejs'
 import { ITicketRes } from "../../application/interfaces/types/ticket";
-import { log } from "console";
-import puppeteer from "puppeteer";
-import { promises as fs } from 'fs'
-import { v4 as uuidv4 } from 'uuid';
-import { installPuppeteer } from "./installPuppeteer";
+// import puppeteer from "puppeteer";
+// import { promises as fs } from 'fs'
+// import { v4 as uuidv4 } from 'uuid';
+// import { installPuppeteer } from "./installPuppeteer";
 
 export function getOTPTemplate (otp: number): string {
     return `
@@ -35,65 +34,64 @@ export function getOTPTemplate (otp: number): string {
 export async function getMovieSuccessMailTemplate (ticket: ITicketRes): Promise<string> {
     const templateData = { ticket };
     const templatePath = path.join(__dirname, '../templates/mail/bookingSuccess.ejs');
-    log(templatePath, 'template path')
     const renderedTemplate = ejs.renderFile(templatePath, templateData);
     return await renderedTemplate;
 }
 
-export async function generateInvoiceAndGetPath (ticket: ITicketRes): Promise<string> {
-    try {
-        // Render the invoice.ejs template with ticket data
-        const templatePath = path.join(__dirname, '../templates/pdf/invoice.ejs'); // Replace with the actual path
-        const templateContent = await fs.readFile(templatePath, 'utf-8');
-        const renderedHtml = ejs.render(templateContent, { ticket });
+// export async function generateInvoiceAndGetPath (ticket: ITicketRes): Promise<string> {
+//     try {
+//         // Render the invoice.ejs template with ticket data
+//         const templatePath = path.join(__dirname, '../templates/pdf/invoice.ejs'); // Replace with the actual path
+//         const templateContent = await fs.readFile(templatePath, 'utf-8');
+//         const renderedHtml = ejs.render(templateContent, { ticket });
 
-        await installPuppeteer() // Check first on localhost 
+//         await installPuppeteer() // Check first on localhost 
 
-        const uuid = uuidv4()
-        log(uuid, 'generated uuid using uuidv4()')
+//         const uuid = uuidv4()
+//         log(uuid, 'generated uuid using uuidv4()')
 
-        // Create a temporary HTML file to load in Puppeteer
-        const tempHtmlDir = path.join(__dirname, '../templates/temp/html');
-        const tempHtmlPath = path.join(tempHtmlDir, `invoice-${uuid}.html`);
+//         // Create a temporary HTML file to load in Puppeteer
+//         const tempHtmlDir = path.join(__dirname, '../templates/temp/html');
+//         const tempHtmlPath = path.join(tempHtmlDir, `invoice-${uuid}.html`);
 
-        // Ensure the directory exists
-        await fs.mkdir(tempHtmlDir, { recursive: true });
+//         // Ensure the directory exists
+//         await fs.mkdir(tempHtmlDir, { recursive: true });
 
-        await fs.writeFile(tempHtmlPath, renderedHtml);
+//         await fs.writeFile(tempHtmlPath, renderedHtml);
     
-        // Configure Puppeteer
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+//         // Configure Puppeteer
+//         const browser = await puppeteer.launch();
+//         const page = await browser.newPage();
 
-        log(page, 'browser page from puppeteer')
+//         log(page, 'browser page from puppeteer')
     
-        // Load the HTML file
-        await page.goto(`file://${tempHtmlPath}`, { waitUntil: 'domcontentloaded' });
+//         // Load the HTML file
+//         await page.goto(`file://${tempHtmlPath}`, { waitUntil: 'domcontentloaded' });
 
-        // Wait for the image to load using a function
-        const imageSelector = 'img[src^="https://image.tmdb.org"]';
-        await page.waitForFunction(
-            (selector) => {
-                const img = document.querySelector(selector) as HTMLImageElement | null
-                return img && img.complete && img.naturalWidth > 0;
-            },
-            {},
-            imageSelector
-        );
+//         // Wait for the image to load using a function
+//         const imageSelector = 'img[src^="https://image.tmdb.org"]';
+//         await page.waitForFunction(
+//             (selector) => {
+//                 const img = document.querySelector(selector) as HTMLImageElement | null
+//                 return img && img.complete && img.naturalWidth > 0;
+//             },
+//             {},
+//             imageSelector
+//         );
         
-        // Generate PDF
-        const pdfDir = path.join(__dirname, '../templates/temp/pdf');
-        await fs.mkdir(pdfDir, { recursive: true });
-        const pdfPath = path.join(pdfDir, `invoice-${uuid}.pdf`); // Replace with your desired output directory
-        await page.pdf({ path: pdfPath, format: 'A4' });
+//         // Generate PDF
+//         const pdfDir = path.join(__dirname, '../templates/temp/pdf');
+//         await fs.mkdir(pdfDir, { recursive: true });
+//         const pdfPath = path.join(pdfDir, `invoice-${uuid}.pdf`); // Replace with your desired output directory
+//         await page.pdf({ path: pdfPath, format: 'A4' });
     
-        // Close Puppeteer
-        await browser.close();
+//         // Close Puppeteer
+//         await browser.close();
     
-        // Return the path to the generated PDF
-        return pdfPath;
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-        throw error;
-      }
-}
+//         // Return the path to the generated PDF
+//         return pdfPath;
+//       } catch (error) {
+//         console.error('Error generating PDF:', error);
+//         throw error;
+//       }
+// }
