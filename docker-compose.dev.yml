@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  cinesnap-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TARGET_ENV: development   # Pass the build-arg to trigger development behavior
+    image: cinesnap-api:development
+    ports:
+      - "3000:3000" 
+    env_file:
+      - .env.development
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"  # Expose HTTP port to host
+  #     # - "443:443" # Optional, if you have HTTPS certs
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     # - ./certs:/etc/nginx/certs:ro   # Optional, for SSL certificates
+  #   depends_on:
+  #     - cinesnap-api
+
