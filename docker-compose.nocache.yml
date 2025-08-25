@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  cinesnap-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TARGET_ENV: production
+    image: cinesnap-api:production
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production
