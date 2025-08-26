@@ -25,7 +25,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: 
+        run: |
           IMAGE_ID=ghcr.io/${{ github.repository }}/cinesnap-server
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
