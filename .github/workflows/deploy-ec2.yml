@@ -28,6 +28,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # git clone https://github.com/fasilv843/CineSnap-BackEnd.git app - use this command to clone to keep the dir name as app
             cd ~/app || exit 1
 
             # Pull the latest code (includes updated docker-compose.yml if changed)
