@@ -1,35 +1,37 @@
-name: Deploy to EC2
+# This workflow will deploy the docker container to AWS EC2, and delete all unused images from ec2 server
 
-on:
-  workflow_run:
-    workflows:
-      - "Build and Push Docker Image"
-    types:
-      - completed
+# name: Deploy to EC2
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# on:
+#   workflow_run:
+#     workflows:
+#       - "Build and Push Docker Image"
+#     types:
+#       - completed
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-      - name: Connect to EC2 and deploy
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # git clone https://github.com/fasilv843/CineSnap-BackEnd.git app - use this command to clone to keep the dir name as app
-            cd ~/app || exit 1
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v4
 
-            # Pull the latest code (includes updated docker-compose.yml if changed)
-            git fetch origin
-            git reset --hard origin/cicd   # or 'main' if that's your deploy branch
+#       - name: Connect to EC2 and deploy
+#         uses: appleboy/ssh-action@v1.2.0
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ${{ secrets.EC2_USER }}
+#           key: ${{ secrets.EC2_SSH_KEY }}
+#           script: |
+#             # git clone https://github.com/fasilv843/CineSnap-BackEnd.git app - use this command to clone to keep the dir name as app
+#             cd ~/app || exit 1
 
-            # Deploy latest Docker images
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
-            docker image prune -a -f
+#             # Pull the latest code (includes updated docker-compose.yml if changed)
+#             git fetch origin
+#             git reset --hard origin/master   # or 'main' if that's your deploy branch
+
+#             # Deploy latest Docker images
+#             docker compose -f docker-compose.prod.yml pull
+#             docker compose -f docker-compose.prod.yml up -d
+#             docker image prune -a -f
