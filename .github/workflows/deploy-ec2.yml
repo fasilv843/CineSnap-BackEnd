@@ -32,6 +32,6 @@ jobs:
             git reset --hard origin/cicd   # or 'main' if that's your deploy branch
 
             # Deploy latest Docker images
-            docker-compose pull
-            docker-compose up -d
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml pull
             docker image prune -f
