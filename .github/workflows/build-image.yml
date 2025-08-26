@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - cicd
-    # paths:
-    #   - 'Dockerfile'        # only trigger when Dockerfile changes
-    #   - '.github/workflows/build-image.yml' # (optional) re-run if workflow changes
 
 jobs:
   build:
