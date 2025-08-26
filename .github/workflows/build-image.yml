@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}/cinesnap-server
+          IMAGE_ID=ghcr.io/${{ github.repository }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
           # Tag with commit SHA and latest
@@ -34,7 +34,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}/cinesnap-server
+          IMAGE_ID=ghcr.io/${{ github.repository }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[:upper:]' '[:lower:]')
 
           docker push $IMAGE_ID:latest

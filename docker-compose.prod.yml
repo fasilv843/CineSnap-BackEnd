@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   cinesnap-api:
-    image: ghcr.io/fasilv843/cinesnap-server:latest
+    image: ghcr.io/fasilv843/cinesnap-backend:latest
     ports:
       - "3000:3000"
     env_file:
