@@ -3,3 +3,30 @@
 node_modules
 dist
 .secrets
+
+
+##? Terraform Specific Files and Directories
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude override files (usually local customizations)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Exclude CLI configuration files
+.terraformrc
+terraform.rc
+
+# Sensitive variable files (if you use them)
+*.tfvars
+*.tfvars.json
