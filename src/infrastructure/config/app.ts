@@ -38,6 +38,9 @@ export const createServer = () => {
             },
         }))
 
+        // Pinged by the frontend to detect a Render cold start
+        app.get('/api/health', (_req, res) => { res.json({ ok: true }) })
+
         app.use('/api/admin', adminRouter)
         app.use('/api/theater', theatreRouter)
         app.use('/api/user', userRouter)
